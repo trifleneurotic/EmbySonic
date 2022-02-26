@@ -7,5 +7,6 @@ namespace EmbySub.Configuration
     /// </summary>
     public class PluginConfiguration : BasePluginConfiguration
     {
+      public int LocalEmbyPort { get; set; }
     }
 }

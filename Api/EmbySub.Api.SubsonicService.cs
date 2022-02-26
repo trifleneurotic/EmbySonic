@@ -34,6 +34,7 @@ namespace EmbySub.Api
 
     public class SubsonicService : IService, IRequiresRequest
     {
+        private const string SupportedSubsonicApiVersion = "1.16.1";
         private readonly ILibraryManager _libraryManager;
         private readonly IMediaEncoder _mediaEncoder;
         private readonly IFileSystem _fileSystem;
@@ -63,14 +64,24 @@ namespace EmbySub.Api
               DeviceName = "SubsoniciApiClient",
               DeviceId = "343247328"
             };
+            string serverAndPort = String.Format("http://localhost:{0}", Plugin.Instance.Configuration.LocalEmbyPort);
             var cryptoProvider = new CryptographyProvider();
-            var client = new ApiClient(logger, "http://localhost:8096", "EmbySubsonic", device, "0.0.0.1", cryptoProvider); 
+            var client = new ApiClient(logger, serverAndPort, "EmbySubsonic", device, "0.0.0.1", cryptoProvider);
             var passwordHash = new SHA1Managed().ComputeHash(Encoding.UTF8.GetBytes("password"));
-            var authResult = await client.AuthenticateUserAsync("username", "password");
+            var authResult = await client.AuthenticateUserAsync(request.Username, request.Password);
             var subReq = new EmbySub.Response();
-            subReq.version = "1.16.1";
-            subReq.status = ResponseStatus.ok;
-            string xmlString = MySerializer<EmbySub.Response>.Serialize(subReq);
+
+            if(authResult.AccessToken == null)
+            {
+              subReq.status = ResponseStatus.failed;
+            }
+            else
+            {
+              subReq.status = ResponseStatus.ok;
+            }
+
+            subReq.version = SupportedSubsonicApiVersion;
+            string xmlString = Serializer<EmbySub.Response>.Serialize(subReq);
             return ResultFactory.GetResult(Request, xmlString, null);
         }
     }

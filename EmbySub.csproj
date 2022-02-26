@@ -6,6 +6,9 @@
     <AssemblyVersion>0.0.0.1</AssemblyVersion>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="mediabrowser.server.core" Version="4.6.0.50" />
+    <PackageReference Include="mediabrowser.server.core" Version="3.3.10" />
+    <PackageReference Include="mediabrowser.common" Version="3.3.10" />
+    <PackageReference Include="mediabrowser.apiclient" Version="3.1.0" />
+    <PackageReference Include="sockethttplistener" Version="1.0.50" />
   </ItemGroup>
 </Project>

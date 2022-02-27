@@ -77,6 +77,7 @@ namespace EmbySub.Api
             else
             {
               subReq.status = ResponseStatus.ok;
+              client.Logout();
             }
 
             subReq.version = SupportedSubsonicApiVersion;

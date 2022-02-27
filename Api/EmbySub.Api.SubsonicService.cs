@@ -34,7 +34,7 @@ namespace EmbySub.Api
 
     public class SubsonicService : IService, IRequiresRequest
     {
-        private const string SupportedSubsonicApiVersion = "1.16.1";
+        private const string SupportedSubsonicApiVersion = "1.12.0";
         private readonly ILibraryManager _libraryManager;
         private readonly IMediaEncoder _mediaEncoder;
         private readonly IFileSystem _fileSystem;

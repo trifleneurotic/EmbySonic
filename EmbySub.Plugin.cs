@@ -23,6 +23,18 @@ namespace EmbySub
 
         public static string PluginName = "Subsonic for Emby";
 
+        public IEnumerable<PluginPageInfo> GetPages()
+        {
+            return new[]
+            {
+                new PluginPageInfo
+                {
+                    Name = "embysubsonic",
+                    EmbeddedResourcePath = GetType().Namespace + ".Configuration.configPage.html"
+                }
+            };
+        }
+
         private Guid _id = new Guid("1067e341-9cea-4587-adc7-8947dccb279e");
         public override Guid Id
         {

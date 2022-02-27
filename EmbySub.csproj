@@ -1,14 +1,19 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <GenerateBindingRedirectsOutputType>true</GenerateBindingRedirectsOutputType>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <ImplicitUsings>enable</ImplicitUsings>
+    <AssemblyVersion>0.0.1.4</AssemblyVersion>
     <Nullable>enable</Nullable>
-    <AssemblyVersion>0.0.0.1</AssemblyVersion>
+    <LangVersion>10.0</LangVersion>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="mediabrowser.server.core" Version="3.3.10" />
-    <PackageReference Include="mediabrowser.common" Version="3.3.10" />
-    <PackageReference Include="mediabrowser.apiclient" Version="3.1.0" />
-    <PackageReference Include="sockethttplistener" Version="1.0.50" />
+    <PackageReference Include="mediabrowser.server.core" Version="4.0.0.2" />
+    <PackageReference Include="mediabrowser.common" Version="4.0.0.2" />
+    <PackageReference Include="system.memory" Version="4.0.1.1" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Configuration/configPage.html" />
   </ItemGroup>
 </Project>

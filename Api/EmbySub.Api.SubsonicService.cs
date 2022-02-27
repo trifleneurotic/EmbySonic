@@ -67,7 +67,6 @@ namespace EmbySub.Api
             string serverAndPort = String.Format("http://localhost:{0}", Plugin.Instance.Configuration.LocalEmbyPort);
             var cryptoProvider = new CryptographyProvider();
             var client = new ApiClient(logger, serverAndPort, "EmbySubsonic", device, "0.0.0.1", cryptoProvider);
-            var passwordHash = new SHA1Managed().ComputeHash(Encoding.UTF8.GetBytes("password"));
             var authResult = await client.AuthenticateUserAsync(request.Username, request.Password);
             var subReq = new EmbySub.Response();
 

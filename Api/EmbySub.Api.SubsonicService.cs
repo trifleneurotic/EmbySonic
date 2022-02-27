@@ -62,7 +62,7 @@ namespace EmbySub.Api
           StringContent body = new StringContent(payload);
           client.DefaultRequestHeaders.Accept.Clear();
           client.DefaultRequestHeaders.Add("Accept", "application/json");
-          client.DefaultRequestHeaders.Add("X-Emby-Authorization", "MediaBrowser Client=\"SubsonicClient\", Device=\"SubsonicDevice\", DeviceId=\"0192742\", Version=\"0.0.1.4\"");
+          client.DefaultRequestHeaders.Add("X-Emby-Authorization", "MediaBrowser Client=\"SubsonicClient\", Device=\"SubsonicDevice\", DeviceId=\"0192742\", Version=\"0.0.1.7\"");
 
           HttpResponseMessage result = await client.PostAsync("http://localhost:8096/api/Users/AuthenticateByName", body);
 

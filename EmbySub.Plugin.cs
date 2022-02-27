@@ -13,7 +13,7 @@ namespace EmbySub
     /// <summary>
     /// Class Plugin
     /// </summary>
-    public class Plugin : BasePlugin<PluginConfiguration>
+    public class Plugin : BasePlugin<PluginConfiguration>, IHasWebPages, IHasThumbImage
     {
         public Plugin(IApplicationPaths applicationPaths, IXmlSerializer xmlSerializer)
             : base(applicationPaths, xmlSerializer)
@@ -30,7 +30,7 @@ namespace EmbySub
                 new PluginPageInfo
                 {
                     Name = "embysubsonic",
-                    EmbeddedResourcePath = GetType().Namespace + ".Configuration.configPage.html"
+                    EmbeddedResourcePath = "EmbySub.Configuration.configPage.html"
                 }
             };
         }
@@ -48,6 +48,20 @@ namespace EmbySub
         public override string Name
         {
             get { return PluginName; }
+        }
+
+        public Stream GetThumbImage()
+        {
+            var type = GetType();
+            return type.Assembly.GetManifestResourceStream("EmbySub.Images.plugin.png");
+        }
+
+        public ImageFormat ThumbImageFormat
+        {
+            get
+            {
+                return ImageFormat.Png;
+            }
         }
 
         /// <summary>

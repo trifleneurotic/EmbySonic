@@ -15,6 +15,7 @@ using System.Net.Http;
 using System.Text;
 using System.Reflection;
 using System.Xml.Serialization;
+using EmbySub.Configuration;
 
 namespace EmbySub.Api
 {
@@ -64,7 +65,9 @@ namespace EmbySub.Api
           client.DefaultRequestHeaders.Add("Accept", "application/json");
           client.DefaultRequestHeaders.Add("X-Emby-Authorization", "MediaBrowser Client=\"SubsonicClient\", Device=\"SubsonicDevice\", DeviceId=\"0192742\", Version=\"0.0.1.7\"");
 
-          HttpResponseMessage result = await client.PostAsync("http://localhost:8096/api/Users/AuthenticateByName", body);
+          String url = String.Format("http://localhost:{0}/emby/Users/AuthenticateByName", Plugin.Instance.Configuration.LocalEmbyPort);
+
+          HttpResponseMessage result = await client.PostAsync(url, body);
 
           var subReq = new EmbySub.Response();
 

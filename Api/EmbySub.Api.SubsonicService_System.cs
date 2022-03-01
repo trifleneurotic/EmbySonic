@@ -15,11 +15,12 @@ using System.Net.Http;
 using System.Text;
 using System.Reflection;
 using System.Xml.Serialization;
+using EmbySub.Configuration;
 
 namespace EmbySub.Api
 {
     [Route("/rest/ping", "GET")]
-    public class PingSystem : IReturn<EmbySub.Response>
+    public class SystemPing : IReturn<EmbySub.Response>
     {
         [ApiMember(Name = "u", Description = "Username of Emby user", IsRequired = true, DataType = "string", ParameterType = "query", Verb = "GET")]
         public string? Username { get; set; }
@@ -28,7 +29,17 @@ namespace EmbySub.Api
         public string? Password { get; set; }
     }
 
-    public class SubsonicService : IService, IRequiresRequest
+    [Route("/rest/getLicense", "GET")]
+    public class SystemGetLicense : IReturn<EmbySub.Response>
+    {
+        [ApiMember(Name = "u", Description = "Username of Emby user", IsRequired = true, DataType = "string", ParameterType = "query", Verb = "GET")]
+        public string? Username { get; set; }
+
+        [ApiMember(Name = "p", Description = "Password of Emby user", IsRequired = true, DataType = "string", ParameterType = "query", Verb = "GET")]
+        public string? Password { get; set; }
+    }
+
+    public partial class SubsonicService : IService, IRequiresRequest
     {
         private const string SupportedSubsonicApiVersion = "1.12.0";
         private readonly ILibraryManager _libraryManager;
@@ -52,7 +63,12 @@ namespace EmbySub.Api
             ResultFactory = resultFactory;
         }
 
-        public async Task<object> Get(PingSystem request)
+        public async Task<object> Get(SystemGetLicense request)
+        {
+          return null;
+        }
+
+        public async Task<object> Get(SystemPing request)
         {
           HttpClientHandler clientHandler = new HttpClientHandler();
           clientHandler.ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => { return true; };
@@ -64,13 +80,16 @@ namespace EmbySub.Api
           client.DefaultRequestHeaders.Add("Accept", "application/json");
           client.DefaultRequestHeaders.Add("X-Emby-Authorization", "MediaBrowser Client=\"SubsonicClient\", Device=\"SubsonicDevice\", DeviceId=\"0192742\", Version=\"0.0.1.8\"");
 
-          HttpResponseMessage result = await client.PostAsync("http://localhost:8096/api/Users/AuthenticateByName", body);
+          String url = String.Format("http://localhost:{0}/emby/Users/AuthenticateByName", Plugin.Instance.Configuration.LocalEmbyPort);
+
+          HttpResponseMessage result = await client.PostAsync(url, body);
 
           var subReq = new EmbySub.Response();
 
-          _logger.Info("************ Hey! It's me! ************");
+          _logger.Info("************************");
           _logger.Info(result.StatusCode.ToString());
           _logger.Info(result.Content.ToString());
+          _logger.Info("************************");
 
           if (result.IsSuccessStatusCode)
           {

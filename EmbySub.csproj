@@ -1,6 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
     <GenerateBindingRedirectsOutputType>true</GenerateBindingRedirectsOutputType>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <ImplicitUsings>enable</ImplicitUsings>
@@ -12,6 +12,7 @@
     <PackageReference Include="mediabrowser.server.core" Version="4.0.0.2" />
     <PackageReference Include="mediabrowser.common" Version="4.0.0.2" />
     <PackageReference Include="system.memory" Version="4.0.1.1" />
+    <PackageReference Include="system.text.json" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Configuration/configPage.html" />

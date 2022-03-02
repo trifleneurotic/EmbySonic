@@ -36,7 +36,24 @@ namespace EmbySub.Api
     {
         public async Task<object> Get(BrowsingGetAlbum request)
         {
-          return null;
+          HttpClientHandler clientHandler = new HttpClientHandler();
+          clientHandler.ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => { return true; };
+          HttpClient client = new HttpClient(clientHandler);
+
+          var payload = String.Format("Username={0}\nPw={1}", request.Username, request.Password);
+          StringContent body = new StringContent(payload);
+          client.DefaultRequestHeaders.Accept.Clear();
+          client.DefaultRequestHeaders.Add("Accept", "application/json");
+          client.DefaultRequestHeaders.Add("X-Emby-Authorization", "MediaBrowser Client=\"SubsonicClient\", Device=\"SubsonicDevice\", DeviceId=\"0192742\", Version=\"0.0.1.7\"");
+
+          String url = String.Format("http://localhost:{0}/emby/Users/AuthenticateByName", Plugin.Instance.Configuration.LocalEmbyPort);
+
+          HttpResponseMessage result = await client.PostAsync(url, body);
+          var subReq = new EmbySub.Response();
+          subReq.version = SupportedSubsonicApiVersion;
+          string xmlString = Serializer<EmbySub.Response>.Serialize(subReq);
+          _logger.Info(xmlString);
+          return ResultFactory.GetResult(Request, xmlString, null);
         }
     }
 }

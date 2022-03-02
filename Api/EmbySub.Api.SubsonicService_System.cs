@@ -21,11 +21,11 @@ namespace EmbySub.Api
 {
     public class SystemBase : IReturn<EmbySub.Response>
     {
-        [ApiMember(Name = "u", Description = "Username of Emby user", IsRequired = true, DataType = "string", ParameterType = "query", Verb = "GET")]
-        public string? Username { get; set; }
+        [ApiMember(Name = "Username", Description = "Username of Emby user", IsRequired = true, DataType = "string", ParameterType = "query", Verb = "GET")]
+        public string? u { get; set; }
 
-        [ApiMember(Name = "p", Description = "Password of Emby user", IsRequired = true, DataType = "string", ParameterType = "query", Verb = "GET")]
-        public string? Password { get; set; }
+        [ApiMember(Name = "Password", Description = "Password of Emby user", IsRequired = true, DataType = "string", ParameterType = "query", Verb = "GET")]
+        public string? p { get; set; }
     }
 
     [Route("/rest/ping", "GET", Description = "Ping Emby Server")]
@@ -72,25 +72,35 @@ namespace EmbySub.Api
           clientHandler.ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => { return true; };
           HttpClient client = new HttpClient(clientHandler);
 
-          var payload = String.Format("Username={0}\nPw={1}", req.Username, req.Password);
-          StringContent body = new StringContent(payload);
+          String payload = String.Format("{{\"Username\":\"{0}\",\"Pw\":\"{1}\"}}", req.u, req.p);
+          StringContent body = new StringContent(payload, Encoding.UTF8, "application/json");
+
           client.DefaultRequestHeaders.Accept.Clear();
-          client.DefaultRequestHeaders.Add("Accept", "application/json");
-          client.DefaultRequestHeaders.Add("X-Emby-Authorization", "MediaBrowser Client=\"SubsonicClient\", Device=\"SubsonicDevice\", DeviceId=\"0192742\", Version=\"0.0.1.7\"");
+          client.DefaultRequestHeaders.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
+          client.DefaultRequestHeaders.Add("X-Emby-Authorization", "Emby Client=\"SubsonicClient\", Device=\"SubsonicDevice\", DeviceId=\"0192742\", Version=\"0.0.4.9\"");
 
           String url = String.Format("http://localhost:{0}/emby/Users/AuthenticateByName", Plugin.Instance.Configuration.LocalEmbyPort);
 
-          HttpResponseMessage result = await client.PostAsync(url, body);
-          return result;
+          return await client.PostAsync(url, body);
         }
 
         public async Task<object> Get(SystemPing req)
         {
-          await Login(req);
+          HttpResponseMessage hrm = await Login(req);
           var subReq = new EmbySub.Response();
           subReq.version = SupportedSubsonicApiVersion;
+
+          if (!hrm.IsSuccessStatusCode)
+          {
+            var e = new EmbySub.Error();
+            e.code = 0;
+            e.message = "Login failed";
+            subReq.status = EmbySub.ResponseStatus.failed;
+            subReq.Item = e;
+            subReq.ItemElementName = EmbySub.ItemChoiceType.error;
+          }
+
           string xmlString = Serializer<EmbySub.Response>.Serialize(subReq);
-          _logger.Info(xmlString);
           return ResultFactory.GetResult(Request, xmlString, null);
         }
     }

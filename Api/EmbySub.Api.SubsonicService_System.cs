@@ -66,7 +66,7 @@ namespace EmbySub.Api
             c = new HttpClient(clientHandler);
         }
 
-        private async Task<object> Login(SystemBase req)
+        private async Task<HttpResponseMessage> Login(SystemBase req)
         {
           HttpClientHandler clientHandler = new HttpClientHandler();
           clientHandler.ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => { return true; };

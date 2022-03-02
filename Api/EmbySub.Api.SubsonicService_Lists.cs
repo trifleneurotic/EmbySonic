@@ -31,17 +31,18 @@ namespace EmbySub.Api
         {
           HttpResponseMessage hrm;
           hrm = await Login(req);
+          var subReq = new EmbySub.Response();
+          string xmlString;
 
           if (!hrm.IsSuccessStatusCode)
           {
-            var subReq = new EmbySub.Response();
             subReq.ItemElementName = EmbySub.ItemChoiceType.error;
             EmbySub.Error e = new EmbySub.Error();
-            e.code = "0";
+            e.code = 0;
             e.message = "Login failed";
             subReq.Item = e;
             subReq.version = SupportedSubsonicApiVersion;
-            string xmlString = Serializer<EmbySub.Response>.Serialize(subReq);
+            xmlString = Serializer<EmbySub.Response>.Serialize(subReq);
             return ResultFactory.GetResult(Request, xmlString, null);
           }
           else
@@ -55,10 +56,8 @@ namespace EmbySub.Api
           String raw = await mes.Content.ReadAsStringAsync();
           JsonDocument j = JsonDocument.Parse(raw);
 
-          HttpResponseMessage hrm;
           String hrmraw;
           JsonElement allArtists = j.RootElement.GetProperty("Items");
-          var subReq = new EmbySub.Response();
 
           subReq.ItemElementName = EmbySub.ItemChoiceType.albumList;
 
@@ -90,7 +89,7 @@ namespace EmbySub.Api
           al.album = albums.ToArray();
           subReq.Item = al;
           subReq.version = SupportedSubsonicApiVersion;
-          string xmlString = Serializer<EmbySub.Response>.Serialize(subReq);
+          xmlString = Serializer<EmbySub.Response>.Serialize(subReq);
           // logout with token
           return ResultFactory.GetResult(Request, xmlString, null);
         }

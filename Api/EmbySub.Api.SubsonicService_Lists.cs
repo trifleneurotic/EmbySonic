@@ -29,9 +29,28 @@ namespace EmbySub.Api
     {
         public async Task<object> Get(ListAlbum req)
         {
-          await Login(req);
+          HttpResponseMessage hrm;
+          hrm = await Login(req);
 
-          String url = String.Format("http://localhost:{0}/emby/Items?api_key=4cee3dd9684a48fc99d32f84bfc7b8e2&ParentId=7843888&IncludeItemTypes=Album&ExcludeItemTypes=Audio", Plugin.Instance.Configuration.LocalEmbyPort);
+          if (!hrm.IsSuccessStatusCode)
+          {
+            var subReq = new EmbySub.Response();
+            subReq.ItemElementName = EmbySub.ItemChoiceType.error;
+            EmbySub.Error e = new EmbySub.Error();
+            e.code = "0";
+            e.message = "Login failed";
+            subReq.Item = e;
+            subReq.version = SupportedSubsonicApiVersion;
+            string xmlString = Serializer<EmbySub.Response>.Serialize(subReq);
+            return ResultFactory.GetResult(Request, xmlString, null);
+          }
+          else
+          {
+            // extract token for c
+            // add token header along with json accept to c
+          }
+
+          String url = String.Format("http://localhost:{0}/emby/Items?ParentId=7843888&IncludeItemTypes=Album&ExcludeItemTypes=Audio", Plugin.Instance.Configuration.LocalEmbyPort);
           HttpResponseMessage mes = await c.GetAsync(url);
           String raw = await mes.Content.ReadAsStringAsync();
           JsonDocument j = JsonDocument.Parse(raw);
@@ -48,7 +67,7 @@ namespace EmbySub.Api
           foreach (JsonElement artist in allArtists.EnumerateArray())
           {
             String artistId = artist.GetProperty("Id").ToString();
-            url = String.Format("http://localhost:{0}/emby/Items?api_key=4cee3dd9684a48fc99d32f84bfc7b8e2&ParentId={1}&IncludeItemTypes=Folder&ExcludeItemTypes=Audio", Plugin.Instance.Configuration.LocalEmbyPort, artistId);
+            url = String.Format("http://localhost:{0}/emby/Items?ParentId={1}&IncludeItemTypes=Folder&ExcludeItemTypes=Audio", Plugin.Instance.Configuration.LocalEmbyPort, artistId);
             hrm = await c.GetAsync(url);
             hrmraw = await hrm.Content.ReadAsStringAsync();
             JsonDocument k = JsonDocument.Parse(hrmraw);
@@ -72,6 +91,7 @@ namespace EmbySub.Api
           subReq.Item = al;
           subReq.version = SupportedSubsonicApiVersion;
           string xmlString = Serializer<EmbySub.Response>.Serialize(subReq);
+          // logout with token
           return ResultFactory.GetResult(Request, xmlString, null);
         }
     }

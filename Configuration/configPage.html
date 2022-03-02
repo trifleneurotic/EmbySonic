@@ -15,6 +15,13 @@
                         </label>
                         <div class="fieldDescription inputFieldDescription">This is the local port for Emby that the EmbySub plugin will use.</div>
                     </div>
+                    <div class="inputContainer inputContainer-withDescription">
+                        <label>
+                            <input is="emby-input" type="text" id="inputMusicLibraryName" />
+                            <span>Name of music library</span>
+                        </label>
+                        <div class="fieldDescription inputFieldDescription">This is the friendly name of your music library that the EmbySub plugin will use.</div>
+                    </div>
                     <br />
                     <div>
                         <button is="emby-button" type="submit" class="raised button-submit block"><span>Save</span></button>
@@ -38,6 +45,7 @@
                     ApiClient.getPluginConfiguration(pluginId).then(function (config) {
 
                         page.querySelector('#inputLocalEmbyPort').text = config.LocalEmbyPort;
+                        page.querySelector('#inputMusicLibraryName').text = config.MusicLibraryName;
 
                         Dashboard.hideLoadingMsg();
                     });
@@ -52,6 +60,7 @@
                     ApiClient.getPluginConfiguration(pluginId).then(function (config) {
 
                         config.LocalEmbyPort = form.querySelector('#inputLocalEmbyPort').text;
+                        config.MusicLibraryName = form.querySelector('#inputMusicLibraryName').text;
 
                         ApiClient.updatePluginConfiguration(pluginId, config).then(Dashboard.processPluginConfigurationUpdateResult);
                     });

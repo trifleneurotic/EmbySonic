@@ -10,8 +10,10 @@ namespace EmbySub.Configuration
       public PluginConfiguration()
       {
         LocalEmbyPort = 8096;
+        MusicLibraryName = "EmbyMusic";
       }
 
       public int LocalEmbyPort { get; set; }
+      public string MusicLibraryName { get; set; }
     }
 }

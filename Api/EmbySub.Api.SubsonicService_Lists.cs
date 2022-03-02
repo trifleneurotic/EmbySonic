@@ -55,15 +55,31 @@ namespace EmbySub.Api
             c.DefaultRequestHeaders.Add("X-Emby-Token", u.GetProperty("AccesssToken").ToString());
           }
 
-          String url = String.Format("http://localhost:{0}/emby/Items?ParentId=7843888&IncludeItemTypes=Album&ExcludeItemTypes=Audio", Plugin.Instance.Configuration.LocalEmbyPort);
+          String url = String.Format("http://localhost:{0}/emby/Items?IncludeItemTypes=Album&ExcludeItemTypes=Audio", Plugin.Instance.Configuration.LocalEmbyPort);
           HttpResponseMessage mes = await c.GetAsync(url);
           String raw = await mes.Content.ReadAsStringAsync();
           JsonDocument j = JsonDocument.Parse(raw);
+          JsonElement allLibs = j.RootElement.GetProperty("Items");
+          String s;
+          String musicLibId = String.Empty;;
+
+          foreach (JsonElement lib in allLibs.EnumerateArray())
+          {
+            s = lib.GetProperty("Name").ToString();
+            if(String.Equals(s, Plugin.Instance.Configuration.MusicLibraryName))
+            {
+              musicLibId = lib.GetProperty("Id").ToString();
+              break;
+            }
+          }
+
+          url = String.Format("http://localhost:{0}/emby/Items?ParentId={1}&IncludeItemTypes=Album&ExcludeItemTypes=Audio", Plugin.Instance.Configuration.LocalEmbyPort, musicLibId);
+          mes = await c.GetAsync(url);
+          raw = await mes.Content.ReadAsStringAsync();
+          j = JsonDocument.Parse(raw);
 
           JsonElement allArtists = j.RootElement.GetProperty("Items");
-
           subReq.ItemElementName = EmbySub.ItemChoiceType.albumList;
-
           List<EmbySub.Child> albums = new List<EmbySub.Child>();
 
           foreach (JsonElement artist in allArtists.EnumerateArray())

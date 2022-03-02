@@ -21,35 +21,18 @@ using System.Text.Json;
 namespace EmbySub.Api
 {
     [Route("/rest/getAlbumList", "GET")]
-    public class ListAlbum : IReturn<EmbySub.Response>
+    public class ListAlbum : SystemBase
     {
-        [ApiMember(Name = "u", Description = "Username of Emby user", IsRequired = true, DataType = "string", ParameterType = "query", Verb = "GET")]
-        public string? Username { get; set; }
-
-        [ApiMember(Name = "p", Description = "Password of Emby user", IsRequired = true, DataType = "string", ParameterType = "query", Verb = "GET")]
-        public string? Password { get; set; }
     }
 
     public partial class SubsonicService : IService, IRequiresRequest
     {
         public async Task<object> Get(ListAlbum req)
         {
-          HttpClientHandler clientHandler = new HttpClientHandler();
-          clientHandler.ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => { return true; };
-          HttpClient client = new HttpClient(clientHandler);
+          await Login(req);
 
-          var payload = String.Format("Username={0}\nPw={1}", req.Username, req.Password);
-          StringContent body = new StringContent(payload);
-          client.DefaultRequestHeaders.Accept.Clear();
-          client.DefaultRequestHeaders.Add("Accept", "application/json");
-          client.DefaultRequestHeaders.Add("X-Emby-Authorization", "MediaBrowser Client=\"SubsonicClient\", Device=\"SubsonicDevice\", DeviceId=\"0192742\", Version=\"0.0.1.7\"");
-
-          String url = String.Format("http://localhost:{0}/emby/Users/AuthenticateByName", Plugin.Instance.Configuration.LocalEmbyPort);
-
-          HttpResponseMessage result = await client.PostAsync(url, body);
-
-          url = String.Format("http://localhost:{0}/emby/Items?api_key=4cee3dd9684a48fc99d32f84bfc7b8e2&ParentId=7843888&IncludeItemTypes=Album&ExcludeItemTypes=Audio", Plugin.Instance.Configuration.LocalEmbyPort);
-          HttpResponseMessage mes = await client.GetAsync(url);
+          String url = String.Format("http://localhost:{0}/emby/Items?api_key=4cee3dd9684a48fc99d32f84bfc7b8e2&ParentId=7843888&IncludeItemTypes=Album&ExcludeItemTypes=Audio", Plugin.Instance.Configuration.LocalEmbyPort);
+          HttpResponseMessage mes = await c.GetAsync(url);
           String raw = await mes.Content.ReadAsStringAsync();
           JsonDocument j = JsonDocument.Parse(raw);
 
@@ -66,7 +49,7 @@ namespace EmbySub.Api
           {
             String artistId = artist.GetProperty("Id").ToString();
             url = String.Format("http://localhost:{0}/emby/Items?api_key=4cee3dd9684a48fc99d32f84bfc7b8e2&ParentId={1}&IncludeItemTypes=Folder&ExcludeItemTypes=Audio", Plugin.Instance.Configuration.LocalEmbyPort, artistId);
-            hrm = await client.GetAsync(url);
+            hrm = await c.GetAsync(url);
             hrmraw = await hrm.Content.ReadAsStringAsync();
             JsonDocument k = JsonDocument.Parse(hrmraw);
 

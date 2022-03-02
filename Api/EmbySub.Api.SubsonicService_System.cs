@@ -19,8 +19,7 @@ using EmbySub.Configuration;
 
 namespace EmbySub.Api
 {
-    [Route("/rest/ping", "GET")]
-    public class SystemPing : IReturn<EmbySub.Response>
+    public class SystemBase : IReturn<EmbySub.Response>
     {
         [ApiMember(Name = "u", Description = "Username of Emby user", IsRequired = true, DataType = "string", ParameterType = "query", Verb = "GET")]
         public string? Username { get; set; }
@@ -29,14 +28,14 @@ namespace EmbySub.Api
         public string? Password { get; set; }
     }
 
-    [Route("/rest/getLicense", "GET")]
-    public class SystemGetLicense : IReturn<EmbySub.Response>
+    [Route("/rest/ping", "GET", Description = "Ping Emby Server")]
+    public class SystemPing : SystemBase
     {
-        [ApiMember(Name = "u", Description = "Username of Emby user", IsRequired = true, DataType = "string", ParameterType = "query", Verb = "GET")]
-        public string? Username { get; set; }
+    }
 
-        [ApiMember(Name = "p", Description = "Password of Emby user", IsRequired = true, DataType = "string", ParameterType = "query", Verb = "GET")]
-        public string? Password { get; set; }
+    [Route("/rest/getLicense", "GET", Description = "Returns Emby license information (Premiere)")]
+    public class SystemGetLicense : SystemBase
+    {
     }
 
     public partial class SubsonicService : IService, IRequiresRequest
@@ -49,6 +48,7 @@ namespace EmbySub.Api
         private readonly IApplicationPaths _appPaths;
         private readonly ILibraryMonitor _libraryMonitor;
         public IHttpResultFactory ResultFactory { get; private set; }
+        private HttpClient c;
 
         public IRequest? Request { get; set; }
 
@@ -61,15 +61,18 @@ namespace EmbySub.Api
             _appPaths = appPaths;
             _libraryMonitor = libraryMonitor;
             ResultFactory = resultFactory;
+            HttpClientHandler clientHandler = new HttpClientHandler();
+            clientHandler.ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => { return true; };
+            c = new HttpClient(clientHandler);
         }
 
-        public async Task<object> Get(SystemPing request)
+        private async Task<object> Login(SystemBase req)
         {
           HttpClientHandler clientHandler = new HttpClientHandler();
           clientHandler.ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => { return true; };
           HttpClient client = new HttpClient(clientHandler);
 
-          var payload = String.Format("Username={0}\nPw={1}", request.Username, request.Password);
+          var payload = String.Format("Username={0}\nPw={1}", req.Username, req.Password);
           StringContent body = new StringContent(payload);
           client.DefaultRequestHeaders.Accept.Clear();
           client.DefaultRequestHeaders.Add("Accept", "application/json");
@@ -78,6 +81,12 @@ namespace EmbySub.Api
           String url = String.Format("http://localhost:{0}/emby/Users/AuthenticateByName", Plugin.Instance.Configuration.LocalEmbyPort);
 
           HttpResponseMessage result = await client.PostAsync(url, body);
+          return result;
+        }
+
+        public async Task<object> Get(SystemPing req)
+        {
+          await Login(req);
           var subReq = new EmbySub.Response();
           subReq.version = SupportedSubsonicApiVersion;
           string xmlString = Serializer<EmbySub.Response>.Serialize(subReq);

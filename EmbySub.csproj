@@ -11,8 +11,7 @@
   <ItemGroup>
     <PackageReference Include="mediabrowser.server.core" Version="4.0.0.2" />
     <PackageReference Include="mediabrowser.common" Version="4.0.0.2" />
-    <PackageReference Include="system.memory" Version="4.0.1.1" />
-    <PackageReference Include="system.text.json" />
+    <PackageReference Include="system.text.json" Version="5.0.2" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Configuration/configPage.html" />

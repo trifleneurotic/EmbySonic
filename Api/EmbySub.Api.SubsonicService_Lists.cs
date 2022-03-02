@@ -33,6 +33,7 @@ namespace EmbySub.Api
           hrm = await Login(req);
           var subReq = new EmbySub.Response();
           string xmlString;
+          String hrmraw;
 
           if (!hrm.IsSuccessStatusCode)
           {
@@ -47,8 +48,11 @@ namespace EmbySub.Api
           }
           else
           {
-            // extract token for c
-            // add token header along with json accept to c
+            hrmraw = await hrm.Content.ReadAsStringAsync();
+            JsonDocument doc = JsonDocument.Parse(hrmraw);
+            JsonElement u = doc.RootElement.GetProperty("User");
+            c.DefaultRequestHeaders.Add("Accept", "application/json");
+            c.DefaultRequestHeaders.Add("X-Emby-Token", u.GetProperty("AccesssToken").ToString());
           }
 
           String url = String.Format("http://localhost:{0}/emby/Items?ParentId=7843888&IncludeItemTypes=Album&ExcludeItemTypes=Audio", Plugin.Instance.Configuration.LocalEmbyPort);
@@ -56,7 +60,6 @@ namespace EmbySub.Api
           String raw = await mes.Content.ReadAsStringAsync();
           JsonDocument j = JsonDocument.Parse(raw);
 
-          String hrmraw;
           JsonElement allArtists = j.RootElement.GetProperty("Items");
 
           subReq.ItemElementName = EmbySub.ItemChoiceType.albumList;
@@ -90,7 +93,9 @@ namespace EmbySub.Api
           subReq.Item = al;
           subReq.version = SupportedSubsonicApiVersion;
           xmlString = Serializer<EmbySub.Response>.Serialize(subReq);
-          // logout with token
+
+          url = String.Format("http://localhost:{0}/emby/Sessions/Logout", Plugin.Instance.Configuration.LocalEmbyPort);
+          await c.PostAsync(url, null);
           return ResultFactory.GetResult(Request, xmlString, null);
         }
     }

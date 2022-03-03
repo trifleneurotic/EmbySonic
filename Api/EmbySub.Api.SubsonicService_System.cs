@@ -17,6 +17,7 @@ using System.Text.RegularExpressions;
 using System.Reflection;
 using System.Xml.Serialization;
 using EmbySub.Configuration;
+using System.Linq;
 
 namespace EmbySub.Api
 {
@@ -67,6 +68,15 @@ namespace EmbySub.Api
             c = new HttpClient(clientHandler);
         }
 
+        private EmbySub.Child[] ShuffleChildren(EmbySub.Child[] arr, int numElements)
+        {
+          Random rand = new Random();
+
+          EmbySub.Child[] RandomizedChildren = arr.OrderBy(x => rand.Next()).ToArray();
+
+          return RandomizedChildren.Take(numElements).ToArray();
+        }
+
         private async Task<HttpResponseMessage> Login(SystemBase req)
         {
           HttpClientHandler clientHandler = new HttpClientHandler();
@@ -78,7 +88,7 @@ namespace EmbySub.Api
 
           client.DefaultRequestHeaders.Accept.Clear();
           client.DefaultRequestHeaders.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
-          client.DefaultRequestHeaders.Add("X-Emby-Authorization", "Emby Client=\"SubsonicClient\", Device=\"SubsonicDevice\", DeviceId=\"0192742\", Version=\"0.0.6.0\"");
+          client.DefaultRequestHeaders.Add("X-Emby-Authorization", "Emby Client=\"SubsonicClient\", Device=\"SubsonicDevice\", DeviceId=\"0192742\", Version=\"0.0.6.1\"");
 
           String url = String.Format("http://localhost:{0}/emby/Users/AuthenticateByName", Plugin.Instance.Configuration.LocalEmbyPort);
 
@@ -125,10 +135,6 @@ namespace EmbySub.Api
           EmbySub.License l = new EmbySub.License();
           l.valid = true;
           l.email = "billingsupport@emby.media";
-          l.licenseExpires = new DateTime(2099, 5, 1, 8, 30, 52);
-          l.licenseExpiresSpecified = false;
-          l.trialExpires = new DateTime(2099, 5, 1, 8, 30, 52);
-          l.trialExpiresSpecified = false;
 
           subReq.Item = l;
           subReq.ItemElementName = EmbySub.ItemChoiceType.license;

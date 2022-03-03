@@ -123,7 +123,7 @@ namespace EmbySub.Api
 
           // lastly let's convert the above list and add to our Subsonic XML to return
           EmbySub.AlbumList al = new EmbySub.AlbumList();
-          al.album = albums.ToArray();
+          al.album = ShuffleChildren(albums.ToArray(), 10);
           subReq.Item = al;
           subReq.version = SupportedSubsonicApiVersion;
           xmlString = Serializer<EmbySub.Response>.Serialize(subReq);

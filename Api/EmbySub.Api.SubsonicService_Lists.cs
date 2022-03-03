@@ -21,7 +21,7 @@ using System.Text.RegularExpressions;
 
 namespace EmbySub.Api
 {
-    [Route("/rest/getAlbumList", "GET")]
+    [Route("/rest/getAlbumList", "GET", Description = "Gets all albums for all artists")]
     public class ListAlbum : SystemBase
     {
     }

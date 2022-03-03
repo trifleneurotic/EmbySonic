@@ -19,7 +19,7 @@ using EmbySub.Configuration;
 
 namespace EmbySub.Api
 {
-    [Route("/rest/getAlbum", "GET")]
+    [Route("/rest/getAlbum", "GET", Description = "Returns an individual album")]
     public class BrowsingGetAlbum : SystemBase
     {
         [ApiMember(Name = "id", Description = "Emby ID of album", IsRequired = true, DataType = "string", ParameterType = "query", Verb = "GET")]

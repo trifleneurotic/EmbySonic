@@ -13,6 +13,7 @@ using System.Threading.Tasks;
 using System.Security.Cryptography;
 using System.Net.Http;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Reflection;
 using System.Xml.Serialization;
 using EmbySub.Configuration;
@@ -77,7 +78,7 @@ namespace EmbySub.Api
 
           client.DefaultRequestHeaders.Accept.Clear();
           client.DefaultRequestHeaders.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
-          client.DefaultRequestHeaders.Add("X-Emby-Authorization", "Emby Client=\"SubsonicClient\", Device=\"SubsonicDevice\", DeviceId=\"0192742\", Version=\"0.0.4.9\"");
+          client.DefaultRequestHeaders.Add("X-Emby-Authorization", "Emby Client=\"SubsonicClient\", Device=\"SubsonicDevice\", DeviceId=\"0192742\", Version=\"0.0.5.9\"");
 
           String url = String.Format("http://localhost:{0}/emby/Users/AuthenticateByName", Plugin.Instance.Configuration.LocalEmbyPort);
 
@@ -101,7 +102,40 @@ namespace EmbySub.Api
           }
 
           string xmlString = Serializer<EmbySub.Response>.Serialize(subReq);
-          return ResultFactory.GetResult(Request, xmlString, null);
+          string xmlStringUnescaped = Regex.Unescape(xmlString);
+          return ResultFactory.GetResult(Request, xmlStringUnescaped, null);
+        }
+
+        public async Task<object> Get(SystemGetLicense req)
+        {
+          HttpResponseMessage hrm = await Login(req);
+          var subReq = new EmbySub.Response();
+          subReq.version = SupportedSubsonicApiVersion;
+
+          if (!hrm.IsSuccessStatusCode)
+          {
+            var e = new EmbySub.Error();
+            e.code = 0;
+            e.message = "Login failed";
+            subReq.status = EmbySub.ResponseStatus.failed;
+            subReq.Item = e;
+            subReq.ItemElementName = EmbySub.ItemChoiceType.error;
+          }
+
+          EmbySub.License l = new EmbySub.License();
+          l.valid = true;
+          l.email = "billingsupport@emby.media";
+          l.licenseExpires = new DateTime(2099, 5, 1, 8, 30, 52);
+          l.licenseExpiresSpecified = false;
+          l.trialExpires = new DateTime(2099, 5, 1, 8, 30, 52);
+          l.trialExpiresSpecified = false;
+
+          subReq.Item = l;
+          subReq.ItemElementName = EmbySub.ItemChoiceType.license;
+
+          string xmlString = Serializer<EmbySub.Response>.Serialize(subReq);
+          string xmlStringUnescaped = Regex.Unescape(xmlString);
+          return ResultFactory.GetResult(Request, xmlStringUnescaped, null);
         }
     }
 }

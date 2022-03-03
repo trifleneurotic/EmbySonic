@@ -17,6 +17,7 @@ using System.Reflection;
 using System.Xml.Serialization;
 using EmbySub.Configuration;
 using System.Text.Json;
+using System.Text.RegularExpressions;
 
 namespace EmbySub.Api
 {
@@ -29,11 +30,9 @@ namespace EmbySub.Api
     {
         public async Task<object> Get(ListAlbum req)
         {
-          HttpResponseMessage hrm;
-          hrm = await Login(req);
+          HttpResponseMessage hrm = await Login(req);
           var subReq = new EmbySub.Response();
-          string xmlString;
-          String hrmraw;
+          String hrmraw, xmlString, s;
 
           // if login is NOT successful return an error....
           if (!hrm.IsSuccessStatusCode)
@@ -52,18 +51,16 @@ namespace EmbySub.Api
           {
             hrmraw = await hrm.Content.ReadAsStringAsync();
             JsonDocument doc = JsonDocument.Parse(hrmraw);
-            JsonElement u = doc.RootElement.GetProperty("User");
             c.DefaultRequestHeaders.Add("Accept", "application/json");
-            c.DefaultRequestHeaders.Add("X-Emby-Token", u.GetProperty("AccesssToken").ToString());
+            c.DefaultRequestHeaders.Add("X-Emby-Token", doc.RootElement.GetProperty("AccessToken").ToString());
           }
 
           // we need the unique ID for the desired music library set in the plugin configuration
           String url = String.Format("http://localhost:{0}/emby/Items?IncludeItemTypes=Album&ExcludeItemTypes=Audio", Plugin.Instance.Configuration.LocalEmbyPort);
           HttpResponseMessage mes = await c.GetAsync(url);
-          String raw = await mes.Content.ReadAsStringAsync();
-          JsonDocument j = JsonDocument.Parse(raw);
+          hrmraw = await mes.Content.ReadAsStringAsync();
+          JsonDocument j = JsonDocument.Parse(hrmraw);
           JsonElement allLibs = j.RootElement.GetProperty("Items");
-          String s;
           String musicLibId = String.Empty;
 
           foreach (JsonElement lib in allLibs.EnumerateArray())
@@ -92,8 +89,8 @@ namespace EmbySub.Api
           // library exists so let's get all the artists that have albums first
           url = String.Format("http://localhost:{0}/emby/Items?ParentId={1}&IncludeItemTypes=Album&ExcludeItemTypes=Audio", Plugin.Instance.Configuration.LocalEmbyPort, musicLibId);
           mes = await c.GetAsync(url);
-          raw = await mes.Content.ReadAsStringAsync();
-          j = JsonDocument.Parse(raw);
+          hrmraw = await mes.Content.ReadAsStringAsync();
+          j = JsonDocument.Parse(hrmraw);
 
           JsonElement allArtists = j.RootElement.GetProperty("Items");
           subReq.ItemElementName = EmbySub.ItemChoiceType.albumList;

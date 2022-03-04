@@ -25,11 +25,27 @@ namespace EmbySub.Api
     public class ListAlbum : SystemBase
     {
       [ApiMember(Name = "Size", Description = "Number of items to return", IsRequired = false, DataType = "int", ParameterType = "query", Verb = "GET")]
-      public int? size { get; set; }
+      public int size { get; set; }
+
+      [ApiMember(Name = "Type", Description = "Type of list to return", IsRequired = true, DataType = "string", ParameterType = "query", Verb = "GET")]
+      public String type { get; set; }
     }
 
     public partial class SubsonicService : IService, IRequiresRequest
     {
+        private String GetEmbyListType(string SubsonicListType)
+        {
+          switch (SubsonicListType)
+          {
+            case "random": return "Random";
+            case "alphabeticalByName": return "Album";
+            case "alphabeticalByArtist": return "Artist";
+            case "recent": return "DateCreated&SortOrder=Descending";
+            case "newest": return "ProductionYear&SortOrder=Descending";
+            case "highest": return "CriticRating&SortOrder=Descending";
+            default: return "Random";
+          }
+        }
         public async Task<object> Get(ListAlbum req)
         {
           HttpResponseMessage hrm = await Login(req);
@@ -106,8 +122,11 @@ namespace EmbySub.Api
             sb.AppendFormat("{0},", artist.GetProperty("Id").ToString());
           }
 
+          String sz = Convert.ToString(req.size  == 0 ? 10 : req.size);
+          String ty = GetEmbyListType(req.type);
+
           // ....we want to exclude artist-only records in our hierarchical library....
-          url = String.Format("http://localhost:{0}/emby/Items?Recursive=true&ParentId={1}&IncludeItemTypes=Folder&ExcludeItemTypes=Audio&ExcludeItemIds={2}&SortBy=random&Limit=10&Fields=ParentId", Plugin.Instance.Configuration.LocalEmbyPort, musicLibId, sb.ToString());
+          url = String.Format("http://localhost:{0}/emby/Items?Recursive=true&ParentId={1}&IncludeItemTypes=Folder&ExcludeItemTypes=Audio&ExcludeItemIds={2}&SortBy={3}&Limit={4}&Fields=ParentId", Plugin.Instance.Configuration.LocalEmbyPort, musicLibId, sb.ToString(), ty, sz);
           hrm = await c.GetAsync(url);
           hrmraw = await hrm.Content.ReadAsStringAsync();
           JsonDocument k = JsonDocument.Parse(hrmraw);

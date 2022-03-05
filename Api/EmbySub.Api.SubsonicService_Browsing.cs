@@ -41,8 +41,24 @@ namespace EmbySub.Api
     {
     }
 
+    [Route("/rest/getMusicDirectory", "GET", Description = "Returns specific music directory")]
+    public class BrowsingGetMusicDirectory : SystemBase
+    {
+      [ApiMember(Name = "Music Folder ID", Description = "Emby ID of music folder", IsRequired = true, DataType = "string", ParameterType = "query", Verb = "GET")]
+      public string? id { get; set; }
+    }
+
     public partial class SubsonicService : IService, IRequiresRequest
     {
+        public async Task<object> Get(BrowsingGetMusicDirectory req)
+        {
+          BrowsingGetIndexes bgi = new BrowsingGetIndexes();
+          bgi.musicFolderId = req.id;
+          bgi.u = req.u;
+          bgi.p = req.p;
+          return await this.Get(bgi);
+        }
+
         public async Task<object> Get(BrowsingGetMusicFolders req)
         {
           HttpResponseMessage hrm = await Login(req);

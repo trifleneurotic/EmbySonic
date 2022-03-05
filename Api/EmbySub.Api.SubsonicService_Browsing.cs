@@ -15,6 +15,7 @@ using System.Net.Http;
 using System.Text;
 using System.Text.Json;
 using System.Reflection;
+using System.Runtime;
 using System.Xml.Serialization;
 using EmbySub.Configuration;
 
@@ -33,7 +34,7 @@ namespace EmbySub.Api
         {
          HttpResponseMessage hrm = await Login(req);
           var subReq = new EmbySub.Response();
-          String hrmraw, xmlString, s;
+          String hrmraw, xmlString;
 
           // if login is NOT successful return an error....
           if (!hrm.IsSuccessStatusCode)
@@ -73,7 +74,7 @@ namespace EmbySub.Api
 
           List<EmbySub.Child> songs = new List<EmbySub.Child>();
 
-          // ....and then add each album to our list of songs for the album
+          // ....and then add each song to our list of songs for the album
           foreach (JsonElement song in ss.EnumerateArray())
           {
             EmbySub.Child ch = new EmbySub.Child();
@@ -82,24 +83,24 @@ namespace EmbySub.Api
             ch.album = album.GetProperty("Name").ToString();
             ch.artist = artist.GetProperty("Name").ToString();
             ch.isDir = song.GetProperty("IsFolder").GetBoolean();
-            // ch.coverArt = album.GetProperty("AlbumPrimaryImageTag").ToString();
             ch.albumId = req.id;
             ch.artistId = artist.GetProperty("Id").ToString();
+            ch.durationSpecified = true;
+            ch.duration = (int)TimeSpan.FromTicks(song.GetProperty("RunTimeTicks").GetInt64()).TotalSeconds;
             songs.Add(ch);
           }
 
           Child[] songArray = songs.ToArray();
 
-
           // then we create the main album record....
           subReq.ItemElementName = EmbySub.ItemChoiceType.album;
           EmbySub.AlbumWithSongsID3 a = new EmbySub.AlbumWithSongsID3();
-          a.id = songArray[0].albumId;
-          a.name = songArray[0].album;
-          a.artist = songArray[0].artist;
-          a.artistId = songArray[0].artistId;
-          a.coverArt = songArray[0].coverArt;
+          a.id = req.id;
+          a.name = album.GetProperty("Name").ToString();
+          a.artist = artist.GetProperty("Name").ToString();
+          a.artistId = artist.GetProperty("Id").ToString();
           a.songCount = Int32.Parse(k.RootElement.GetProperty("TotalRecordCount").ToString());
+          a.duration = (int)TimeSpan.FromTicks(album.GetProperty("RunTimeTicks").GetInt64()).TotalSeconds;
 
           // ....and the album's song list to that record
           a.song = songArray;

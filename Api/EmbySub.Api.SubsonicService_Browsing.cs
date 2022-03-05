@@ -34,8 +34,89 @@ namespace EmbySub.Api
     {
     }
 
+    [Route("/rest/getMusicFolders", "GET", Description = "Returns top level music folder configured for plugin")]
+    public class BrowsingGetMusicFolders : SystemBase
+    {
+    }
+
     public partial class SubsonicService : IService, IRequiresRequest
     {
+        public async Task<object> Get(BrowsingGetMusicFolders req)
+        {
+          HttpResponseMessage hrm = await Login(req);
+          var subReq = new EmbySub.Response();
+          String hrmraw, xmlString, s;
+
+          // if login is NOT successful return an error....
+          if (!hrm.IsSuccessStatusCode)
+          {
+            subReq.ItemElementName = EmbySub.ItemChoiceType.error;
+            EmbySub.Error e = new EmbySub.Error();
+            e.code = 0;
+            e.message = "Login failed";
+            subReq.Item = e;
+            subReq.version = SupportedSubsonicApiVersion;
+            xmlString = Serializer<EmbySub.Response>.Serialize(subReq);
+            return ResultFactory.GetResult(Request, xmlString, null);
+          }
+          // otherwise it was successful so grab & store the auth token
+          else
+          {
+            hrmraw = await hrm.Content.ReadAsStringAsync();
+            JsonDocument doc = JsonDocument.Parse(hrmraw);
+            c.DefaultRequestHeaders.Add("Accept", "application/json");
+            c.DefaultRequestHeaders.Add("X-Emby-Token", doc.RootElement.GetProperty("AccessToken").ToString());
+          }
+
+          // we need the unique ID for the desired music library set in the plugin configuration
+          String url = String.Format("http://localhost:{0}/emby/Items?IncludeItemTypes=Album&ExcludeItemTypes=Audio", Plugin.Instance.Configuration.LocalEmbyPort);
+          HttpResponseMessage mes = await c.GetAsync(url);
+          hrmraw = await mes.Content.ReadAsStringAsync();
+          JsonDocument j = JsonDocument.Parse(hrmraw);
+          JsonElement allLibs = j.RootElement.GetProperty("Items");
+          String musicLibId = String.Empty;
+
+          List<EmbySub.MusicFolder> mfl = new List<EmbySub.MusicFolder>();
+          EmbySub.MusicFolders m = new EmbySub.MusicFolders();
+
+          foreach (JsonElement lib in allLibs.EnumerateArray())
+          {
+            s = lib.GetProperty("Name").ToString();
+            if(String.Equals(s, Plugin.Instance.Configuration.MusicLibraryName))
+            {
+              EmbySub.MusicFolder mf = new EmbySub.MusicFolder();
+              mf.name = s;
+              mf.id = Int32.Parse(lib.GetProperty("Id").ToString());
+              musicLibId = mf.id.ToString();
+              mfl.Add(mf);
+              break;
+            }
+          }
+
+          // music library does not exist under configured name
+          if (String.IsNullOrEmpty(musicLibId))
+          {
+            subReq.ItemElementName = EmbySub.ItemChoiceType.error;
+            EmbySub.Error e = new EmbySub.Error();
+            e.code = 0;
+            e.message = "Music library does not exist";
+            subReq.Item = e;
+            subReq.version = SupportedSubsonicApiVersion;
+            xmlString = Serializer<EmbySub.Response>.Serialize(subReq);
+            return ResultFactory.GetResult(Request, xmlString, null);
+          }
+
+          m.musicFolder = mfl.ToArray();
+
+          subReq.Item = m;
+          subReq.ItemElementName = EmbySub.ItemChoiceType.musicFolders;
+          subReq.version = SupportedSubsonicApiVersion;
+          xmlString = Serializer<EmbySub.Response>.Serialize(subReq);
+
+          url = String.Format("http://localhost:{0}/emby/Sessions/Logout", Plugin.Instance.Configuration.LocalEmbyPort);
+          await c.PostAsync(url, null);
+          return ResultFactory.GetResult(Request, xmlString, null);
+        }
         public async Task<object> Get(BrowsingGetIndexes req)
         {
           HttpResponseMessage hrm = await Login(req);

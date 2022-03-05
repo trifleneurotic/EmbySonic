@@ -13,6 +13,7 @@ using System.Threading.Tasks;
 using System.Security.Cryptography;
 using System.Net.Http;
 using System.Text;
+using System.Text.Json;
 using System.Reflection;
 using System.Xml.Serialization;
 using EmbySub.Configuration;
@@ -22,19 +23,93 @@ namespace EmbySub.Api
     [Route("/rest/getAlbum", "GET", Description = "Returns an individual album")]
     public class BrowsingGetAlbum : SystemBase
     {
-        [ApiMember(Name = "id", Description = "Emby ID of album", IsRequired = true, DataType = "string", ParameterType = "query", Verb = "GET")]
-        public string? AlbumId { get; set; }
+        [ApiMember(Name = "Album ID", Description = "Emby ID of album", IsRequired = true, DataType = "string", ParameterType = "query", Verb = "GET")]
+        public string? id { get; set; }
     }
 
     public partial class SubsonicService : IService, IRequiresRequest
     {
         public async Task<object> Get(BrowsingGetAlbum req)
         {
-          await Login(req);
+         HttpResponseMessage hrm = await Login(req);
           var subReq = new EmbySub.Response();
+          String hrmraw, xmlString, s;
+
+          // if login is NOT successful return an error....
+          if (!hrm.IsSuccessStatusCode)
+          {
+            subReq.ItemElementName = EmbySub.ItemChoiceType.error;
+            EmbySub.Error e = new EmbySub.Error();
+            e.code = 0;
+            e.message = "Login failed";
+            subReq.Item = e;
+            subReq.version = SupportedSubsonicApiVersion;
+            xmlString = Serializer<EmbySub.Response>.Serialize(subReq);
+            return ResultFactory.GetResult(Request, xmlString, null);
+          }
+          // otherwise it was successful so grab & store the auth token
+          else
+          {
+            hrmraw = await hrm.Content.ReadAsStringAsync();
+            JsonDocument doc = JsonDocument.Parse(hrmraw);
+            c.DefaultRequestHeaders.Add("Accept", "application/json");
+            c.DefaultRequestHeaders.Add("X-Emby-Token", doc.RootElement.GetProperty("AccessToken").ToString());
+          }
+
+          // first we get album (not the songs)
+          String url = String.Format("http://localhost:{0}/emby/Items?Ids={1}&Fields=ParentId", Plugin.Instance.Configuration.LocalEmbyPort, req.id);
+          HttpResponseMessage mes = await c.GetAsync(url);
+          hrmraw = await mes.Content.ReadAsStringAsync();
+          JsonDocument j = JsonDocument.Parse(hrmraw);
+          JsonElement album = j.RootElement.GetProperty("Items")[0];
+          JsonElement artist = album.GetProperty("ArtistItems")[0];
+
+          // then we get the album's songs
+          url = String.Format("http://localhost:{0}/emby/Items?ParentId={1}", Plugin.Instance.Configuration.LocalEmbyPort, req.id);
+          mes = await c.GetAsync(url);
+          hrmraw = await mes.Content.ReadAsStringAsync();
+          JsonDocument k = JsonDocument.Parse(hrmraw);
+          JsonElement ss = k.RootElement.GetProperty("Items");
+
+          List<EmbySub.Child> songs = new List<EmbySub.Child>();
+
+          // ....and then add each album to our list of songs for the album
+          foreach (JsonElement song in ss.EnumerateArray())
+          {
+            EmbySub.Child ch = new EmbySub.Child();
+            ch.id = song.GetProperty("Id").ToString();
+            ch.title = song.GetProperty("Name").ToString();
+            ch.album = album.GetProperty("Name").ToString();
+            ch.artist = artist.GetProperty("Name").ToString();
+            ch.isDir = song.GetProperty("IsFolder").GetBoolean();
+            // ch.coverArt = album.GetProperty("AlbumPrimaryImageTag").ToString();
+            ch.albumId = req.id;
+            ch.artistId = artist.GetProperty("Id").ToString();
+            songs.Add(ch);
+          }
+
+          Child[] songArray = songs.ToArray();
+
+
+          // then we create the main album record....
+          subReq.ItemElementName = EmbySub.ItemChoiceType.album;
+          EmbySub.AlbumWithSongsID3 a = new EmbySub.AlbumWithSongsID3();
+          a.id = songArray[0].albumId;
+          a.name = songArray[0].album;
+          a.artist = songArray[0].artist;
+          a.artistId = songArray[0].artistId;
+          a.coverArt = songArray[0].coverArt;
+          a.songCount = Int32.Parse(k.RootElement.GetProperty("TotalRecordCount").ToString());
+
+          // ....and the album's song list to that record
+          a.song = songArray;
+
+          subReq.Item = a;
           subReq.version = SupportedSubsonicApiVersion;
-          string xmlString = Serializer<EmbySub.Response>.Serialize(subReq);
-          _logger.Info(xmlString);
+          xmlString = Serializer<EmbySub.Response>.Serialize(subReq);
+
+          url = String.Format("http://localhost:{0}/emby/Sessions/Logout", Plugin.Instance.Configuration.LocalEmbyPort);
+          await c.PostAsync(url, null);
           return ResultFactory.GetResult(Request, xmlString, null);
         }
     }

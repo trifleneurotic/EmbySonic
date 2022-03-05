@@ -29,6 +29,13 @@ namespace EmbySub.Api
         public string? id { get; set; }
     }
 
+    [Route("/rest/getArtists", "GET", Description = "Returns an ID3 (non-folder) list of all artists")]
+    public class BrowsingGetArtists : SystemBase
+    {
+      [ApiMember(Name = "Music Folder ID", Description = "Emby ID of music folder", IsRequired = false, DataType = "string", ParameterType = "query", Verb = "GET")]
+      public string? musicFolderId { get; set; }
+    }
+
     [Route("/rest/getIndexes", "GET", Description = "Returns an indexed list of all artists")]
     public class BrowsingGetIndexes : SystemBase
     {
@@ -48,6 +55,12 @@ namespace EmbySub.Api
       public string? id { get; set; }
     }
 
+    public class ArtistPackage
+    {
+      public HashSet<String> albums { get; set; }
+      public String artistName { get; set; }
+    }
+
     public partial class SubsonicService : IService, IRequiresRequest
     {
         public async Task<object> Get(BrowsingGetMusicDirectory req)
@@ -57,6 +70,157 @@ namespace EmbySub.Api
           bgi.u = req.u;
           bgi.p = req.p;
           return await this.Get(bgi);
+        }
+
+        public async Task<object> Get(BrowsingGetArtists req)
+        {
+          HttpResponseMessage hrm = await Login(req);
+          var subReq = new EmbySub.Response();
+          String hrmraw, xmlString, s;
+
+          // if login is NOT successful return an error....
+          if (!hrm.IsSuccessStatusCode)
+          {
+            subReq.ItemElementName = EmbySub.ItemChoiceType.error;
+            EmbySub.Error e = new EmbySub.Error();
+            e.code = 0;
+            e.message = "Login failed";
+            subReq.Item = e;
+            subReq.version = SupportedSubsonicApiVersion;
+            xmlString = Serializer<EmbySub.Response>.Serialize(subReq);
+            return ResultFactory.GetResult(Request, xmlString, null);
+          }
+          // otherwise it was successful so grab & store the auth token
+          else
+          {
+            hrmraw = await hrm.Content.ReadAsStringAsync();
+            JsonDocument doc = JsonDocument.Parse(hrmraw);
+            c.DefaultRequestHeaders.Add("Accept", "application/json");
+            c.DefaultRequestHeaders.Add("X-Emby-Token", doc.RootElement.GetProperty("AccessToken").ToString());
+          }
+
+          // let's get all ID3 artists in the library first
+          String url = String.Format("http://emby.localdomain:{0}/emby/Items?IncludeItemTypes=MusicArtist&Recursive=true&SortBy=Name", Plugin.Instance.Configuration.LocalEmbyPort);
+          HttpResponseMessage mes = await c.GetAsync(url);
+          hrmraw = await mes.Content.ReadAsStringAsync();
+          JsonDocument j = JsonDocument.Parse(hrmraw);
+          JsonElement allID3Artists = j.RootElement.GetProperty("Items");
+
+
+          // now let's get a list of all ID3 songs
+          url = String.Format("http://emby.localdomain:{0}/emby/Items?IncludeItemTypes=Audio&Recursive=true", Plugin.Instance.Configuration.LocalEmbyPort);
+          mes = await c.GetAsync(url);
+          hrmraw = await mes.Content.ReadAsStringAsync();
+          JsonDocument k = JsonDocument.Parse(hrmraw);
+          JsonElement allID3Songs = k.RootElement.GetProperty("Items");
+
+          // store all albums UNIQUELY per artist 
+          Dictionary<String, HashSet<String>> d = new Dictionary<String, HashSet<String>>();
+          JsonElement je;
+          foreach (JsonElement song in allID3Songs.EnumerateArray())
+          {
+            if (!song.TryGetProperty("AlbumArtist", out je) || !song.TryGetProperty("Album", out je))
+            {
+              continue;
+            }
+            String albumArtist = song.GetProperty("AlbumArtist").ToString();
+            if (!d.ContainsKey(albumArtist))
+            {
+              d.Add(albumArtist, new HashSet<String>());
+            }
+
+            String album = song.GetProperty("Album").ToString();
+
+            d[albumArtist].Add(album);
+          }
+
+          var sortedDict = from entry in d orderby entry.Key ascending select entry;
+
+          // now let's put each artist/albumlist pair into a queue for easier processing
+          Queue<ArtistPackage> q = new Queue<ArtistPackage>();
+          foreach(KeyValuePair<string, HashSet<String>> entry in sortedDict)
+          {
+            ArtistPackage ap = new ArtistPackage();
+            ap.artistName = entry.Key;
+            ap.albums = entry.Value;
+            q.Enqueue(ap);
+          }
+
+          // quick lookup dictionary for ID3 artist IDs
+          Dictionary<String, String> a = new Dictionary<String, String>();
+          foreach (JsonElement f in allID3Artists.EnumerateArray())
+          {
+            String artist = f.GetProperty("Name").ToString();
+            String id = f.GetProperty("Id").ToString();
+
+            a.Add(artist, id);
+          }
+
+          char[] alpha = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".ToCharArray();
+
+          EmbySub.ArtistsID3 artistListID3 = new EmbySub.ArtistsID3();
+          List<EmbySub.IndexID3> letterIndex = new List<EmbySub.IndexID3>();
+          
+          // for each letter of the alphabet....
+          foreach(char c in alpha)
+          {
+            ArtistPackage artpac;
+            if (q.TryPeek(out artpac))
+            {
+              List<EmbySub.ArtistID3> artistIndex = new List<EmbySub.ArtistID3>();
+
+              // if there are any artists that begin with this letter, dequeue and add to index's artist array
+              char ch = q.Peek().artistName[0];
+              _logger.Info("*********");
+              _logger.Info(ch.ToString());
+              _logger.Info(c.ToString());
+              _logger.Info("*********");
+
+              
+              while (Char.ToUpper(ch).Equals(char.ToUpper(c)))
+              {
+                ArtistPackage arp = q.Dequeue();
+                EmbySub.ArtistID3 toAdd = new EmbySub.ArtistID3();
+                toAdd.id = a[arp.artistName];
+                toAdd.name = arp.artistName;
+                toAdd.albumCount = arp.albums.Count;
+                artistIndex.Add(toAdd);
+                if (!q.TryPeek(out artpac))
+                {
+                  break;
+                }
+                else
+                {
+                  ch = q.Peek().artistName[0];
+                }
+              }
+
+              // if any artists for that letter existed, add the index to the master indexes list
+              if (artistIndex.Any())
+              {
+                EmbySub.IndexID3 i = new EmbySub.IndexID3();
+                i.name = Char.ToUpper(c).ToString();
+                i.artist = artistIndex.ToArray();
+                letterIndex.Add(i);
+              }
+            }
+            else
+            {
+              break;
+            }
+          }
+
+
+          artistListID3.index = letterIndex.ToArray();
+
+          subReq.Item = artistListID3;
+          subReq.ItemElementName = EmbySub.ItemChoiceType.artists;
+          subReq.version = SupportedSubsonicApiVersion;
+          xmlString = Serializer<EmbySub.Response>.Serialize(subReq);
+
+          url = String.Format("http://localhost:{0}/emby/Sessions/Logout", Plugin.Instance.Configuration.LocalEmbyPort);
+          await c.PostAsync(url, null);
+          return ResultFactory.GetResult(Request, xmlString, null);
         }
 
         public async Task<object> Get(BrowsingGetMusicFolders req)

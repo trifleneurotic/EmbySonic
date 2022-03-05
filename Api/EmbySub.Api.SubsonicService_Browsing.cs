@@ -32,6 +32,8 @@ namespace EmbySub.Api
     [Route("/rest/getIndexes", "GET", Description = "Returns an indexed list of all artists")]
     public class BrowsingGetIndexes : SystemBase
     {
+      [ApiMember(Name = "Music Folder ID", Description = "Emby ID of music folder", IsRequired = false, DataType = "string", ParameterType = "query", Verb = "GET")]
+      public string? musicFolderId { get; set; }
     }
 
     [Route("/rest/getMusicFolders", "GET", Description = "Returns top level music folder configured for plugin")]
@@ -172,6 +174,51 @@ namespace EmbySub.Api
             subReq.Item = e;
             subReq.version = SupportedSubsonicApiVersion;
             xmlString = Serializer<EmbySub.Response>.Serialize(subReq);
+            return ResultFactory.GetResult(Request, xmlString, null);
+          }
+
+          // we want a certain music folder, so let's get all of them first
+          if (!String.IsNullOrEmpty(req.musicFolderId))
+          {
+            url = String.Format("http://localhost:{0}/emby/Items?ParentId={1}&Recursive=true&IncludeItemTypes=Folder&Fields=ParentId", Plugin.Instance.Configuration.LocalEmbyPort, musicLibId);
+            mes = await c.GetAsync(url);
+            hrmraw = await mes.Content.ReadAsStringAsync();
+            j = JsonDocument.Parse(hrmraw);
+            JsonElement allFolders = j.RootElement.GetProperty("Items");
+            EmbySub.Directory d = new EmbySub.Directory();
+            List<EmbySub.Child> l  = new List<EmbySub.Child>();
+
+            // for each folder let's find out if it is a parent or child music directory and add to the appropriate collection
+            foreach (JsonElement folder in allFolders.EnumerateArray())
+            {
+              if (folder.GetProperty("Id").ToString().Equals(req.musicFolderId))
+              {
+                d.parent = folder.GetProperty("ParentId").ToString();
+                d.id = folder.GetProperty("Id").ToString();
+                d.name = folder.GetProperty("Name").ToString();
+              }
+              else if (folder.GetProperty("ParentId").ToString().Equals(req.musicFolderId))
+              {
+                EmbySub.Child c = new EmbySub.Child();
+                c.id = folder.GetProperty("Id").ToString();
+                c.parent = folder.GetProperty("ParentId").ToString();
+                c.title = folder.GetProperty("Name").ToString();
+                c.artist = d.name;
+                c.isDir = folder.GetProperty("IsFolder").GetBoolean();
+                c.coverArt = folder.GetProperty("ImageTags").GetProperty("Primary").ToString();
+                l.Add(c);
+              }
+            }
+
+            d.child = l.ToArray();
+
+            subReq.Item = d;
+            subReq.ItemElementName = EmbySub.ItemChoiceType.directory;
+            subReq.version = SupportedSubsonicApiVersion;
+            xmlString = Serializer<EmbySub.Response>.Serialize(subReq);
+
+            url = String.Format("http://localhost:{0}/emby/Sessions/Logout", Plugin.Instance.Configuration.LocalEmbyPort);
+            await c.PostAsync(url, null);
             return ResultFactory.GetResult(Request, xmlString, null);
           }
 

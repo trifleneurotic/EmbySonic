@@ -28,14 +28,20 @@ namespace EmbySub.Api
 
         [ApiMember(Name = "Password", Description = "Password of Emby user", IsRequired = true, DataType = "string", ParameterType = "query", Verb = "GET")]
         public string? p { get; set; }
+
+        [ApiMember(Name = "Client", Description = "Subsonic Client ID", IsRequired = true, DataType = "string", ParameterType = "query", Verb = "GET")]
+        public string? c { get; set; }
+
+        [ApiMember(Name = "Version", Description = "Subsonic Client Version", IsRequired = true, DataType = "string", ParameterType = "query", Verb = "GET")]
+        public string? v { get; set; }
     }
 
-    [Route("/rest/ping", "GET", Description = "Ping Emby Server")]
+    [Route("/rest/ping.view", "GET", Description = "Ping Emby Server")]
     public class SystemPing : SystemBase
     {
     }
 
-    [Route("/rest/getLicense", "GET", Description = "Returns Emby license information (Premiere)")]
+    [Route("/rest/getLicense.view", "GET", Description = "Returns Emby license information (Premiere)")]
     public class SystemGetLicense : SystemBase
     {
     }
@@ -77,18 +83,47 @@ namespace EmbySub.Api
           return RandomizedChildren.Take(numElements).ToArray();
         }
 
+        public static byte[] HexStringToBytes(string hexString)
+        {
+            if(hexString == null)
+                throw new ArgumentNullException("hexString");
+            if(hexString.Length % 2 != 0)
+                throw new ArgumentException("hexString must have an even length", "hexString");
+            var bytes = new byte[hexString.Length / 2];
+            for (int i = 0; i < bytes.Length; i++)
+            {
+                string currentHex = hexString.Substring(i * 2, 2);
+                bytes[i] = Convert.ToByte(currentHex, 16);
+            }
+            return bytes;
+        }
+
+
+
         private async Task<HttpResponseMessage> Login(SystemBase req)
         {
           HttpClientHandler clientHandler = new HttpClientHandler();
           clientHandler.ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => { return true; };
           HttpClient client = new HttpClient(clientHandler);
+          String pw;
+
+          if (req.p.StartsWith("enc"))
+          {
+            String pwHex = req.p.Substring(req.p.LastIndexOf(':') + 1);
+            byte[] bytes = EmbySub.Api.SubsonicService.HexStringToBytes(pwHex);
+            pw = Encoding.GetEncoding("UTF-8").GetString(bytes);
+          }
+          else
+          {
+            pw = req.p;
+          }
 
           String payload = String.Format("{{\"Username\":\"{0}\",\"Pw\":\"{1}\"}}", req.u, req.p);
           StringContent body = new StringContent(payload, Encoding.UTF8, "application/json");
 
           client.DefaultRequestHeaders.Accept.Clear();
           client.DefaultRequestHeaders.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
-          client.DefaultRequestHeaders.Add("X-Emby-Authorization", "Emby Client=\"SubsonicClient\", Device=\"SubsonicDevice\", DeviceId=\"0192742\", Version=\"0.1.3.6\"");
+          client.DefaultRequestHeaders.Add("X-Emby-Authorization", String.Format("Emby Client=\"{0}\", Device=\"SubsonicDevice\", DeviceId=\"0192742\", Version=\"{1}\"", req.c, req.v));
 
           String url = String.Format("http://localhost:{0}/emby/Users/AuthenticateByName", Plugin.Instance.Configuration.LocalEmbyPort);
 

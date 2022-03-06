@@ -19,6 +19,7 @@ using System.Runtime;
 using System.Linq;
 using System.Xml.Serialization;
 using EmbySub.Configuration;
+using System.Text.RegularExpressions;
 
 namespace EmbySub.Api
 {
@@ -59,6 +60,8 @@ namespace EmbySub.Api
     {
       public HashSet<String> albums { get; set; }
       public String artistName { get; set; }
+
+      public String artistId { get; set; }
     }
 
     public partial class SubsonicService : IService, IRequiresRequest
@@ -99,23 +102,22 @@ namespace EmbySub.Api
             c.DefaultRequestHeaders.Add("X-Emby-Token", doc.RootElement.GetProperty("AccessToken").ToString());
           }
 
-          // let's get all ID3 artists in the library first
-          String url = String.Format("http://emby.localdomain:{0}/emby/Items?IncludeItemTypes=MusicArtist&Recursive=true&SortBy=Name", Plugin.Instance.Configuration.LocalEmbyPort);
+
+          // let's get a list of all ID3 songs
+          String url = String.Format("http://emby.localdomain:{0}/emby/Items?IncludeItemTypes=Audio&Recursive=true", Plugin.Instance.Configuration.LocalEmbyPort);
           HttpResponseMessage mes = await c.GetAsync(url);
-          hrmraw = await mes.Content.ReadAsStringAsync();
-          JsonDocument j = JsonDocument.Parse(hrmraw);
-          JsonElement allID3Artists = j.RootElement.GetProperty("Items");
-
-
-          // now let's get a list of all ID3 songs
-          url = String.Format("http://emby.localdomain:{0}/emby/Items?IncludeItemTypes=Audio&Recursive=true", Plugin.Instance.Configuration.LocalEmbyPort);
-          mes = await c.GetAsync(url);
           hrmraw = await mes.Content.ReadAsStringAsync();
           JsonDocument k = JsonDocument.Parse(hrmraw);
           JsonElement allID3Songs = k.RootElement.GetProperty("Items");
 
-          // store all albums UNIQUELY per artist 
+          // now store all albums UNIQUELY per artist
           Dictionary<String, HashSet<String>> d = new Dictionary<String, HashSet<String>>();
+
+          // make an artist ID lookup dictionary for convenience
+          Dictionary<String, String> artistWithId = new Dictionary<String, String>();
+
+          String albumArtist = string.Empty;
+          String artistId = string.Empty;
           JsonElement je;
           foreach (JsonElement song in allID3Songs.EnumerateArray())
           {
@@ -123,7 +125,20 @@ namespace EmbySub.Api
             {
               continue;
             }
-            String albumArtist = song.GetProperty("AlbumArtist").ToString();
+
+            foreach (JsonElement items in song.GetProperty("ArtistItems").EnumerateArray())
+            {
+              artistId = items.GetProperty("Id").ToString();
+              albumArtist = items.GetProperty("Name").ToString();
+              break;
+            }
+
+            // not worrying about artists that don't begin with a letter right now
+            if(!Char.IsLetter(albumArtist[0]))
+            {
+              continue;
+            }
+
             if (!d.ContainsKey(albumArtist))
             {
               d.Add(albumArtist, new HashSet<String>());
@@ -132,28 +147,24 @@ namespace EmbySub.Api
             String album = song.GetProperty("Album").ToString();
 
             d[albumArtist].Add(album);
+
+            if (!artistWithId.ContainsKey(albumArtist))
+            {
+              artistWithId.Add(albumArtist, artistId);
+            }
           }
 
           var sortedDict = from entry in d orderby entry.Key ascending select entry;
 
-          // now let's put each artist/albumlist pair into a queue for easier processing
+          // now let's put each artist/albumlist pair into a queue for easier processing with a custom object
           Queue<ArtistPackage> q = new Queue<ArtistPackage>();
           foreach(KeyValuePair<string, HashSet<String>> entry in sortedDict)
           {
             ArtistPackage ap = new ArtistPackage();
             ap.artistName = entry.Key;
             ap.albums = entry.Value;
+            ap.artistId = artistWithId[ap.artistName];
             q.Enqueue(ap);
-          }
-
-          // quick lookup dictionary for ID3 artist IDs
-          Dictionary<String, String> a = new Dictionary<String, String>();
-          foreach (JsonElement f in allID3Artists.EnumerateArray())
-          {
-            String artist = f.GetProperty("Name").ToString();
-            String id = f.GetProperty("Id").ToString();
-
-            a.Add(artist, id);
           }
 
           char[] alpha = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".ToCharArray();
@@ -169,21 +180,16 @@ namespace EmbySub.Api
             {
               List<EmbySub.ArtistID3> artistIndex = new List<EmbySub.ArtistID3>();
 
-              // if there are any artists that begin with this letter, dequeue and add to index's artist array
               char ch = q.Peek().artistName[0];
-              _logger.Info("*********");
-              _logger.Info(ch.ToString());
-              _logger.Info(c.ToString());
-              _logger.Info("*********");
 
-              
-              while (Char.ToUpper(ch).Equals(char.ToUpper(c)))
+              // ....let's get all artists that begin with that letter
+              while (Char.ToUpper(ch).Equals(Char.ToUpper(c)))
               {
                 ArtistPackage arp = q.Dequeue();
                 EmbySub.ArtistID3 toAdd = new EmbySub.ArtistID3();
-                toAdd.id = a[arp.artistName];
                 toAdd.name = arp.artistName;
                 toAdd.albumCount = arp.albums.Count;
+                toAdd.id = arp.artistId;
                 artistIndex.Add(toAdd);
                 if (!q.TryPeek(out artpac))
                 {
@@ -198,10 +204,10 @@ namespace EmbySub.Api
               // if any artists for that letter existed, add the index to the master indexes list
               if (artistIndex.Any())
               {
-                EmbySub.IndexID3 i = new EmbySub.IndexID3();
-                i.name = Char.ToUpper(c).ToString();
-                i.artist = artistIndex.ToArray();
-                letterIndex.Add(i);
+                EmbySub.IndexID3 idx = new EmbySub.IndexID3();
+                idx.name = Char.ToUpper(c).ToString();
+                idx.artist = artistIndex.ToArray();
+                letterIndex.Add(idx);
               }
             }
             else

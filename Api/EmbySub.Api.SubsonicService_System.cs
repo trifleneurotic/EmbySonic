@@ -118,7 +118,7 @@ namespace EmbySub.Api
             pw = req.p;
           }
 
-          String payload = String.Format("{{\"Username\":\"{0}\",\"Pw\":\"{1}\"}}", req.u, req.p);
+          String payload = String.Format("{{\"Username\":\"{0}\",\"Pw\":\"{1}\"}}", req.u, pw);
           StringContent body = new StringContent(payload, Encoding.UTF8, "application/json");
 
           client.DefaultRequestHeaders.Accept.Clear();
@@ -147,8 +147,10 @@ namespace EmbySub.Api
           }
 
           string xmlString = Serializer<EmbySub.Response>.Serialize(subReq);
-          string xmlStringUnescaped = Regex.Unescape(xmlString);
-          return ResultFactory.GetResult(Request, xmlStringUnescaped, null);
+          _logger.Info("*************");
+          _logger.Info(xmlString);
+          _logger.Info("*************");
+          return ResultFactory.GetResult(Request, xmlString, null);
         }
 
         public async Task<object> Get(SystemGetLicense req)
@@ -175,8 +177,7 @@ namespace EmbySub.Api
           subReq.ItemElementName = EmbySub.ItemChoiceType.license;
 
           string xmlString = Serializer<EmbySub.Response>.Serialize(subReq);
-          string xmlStringUnescaped = Regex.Unescape(xmlString);
-          return ResultFactory.GetResult(Request, xmlStringUnescaped, null);
+          return ResultFactory.GetResult(Request, xmlString, null);
         }
     }
 }

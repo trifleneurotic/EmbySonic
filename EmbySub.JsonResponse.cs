@@ -1,2185 +1,99 @@
-// Root myDeserializedClass = JsonConvert.DeserializeObject<Root>(myJsonResponse);
-    public class AllOf2
+﻿namespace EmbySub
+{
+
+    public partial class JsonResponse
     {
-        [JsonProperty("$ref")]
-        public string Ref { get; set; }
-        public string type { get; set; }
-        public string title { get; set; }
-        public Properties properties { get; set; }
-        public Items items { get; set; }
-        public int minItems { get; set; }
-        public List<string> @enum { get; set; }
+        public Uri Id { get; set; }
+        public Definitions Definitions { get; set; }
+        public AnyOf[] AnyOf { get; set; }
     }
 
-    public class AttributeName
+    public partial class AnyOf
     {
-        public string localPart { get; set; }
-        public string namespaceURI { get; set; }
+        public string Type { get; set; }
+        public AnyOfProperties Properties { get; set; }
+        public Name ElementName { get; set; }
     }
 
-    public class StreamId
+    public partial class Name
     {
-        public string title { get; set; }
-        public List<AllOf> allOf { get; set; }
-        public string propertyType { get; set; }
-        public AttributeName attributeName { get; set; }
+        public string LocalPart { get; set; }
+        public string NamespaceUri { get; set; }
     }
 
-    public class ChannelId
+    public partial class AnyOfProperties
     {
-        public string title { get; set; }
-        public List<AllOf> allOf { get; set; }
-        public string propertyType { get; set; }
-        public AttributeName attributeName { get; set; }
+        public NameClass Name { get; set; }
+        public Value Value { get; set; }
     }
 
-    public class Description
+    public partial class NameClass
     {
-        public string title { get; set; }
-        public List<AllOf> allOf { get; set; }
-        public string propertyType { get; set; }
-        public AttributeName attributeName { get; set; }
+        public NameAllOf[] AllOf { get; set; }
     }
 
-    public class Status
+    public partial class NameAllOf
     {
-        public string title { get; set; }
-        public List<AllOf> allOf { get; set; }
-        public string propertyType { get; set; }
-        public AttributeName attributeName { get; set; }
+        public Uri Ref { get; set; }
+        public string Type { get; set; }
+        public PurpleProperties Properties { get; set; }
     }
 
-    public class PublishDate
+    public partial class PurpleProperties
     {
-        public string title { get; set; }
-        public List<AllOf> allOf { get; set; }
-        public string propertyType { get; set; }
-        public AttributeName attributeName { get; set; }
+        public LocalPart LocalPart { get; set; }
+        public LocalPart NamespaceUri { get; set; }
     }
 
-    public class Properties
+    public partial class LocalPart
     {
-        public StreamId streamId { get; set; }
-        public ChannelId channelId { get; set; }
-        public Description description { get; set; }
-        public Status status { get; set; }
-        public PublishDate publishDate { get; set; }
-        public SimilarArtist similarArtist { get; set; }
-        public MusicFolders musicFolders { get; set; }
-        public Indexes indexes { get; set; }
-        public Directory directory { get; set; }
-        public Genres genres { get; set; }
-        public Artists artists { get; set; }
-        public Artist artist { get; set; }
-        public Album album { get; set; }
-        public Song song { get; set; }
-        public Videos videos { get; set; }
-        public VideoInfo videoInfo { get; set; }
-        public NowPlaying nowPlaying { get; set; }
-        public SearchResult searchResult { get; set; }
-        public SearchResult2 searchResult2 { get; set; }
-        public SearchResult3 searchResult3 { get; set; }
-        public Playlists playlists { get; set; }
-        public Playlist playlist { get; set; }
-        public JukeboxStatus jukeboxStatus { get; set; }
-        public JukeboxPlaylist jukeboxPlaylist { get; set; }
-        public License license { get; set; }
-        public Users users { get; set; }
-        public User user { get; set; }
-        public ChatMessages chatMessages { get; set; }
-        public AlbumList albumList { get; set; }
-        public AlbumList2 albumList2 { get; set; }
-        public RandomSongs randomSongs { get; set; }
-        public SongsByGenre songsByGenre { get; set; }
-        public Lyrics lyrics { get; set; }
-        public Podcasts podcasts { get; set; }
-        public NewestPodcasts newestPodcasts { get; set; }
-        public InternetRadioStations internetRadioStations { get; set; }
-        public Bookmarks bookmarks { get; set; }
-        public PlayQueue playQueue { get; set; }
-        public Shares shares { get; set; }
-        public Starred starred { get; set; }
-        public Starred2 starred2 { get; set; }
-        public AlbumInfo albumInfo { get; set; }
-        public ArtistInfo artistInfo { get; set; }
-        public ArtistInfo2 artistInfo2 { get; set; }
-        public SimilarSongs similarSongs { get; set; }
-        public SimilarSongs2 similarSongs2 { get; set; }
-        public TopSongs topSongs { get; set; }
-        public ScanStatus scanStatus { get; set; }
-        public Error error { get; set; }
-        public Version version { get; set; }
-        public Episode episode { get; set; }
-        public Entry entry { get; set; }
-        public Id id { get; set; }
-        public Url url { get; set; }
-        public Username username { get; set; }
-        public Created created { get; set; }
-        public Expires expires { get; set; }
-        public LastVisited lastVisited { get; set; }
-        public VisitCount visitCount { get; set; }
-        public Name name { get; set; }
-        public StreamUrl streamUrl { get; set; }
-        public HomePageUrl homePageUrl { get; set; }
-        public Shortcut shortcut { get; set; }
-        public Index index { get; set; }
-        public Child child { get; set; }
-        public LastModified lastModified { get; set; }
-        public IgnoredArticles ignoredArticles { get; set; }
-        public Parent parent { get; set; }
-        public UserRating userRating { get; set; }
-        public AverageRating averageRating { get; set; }
-        public PlayCount playCount { get; set; }
-        public Scanning scanning { get; set; }
-        public Count count { get; set; }
-        public Code code { get; set; }
-        public Message message { get; set; }
-        public Genre genre { get; set; }
-        public ArtistId artistId { get; set; }
-        public CoverArt coverArt { get; set; }
-        public SongCount songCount { get; set; }
-        public Duration duration { get; set; }
-        public Year year { get; set; }
-        public Position position { get; set; }
-        public Comment comment { get; set; }
-        public Changed changed { get; set; }
-        public AllowedUser allowedUser { get; set; }
-        public Owner owner { get; set; }
-        public Public _public { get; set; }
-        public ChatMessage chatMessage { get; set; }
-        public Valid valid { get; set; }
-        public Email email { get; set; }
-        public LicenseExpires licenseExpires { get; set; }
-        public TrialExpires trialExpires { get; set; }
-        public Content content { get; set; }
-        public AlbumCount albumCount { get; set; }
-        public ArtistImageUrl artistImageUrl { get; set; }
-        public LanguageCode languageCode { get; set; }
-        public Bookmark bookmark { get; set; }
-        public Video video { get; set; }
-        public Notes notes { get; set; }
-        public MusicBrainzId musicBrainzId { get; set; }
-        public LastFmUrl lastFmUrl { get; set; }
-        public SmallImageUrl smallImageUrl { get; set; }
-        public MediumImageUrl mediumImageUrl { get; set; }
-        public LargeImageUrl largeImageUrl { get; set; }
-        public MusicFolder musicFolder { get; set; }
-        public Share share { get; set; }
-        public MinutesAgo minutesAgo { get; set; }
-        public PlayerId playerId { get; set; }
-        public PlayerName playerName { get; set; }
-        public CurrentIndex currentIndex { get; set; }
-        public Playing playing { get; set; }
-        public Gain gain { get; set; }
-        public InternetRadioStation internetRadioStation { get; set; }
-        public Title title { get; set; }
-        public Captions captions { get; set; }
-        public AudioTrack audioTrack { get; set; }
-        public Conversion conversion { get; set; }
-        public Folder folder { get; set; }
-        public ScrobblingEnabled scrobblingEnabled { get; set; }
-        public MaxBitRate maxBitRate { get; set; }
-        public AdminRole adminRole { get; set; }
-        public SettingsRole settingsRole { get; set; }
-        public DownloadRole downloadRole { get; set; }
-        public UploadRole uploadRole { get; set; }
-        public PlaylistRole playlistRole { get; set; }
-        public CoverArtRole coverArtRole { get; set; }
-        public CommentRole commentRole { get; set; }
-        public PodcastRole podcastRole { get; set; }
-        public StreamRole streamRole { get; set; }
-        public JukeboxRole jukeboxRole { get; set; }
-        public ShareRole shareRole { get; set; }
-        public VideoConversionRole videoConversionRole { get; set; }
-        public AvatarLastChanged avatarLastChanged { get; set; }
-        public Biography biography { get; set; }
-        public Match match { get; set; }
-        public Offset offset { get; set; }
-        public TotalHits totalHits { get; set; }
-        public IsDir isDir { get; set; }
-        public Track track { get; set; }
-        public Size size { get; set; }
-        public ContentType contentType { get; set; }
-        public Suffix suffix { get; set; }
-        public TranscodedContentType transcodedContentType { get; set; }
-        public TranscodedSuffix transcodedSuffix { get; set; }
-        public BitRate bitRate { get; set; }
-        public Path path { get; set; }
-        public IsVideo isVideo { get; set; }
-        public DiscNumber discNumber { get; set; }
-        public AlbumId albumId { get; set; }
-        public Type type { get; set; }
-        public BookmarkPosition bookmarkPosition { get; set; }
-        public OriginalWidth originalWidth { get; set; }
-        public OriginalHeight originalHeight { get; set; }
-        public Channel channel { get; set; }
-        public Time time { get; set; }
-        public Current current { get; set; }
-        public ChangedBy changedBy { get; set; }
-        public AudioTrackId audioTrackId { get; set; }
-        public OriginalImageUrl originalImageUrl { get; set; }
-        public ErrorMessage errorMessage { get; set; }
-        public LocalPart localPart { get; set; }
-        public NamespaceURI namespaceURI { get; set; }
-        public Value value { get; set; }
+        public string[] Enum { get; set; }
     }
 
-    public class TypeName
+    public partial class Value
     {
-        public string localPart { get; set; }
-        public string namespaceURI { get; set; }
-    }
-
-    public class PodcastEpisode
-    {
-        public List<string> required { get; set; }
-        public List<AllOf> allOf { get; set; }
-        public string typeType { get; set; }
-        public TypeName typeName { get; set; }
-        public List<string> propertiesOrder { get; set; }
-    }
-
-    public class Items
-    {
-        [JsonProperty("$ref")]
         public string Ref { get; set; }
     }
 
-    public class ElementName
-    {
-        public string localPart { get; set; }
-        public string namespaceURI { get; set; }
-    }
-
-    public class SimilarArtist
-    {
-        public string title { get; set; }
-        public List<AllOf> allOf { get; set; }
-        public string propertyType { get; set; }
-        public ElementName elementName { get; set; }
-    }
-
-    public class ArtistInfo
-    {
-        public List<AllOf> allOf { get; set; }
-        public string typeType { get; set; }
-        public TypeName typeName { get; set; }
-        public List<string> propertiesOrder { get; set; }
-    }
-
-    public class MusicFolders
-    {
-        public string title { get; set; }
-        public List<AllOf> allOf { get; set; }
-        public string propertyType { get; set; }
-        public ElementName elementName { get; set; }
-    }
-
-    public class Indexes
-    {
-        public string title { get; set; }
-        public List<AllOf> allOf { get; set; }
-        public string propertyType { get; set; }
-        public ElementName elementName { get; set; }
-    }
-
-    public class Directory
-    {
-        public string title { get; set; }
-        public List<AllOf> allOf { get; set; }
-        public string propertyType { get; set; }
-        public ElementName elementName { get; set; }
-    }
-
-    public class Genres
-    {
-        public string title { get; set; }
-        public List<AllOf> allOf { get; set; }
-        public string propertyType { get; set; }
-        public ElementName elementName { get; set; }
-    }
-
-    public class Artists
-    {
-        public string title { get; set; }
-        public List<AllOf> allOf { get; set; }
-        public string propertyType { get; set; }
-        public ElementName elementName { get; set; }
-    }
-
-    public class Artist
-    {
-        public string title { get; set; }
-        public List<AllOf> allOf { get; set; }
-        public string propertyType { get; set; }
-        public ElementName elementName { get; set; }
-        public AttributeName attributeName { get; set; }
-    }
-
-    public class Album
-    {
-        public string title { get; set; }
-        public List<AllOf> allOf { get; set; }
-        public string propertyType { get; set; }
-        public ElementName elementName { get; set; }
-        public AttributeName attributeName { get; set; }
-    }
-
-    public class Song
-    {
-        public string title { get; set; }
-        public List<AllOf> allOf { get; set; }
-        public string propertyType { get; set; }
-        public ElementName elementName { get; set; }
-    }
-
-    public class Videos
-    {
-        public string title { get; set; }
-        public List<AllOf> allOf { get; set; }
-        public string propertyType { get; set; }
-        public ElementName elementName { get; set; }
-    }
-
-    public class VideoInfo
-    {
-        public string title { get; set; }
-        public List<AllOf> allOf { get; set; }
-        public string propertyType { get; set; }
-        public ElementName elementName { get; set; }
-    }
-
-    public class NowPlaying
-    {
-        public string title { get; set; }
-        public List<AllOf> allOf { get; set; }
-        public string propertyType { get; set; }
-        public ElementName elementName { get; set; }
-    }
-
-    public class SearchResult
-    {
-        public string title { get; set; }
-        public List<AllOf> allOf { get; set; }
-        public string propertyType { get; set; }
-        public ElementName elementName { get; set; }
-    }
-
-    public class SearchResult2
-    {
-        public string title { get; set; }
-        public List<AllOf> allOf { get; set; }
-        public string propertyType { get; set; }
-        public ElementName elementName { get; set; }
-    }
-
-    public class SearchResult3
-    {
-        public string title { get; set; }
-        public List<AllOf> allOf { get; set; }
-        public string propertyType { get; set; }
-        public ElementName elementName { get; set; }
-    }
-
-    public class Playlists
-    {
-        public string title { get; set; }
-        public List<AllOf> allOf { get; set; }
-        public string propertyType { get; set; }
-        public ElementName elementName { get; set; }
-    }
-
-    public class Playlist
-    {
-        public string title { get; set; }
-        public List<AllOf> allOf { get; set; }
-        public string propertyType { get; set; }
-        public ElementName elementName { get; set; }
-    }
-
-    public class JukeboxStatus
-    {
-        public string title { get; set; }
-        public List<AllOf> allOf { get; set; }
-        public string propertyType { get; set; }
-        public ElementName elementName { get; set; }
-    }
-
-    public class JukeboxPlaylist
-    {
-        public string title { get; set; }
-        public List<AllOf> allOf { get; set; }
-        public string propertyType { get; set; }
-        public ElementName elementName { get; set; }
-    }
-
-    public class License
-    {
-        public string title { get; set; }
-        public List<AllOf> allOf { get; set; }
-        public string propertyType { get; set; }
-        public ElementName elementName { get; set; }
-    }
-
-    public class Users
-    {
-        public string title { get; set; }
-        public List<AllOf> allOf { get; set; }
-        public string propertyType { get; set; }
-        public ElementName elementName { get; set; }
-    }
-
-    public class User
-    {
-        public string title { get; set; }
-        public List<AllOf> allOf { get; set; }
-        public string propertyType { get; set; }
-        public ElementName elementName { get; set; }
-    }
-
-    public class ChatMessages
-    {
-        public string title { get; set; }
-        public List<AllOf> allOf { get; set; }
-        public string propertyType { get; set; }
-        public ElementName elementName { get; set; }
-    }
-
-    public class AlbumList
-    {
-        public string title { get; set; }
-        public List<AllOf> allOf { get; set; }
-        public string propertyType { get; set; }
-        public ElementName elementName { get; set; }
-    }
-
-    public class AlbumList2
-    {
-        public string title { get; set; }
-        public List<AllOf> allOf { get; set; }
-        public string propertyType { get; set; }
-        public ElementName elementName { get; set; }
-    }
-
-    public class RandomSongs
-    {
-        public string title { get; set; }
-        public List<AllOf> allOf { get; set; }
-        public string propertyType { get; set; }
-        public ElementName elementName { get; set; }
-    }
-
-    public class SongsByGenre
-    {
-        public string title { get; set; }
-        public List<AllOf> allOf { get; set; }
-        public string propertyType { get; set; }
-        public ElementName elementName { get; set; }
-    }
-
-    public class Lyrics
-    {
-        public string title { get; set; }
-        public List<AllOf> allOf { get; set; }
-        public string propertyType { get; set; }
-        public ElementName elementName { get; set; }
-    }
-
-    public class Podcasts
-    {
-        public string title { get; set; }
-        public List<AllOf> allOf { get; set; }
-        public string propertyType { get; set; }
-        public ElementName elementName { get; set; }
-    }
-
-    public class NewestPodcasts
-    {
-        public string title { get; set; }
-        public List<AllOf> allOf { get; set; }
-        public string propertyType { get; set; }
-        public ElementName elementName { get; set; }
-    }
-
-    public class InternetRadioStations
-    {
-        public string title { get; set; }
-        public List<AllOf> allOf { get; set; }
-        public string propertyType { get; set; }
-        public ElementName elementName { get; set; }
-    }
-
-    public class Bookmarks
-    {
-        public string title { get; set; }
-        public List<AllOf> allOf { get; set; }
-        public string propertyType { get; set; }
-        public ElementName elementName { get; set; }
-    }
-
-    public class PlayQueue
-    {
-        public string title { get; set; }
-        public List<AllOf> allOf { get; set; }
-        public string propertyType { get; set; }
-        public ElementName elementName { get; set; }
-    }
-
-    public class Shares
-    {
-        public string title { get; set; }
-        public List<AllOf> allOf { get; set; }
-        public string propertyType { get; set; }
-        public ElementName elementName { get; set; }
-    }
-
-    public class Starred
-    {
-        public string title { get; set; }
-        public List<AllOf> allOf { get; set; }
-        public string propertyType { get; set; }
-        public ElementName elementName { get; set; }
-        public AttributeName attributeName { get; set; }
-    }
-
-    public class Starred2
-    {
-        public string title { get; set; }
-        public List<AllOf> allOf { get; set; }
-        public string propertyType { get; set; }
-        public ElementName elementName { get; set; }
-    }
-
-    public class AlbumInfo
-    {
-        public string title { get; set; }
-        public List<AllOf> allOf { get; set; }
-        public string propertyType { get; set; }
-        public ElementName elementName { get; set; }
-    }
-
-    public class ArtistInfo2
-    {
-        public string title { get; set; }
-        public List<AllOf> allOf { get; set; }
-        public string propertyType { get; set; }
-        public ElementName elementName { get; set; }
-    }
-
-    public class ArtistInfo22
-    {
-        public string title { get; set; }
-        public List<AllOf> allOf { get; set; }
-        public string propertyType { get; set; }
-        public ElementName elementName { get; set; }
-    }
-
-    public class SimilarSongs
-    {
-        public string title { get; set; }
-        public List<AllOf> allOf { get; set; }
-        public string propertyType { get; set; }
-        public ElementName elementName { get; set; }
-    }
-
-    public class SimilarSongs2
-    {
-        public string title { get; set; }
-        public List<AllOf> allOf { get; set; }
-        public string propertyType { get; set; }
-        public ElementName elementName { get; set; }
-    }
-
-    public class TopSongs
-    {
-        public string title { get; set; }
-        public List<AllOf> allOf { get; set; }
-        public string propertyType { get; set; }
-        public ElementName elementName { get; set; }
-    }
-
-    public class ScanStatus
-    {
-        public string title { get; set; }
-        public List<AllOf> allOf { get; set; }
-        public string propertyType { get; set; }
-        public ElementName elementName { get; set; }
-    }
-
-    public class Error
-    {
-        public string title { get; set; }
-        public List<AllOf> allOf { get; set; }
-        public string propertyType { get; set; }
-        public ElementName elementName { get; set; }
-    }
-
-    public class Version
-    {
-        public string title { get; set; }
-        public List<AllOf> allOf { get; set; }
-        public string propertyType { get; set; }
-        public AttributeName attributeName { get; set; }
-    }
-
-    public class Response
-    {
-        public string type { get; set; }
-        public string title { get; set; }
-        public List<string> required { get; set; }
-        public Properties properties { get; set; }
-        public string typeType { get; set; }
-        public TypeName typeName { get; set; }
-        public List<string> propertiesOrder { get; set; }
-    }
-
-    public class Episode
-    {
-        public string title { get; set; }
-        public List<AllOf> allOf { get; set; }
-        public string propertyType { get; set; }
-        public ElementName elementName { get; set; }
-    }
-
-    public class NewestPodcasts2
-    {
-        public string type { get; set; }
-        public string title { get; set; }
-        public Properties properties { get; set; }
-        public string typeType { get; set; }
-        public TypeName typeName { get; set; }
-        public List<string> propertiesOrder { get; set; }
-    }
-
-    public class Entry
-    {
-        public string title { get; set; }
-        public List<AllOf> allOf { get; set; }
-        public string propertyType { get; set; }
-        public ElementName elementName { get; set; }
-    }
-
-    public class Id
-    {
-        public string title { get; set; }
-        public List<AllOf> allOf { get; set; }
-        public string propertyType { get; set; }
-        public AttributeName attributeName { get; set; }
-    }
-
-    public class Url
-    {
-        public string title { get; set; }
-        public List<AllOf> allOf { get; set; }
-        public string propertyType { get; set; }
-        public AttributeName attributeName { get; set; }
-    }
-
-    public class Username
-    {
-        public string title { get; set; }
-        public List<AllOf> allOf { get; set; }
-        public string propertyType { get; set; }
-        public AttributeName attributeName { get; set; }
-    }
-
-    public class Created
-    {
-        public string title { get; set; }
-        public List<AllOf> allOf { get; set; }
-        public string propertyType { get; set; }
-        public AttributeName attributeName { get; set; }
-    }
-
-    public class Expires
-    {
-        public string title { get; set; }
-        public List<AllOf> allOf { get; set; }
-        public string propertyType { get; set; }
-        public AttributeName attributeName { get; set; }
-    }
-
-    public class LastVisited
-    {
-        public string title { get; set; }
-        public List<AllOf> allOf { get; set; }
-        public string propertyType { get; set; }
-        public AttributeName attributeName { get; set; }
-    }
-
-    public class VisitCount
-    {
-        public string title { get; set; }
-        public List<AllOf> allOf { get; set; }
-        public string propertyType { get; set; }
-        public AttributeName attributeName { get; set; }
-    }
-
-    public class Share
-    {
-        public string type { get; set; }
-        public string title { get; set; }
-        public List<string> required { get; set; }
-        public Properties properties { get; set; }
-        public string typeType { get; set; }
-        public TypeName typeName { get; set; }
-        public List<string> propertiesOrder { get; set; }
-    }
-
-    public class Name
-    {
-        public string title { get; set; }
-        public List<AllOf> allOf { get; set; }
-        public string propertyType { get; set; }
-        public AttributeName attributeName { get; set; }
-    }
-
-    public class StreamUrl
-    {
-        public string title { get; set; }
-        public List<AllOf> allOf { get; set; }
-        public string propertyType { get; set; }
-        public AttributeName attributeName { get; set; }
-    }
-
-    public class HomePageUrl
-    {
-        public string title { get; set; }
-        public List<AllOf> allOf { get; set; }
-        public string propertyType { get; set; }
-        public AttributeName attributeName { get; set; }
-    }
-
-    public class InternetRadioStation
-    {
-        public string type { get; set; }
-        public string title { get; set; }
-        public List<string> required { get; set; }
-        public Properties properties { get; set; }
-        public string typeType { get; set; }
-        public TypeName typeName { get; set; }
-        public List<string> propertiesOrder { get; set; }
-    }
-
-    public class PlaylistWithSongs
-    {
-        public List<AllOf> allOf { get; set; }
-        public string typeType { get; set; }
-        public TypeName typeName { get; set; }
-        public List<string> propertiesOrder { get; set; }
-    }
-
-    public class MusicFolder
-    {
-        public string type { get; set; }
-        public string title { get; set; }
-        public List<string> required { get; set; }
-        public Properties properties { get; set; }
-        public string typeType { get; set; }
-        public TypeName typeName { get; set; }
-        public List<string> propertiesOrder { get; set; }
-    }
-
-    public class Shortcut
-    {
-        public string title { get; set; }
-        public List<AllOf> allOf { get; set; }
-        public string propertyType { get; set; }
-        public ElementName elementName { get; set; }
-    }
-
-    public class Index
-    {
-        public string title { get; set; }
-        public List<AllOf> allOf { get; set; }
-        public string propertyType { get; set; }
-        public ElementName elementName { get; set; }
-    }
-
-    public class Child
-    {
-        public string title { get; set; }
-        public List<AllOf> allOf { get; set; }
-        public string propertyType { get; set; }
-        public ElementName elementName { get; set; }
-    }
-
-    public class LastModified
-    {
-        public string title { get; set; }
-        public List<AllOf> allOf { get; set; }
-        public string propertyType { get; set; }
-        public AttributeName attributeName { get; set; }
-    }
-
-    public class IgnoredArticles
-    {
-        public string title { get; set; }
-        public List<AllOf> allOf { get; set; }
-        public string propertyType { get; set; }
-        public AttributeName attributeName { get; set; }
-    }
-
-    public class Indexes2
-    {
-        public string type { get; set; }
-        public string title { get; set; }
-        public List<string> required { get; set; }
-        public Properties properties { get; set; }
-        public string typeType { get; set; }
-        public TypeName typeName { get; set; }
-        public List<string> propertiesOrder { get; set; }
-    }
-
-    public class AlbumWithSongsID3
-    {
-        public List<AllOf> allOf { get; set; }
-        public string typeType { get; set; }
-        public TypeName typeName { get; set; }
-        public List<string> propertiesOrder { get; set; }
-    }
-
-    public class Parent
-    {
-        public string title { get; set; }
-        public List<AllOf> allOf { get; set; }
-        public string propertyType { get; set; }
-        public AttributeName attributeName { get; set; }
-    }
-
-    public class UserRating
-    {
-        public string title { get; set; }
-        public List<AllOf> allOf { get; set; }
-        public string propertyType { get; set; }
-        public AttributeName attributeName { get; set; }
-    }
-
-    public class AverageRating
-    {
-        public string title { get; set; }
-        public List<AllOf> allOf { get; set; }
-        public string propertyType { get; set; }
-        public AttributeName attributeName { get; set; }
-    }
-
-    public class PlayCount
-    {
-        public string title { get; set; }
-        public List<AllOf> allOf { get; set; }
-        public string propertyType { get; set; }
-        public AttributeName attributeName { get; set; }
-    }
-
-    public class Directory2
-    {
-        public string type { get; set; }
-        public string title { get; set; }
-        public List<string> required { get; set; }
-        public Properties properties { get; set; }
-        public string typeType { get; set; }
-        public TypeName typeName { get; set; }
-        public List<string> propertiesOrder { get; set; }
-    }
-
-    public class Scanning
-    {
-        public string title { get; set; }
-        public List<AllOf> allOf { get; set; }
-        public string propertyType { get; set; }
-        public AttributeName attributeName { get; set; }
-    }
-
-    public class Count
-    {
-        public string title { get; set; }
-        public List<AllOf> allOf { get; set; }
-        public string propertyType { get; set; }
-        public AttributeName attributeName { get; set; }
-    }
-
-    public class ScanStatus2
-    {
-        public string type { get; set; }
-        public string title { get; set; }
-        public List<string> required { get; set; }
-        public Properties properties { get; set; }
-        public string typeType { get; set; }
-        public TypeName typeName { get; set; }
-        public List<string> propertiesOrder { get; set; }
-    }
-
-    public class ArtistsID3
-    {
-        public string type { get; set; }
-        public string title { get; set; }
-        public List<string> required { get; set; }
-        public Properties properties { get; set; }
-        public string typeType { get; set; }
-        public TypeName typeName { get; set; }
-        public List<string> propertiesOrder { get; set; }
-    }
-
-    public class Code
-    {
-        public string title { get; set; }
-        public List<AllOf> allOf { get; set; }
-        public string propertyType { get; set; }
-        public AttributeName attributeName { get; set; }
-    }
-
-    public class Message
-    {
-        public string title { get; set; }
-        public List<AllOf> allOf { get; set; }
-        public string propertyType { get; set; }
-        public AttributeName attributeName { get; set; }
-    }
-
-    public class Error2
-    {
-        public string type { get; set; }
-        public string title { get; set; }
-        public List<string> required { get; set; }
-        public Properties properties { get; set; }
-        public string typeType { get; set; }
-        public TypeName typeName { get; set; }
-        public List<string> propertiesOrder { get; set; }
-    }
-
-    public class SimilarSongs3
-    {
-        public string type { get; set; }
-        public string title { get; set; }
-        public Properties properties { get; set; }
-        public string typeType { get; set; }
-        public TypeName typeName { get; set; }
-        public List<string> propertiesOrder { get; set; }
-    }
-
-    public class Genre
-    {
-        public string title { get; set; }
-        public List<AllOf> allOf { get; set; }
-        public string propertyType { get; set; }
-        public ElementName elementName { get; set; }
-        public AttributeName attributeName { get; set; }
-    }
-
-    public class Genres2
-    {
-        public string type { get; set; }
-        public string title { get; set; }
-        public Properties properties { get; set; }
-        public string typeType { get; set; }
-        public TypeName typeName { get; set; }
-        public List<string> propertiesOrder { get; set; }
-    }
-
-    public class ArtistId
-    {
-        public string title { get; set; }
-        public List<AllOf> allOf { get; set; }
-        public string propertyType { get; set; }
-        public AttributeName attributeName { get; set; }
-    }
-
-    public class CoverArt
-    {
-        public string title { get; set; }
-        public List<AllOf> allOf { get; set; }
-        public string propertyType { get; set; }
-        public AttributeName attributeName { get; set; }
-    }
-
-    public class SongCount
-    {
-        public string title { get; set; }
-        public List<AllOf> allOf { get; set; }
-        public string propertyType { get; set; }
-        public AttributeName attributeName { get; set; }
-    }
-
-    public class Duration
-    {
-        public string title { get; set; }
-        public List<AllOf> allOf { get; set; }
-        public string propertyType { get; set; }
-        public AttributeName attributeName { get; set; }
-    }
-
-    public class Year
-    {
-        public string title { get; set; }
-        public List<AllOf> allOf { get; set; }
-        public string propertyType { get; set; }
-        public AttributeName attributeName { get; set; }
-    }
-
-    public class AlbumID3
-    {
-        public string type { get; set; }
-        public string title { get; set; }
-        public List<string> required { get; set; }
-        public Properties properties { get; set; }
-        public string typeType { get; set; }
-        public TypeName typeName { get; set; }
-        public List<string> propertiesOrder { get; set; }
-    }
-
-    public class Position
-    {
-        public string title { get; set; }
-        public List<AllOf> allOf { get; set; }
-        public string propertyType { get; set; }
-        public AttributeName attributeName { get; set; }
-    }
-
-    public class Comment
-    {
-        public string title { get; set; }
-        public List<AllOf> allOf { get; set; }
-        public string propertyType { get; set; }
-        public AttributeName attributeName { get; set; }
-    }
-
-    public class Changed
-    {
-        public string title { get; set; }
-        public List<AllOf> allOf { get; set; }
-        public string propertyType { get; set; }
-        public AttributeName attributeName { get; set; }
-    }
-
-    public class Bookmark
-    {
-        public string type { get; set; }
-        public string title { get; set; }
-        public List<string> required { get; set; }
-        public Properties properties { get; set; }
-        public string typeType { get; set; }
-        public TypeName typeName { get; set; }
-        public List<string> propertiesOrder { get; set; }
-    }
-
-    public class SearchResult22
-    {
-        public string type { get; set; }
-        public string title { get; set; }
-        public Properties properties { get; set; }
-        public string typeType { get; set; }
-        public TypeName typeName { get; set; }
-        public List<string> propertiesOrder { get; set; }
-    }
-
-    public class Users2
-    {
-        public string type { get; set; }
-        public string title { get; set; }
-        public Properties properties { get; set; }
-        public string typeType { get; set; }
-        public TypeName typeName { get; set; }
-        public List<string> propertiesOrder { get; set; }
-    }
-
-    public class Starred5
-    {
-        public string type { get; set; }
-        public string title { get; set; }
-        public Properties properties { get; set; }
-        public string typeType { get; set; }
-        public TypeName typeName { get; set; }
-        public List<string> propertiesOrder { get; set; }
-    }
-
-    public class AllowedUser
-    {
-        public string title { get; set; }
-        public List<AllOf> allOf { get; set; }
-        public string propertyType { get; set; }
-        public ElementName elementName { get; set; }
-    }
-
-    public class Owner
-    {
-        public string title { get; set; }
-        public List<AllOf> allOf { get; set; }
-        public string propertyType { get; set; }
-        public AttributeName attributeName { get; set; }
-    }
-
-    public class Public
-    {
-        public string title { get; set; }
-        public List<AllOf> allOf { get; set; }
-        public string propertyType { get; set; }
-        public AttributeName attributeName { get; set; }
-    }
-
-    public class Playlist2
-    {
-        public string type { get; set; }
-        public string title { get; set; }
-        public List<string> required { get; set; }
-        public Properties properties { get; set; }
-        public string typeType { get; set; }
-        public TypeName typeName { get; set; }
-        public List<string> propertiesOrder { get; set; }
-    }
-
-    public class ChatMessage
-    {
-        public string title { get; set; }
-        public List<AllOf> allOf { get; set; }
-        public string propertyType { get; set; }
-        public ElementName elementName { get; set; }
-    }
-
-    public class ChatMessages2
-    {
-        public string type { get; set; }
-        public string title { get; set; }
-        public Properties properties { get; set; }
-        public string typeType { get; set; }
-        public TypeName typeName { get; set; }
-        public List<string> propertiesOrder { get; set; }
-    }
-
-    public class TopSongs2
-    {
-        public string type { get; set; }
-        public string title { get; set; }
-        public Properties properties { get; set; }
-        public string typeType { get; set; }
-        public TypeName typeName { get; set; }
-        public List<string> propertiesOrder { get; set; }
-    }
-
-    public class Captions
-    {
-        public string type { get; set; }
-        public string title { get; set; }
-        public List<string> required { get; set; }
-        public Properties properties { get; set; }
-        public string typeType { get; set; }
-        public TypeName typeName { get; set; }
-        public List<string> propertiesOrder { get; set; }
-    }
-
-    public class JukeboxPlaylist2
-    {
-        public List<AllOf> allOf { get; set; }
-        public string typeType { get; set; }
-        public TypeName typeName { get; set; }
-        public List<string> propertiesOrder { get; set; }
-    }
-
-    public class Valid
-    {
-        public string title { get; set; }
-        public List<AllOf> allOf { get; set; }
-        public string propertyType { get; set; }
-        public AttributeName attributeName { get; set; }
-    }
-
-    public class Email
-    {
-        public string title { get; set; }
-        public List<AllOf> allOf { get; set; }
-        public string propertyType { get; set; }
-        public AttributeName attributeName { get; set; }
-    }
-
-    public class LicenseExpires
-    {
-        public string title { get; set; }
-        public List<AllOf> allOf { get; set; }
-        public string propertyType { get; set; }
-        public AttributeName attributeName { get; set; }
-    }
-
-    public class TrialExpires
-    {
-        public string title { get; set; }
-        public List<AllOf> allOf { get; set; }
-        public string propertyType { get; set; }
-        public AttributeName attributeName { get; set; }
-    }
-
-    public class License2
-    {
-        public string type { get; set; }
-        public string title { get; set; }
-        public List<string> required { get; set; }
-        public Properties properties { get; set; }
-        public string typeType { get; set; }
-        public TypeName typeName { get; set; }
-        public List<string> propertiesOrder { get; set; }
-    }
-
-    public class SimilarSongs22
-    {
-        public string type { get; set; }
-        public string title { get; set; }
-        public Properties properties { get; set; }
-        public string typeType { get; set; }
-        public TypeName typeName { get; set; }
-        public List<string> propertiesOrder { get; set; }
-    }
-
-    public class Content
-    {
-        public string title { get; set; }
-        public List<AllOf> allOf { get; set; }
-        public string propertyType { get; set; }
-    }
-
-    public class AlbumCount
-    {
-        public string title { get; set; }
-        public List<AllOf> allOf { get; set; }
-        public string propertyType { get; set; }
-        public AttributeName attributeName { get; set; }
-    }
-
-    public class Genre3
-    {
-        public string type { get; set; }
-        public string title { get; set; }
-        public List<string> required { get; set; }
-        public Properties properties { get; set; }
-        public string typeType { get; set; }
-        public TypeName typeName { get; set; }
-        public List<string> propertiesOrder { get; set; }
-    }
-
-    public class ArtistInfo23
-    {
-        public List<AllOf> allOf { get; set; }
-        public string typeType { get; set; }
-        public TypeName typeName { get; set; }
-        public List<string> propertiesOrder { get; set; }
-    }
-
-    public class Index3
-    {
-        public string type { get; set; }
-        public string title { get; set; }
-        public List<string> required { get; set; }
-        public Properties properties { get; set; }
-        public string typeType { get; set; }
-        public TypeName typeName { get; set; }
-        public List<string> propertiesOrder { get; set; }
-    }
-
-    public class ArtistImageUrl
-    {
-        public string title { get; set; }
-        public List<AllOf> allOf { get; set; }
-        public string propertyType { get; set; }
-        public AttributeName attributeName { get; set; }
-    }
-
-    public class ArtistID3
-    {
-        public string type { get; set; }
-        public string title { get; set; }
-        public List<string> required { get; set; }
-        public Properties properties { get; set; }
-        public string typeType { get; set; }
-        public TypeName typeName { get; set; }
-        public List<string> propertiesOrder { get; set; }
-    }
-
-    public class LanguageCode
-    {
-        public string title { get; set; }
-        public List<AllOf> allOf { get; set; }
-        public string propertyType { get; set; }
-        public AttributeName attributeName { get; set; }
-    }
-
-    public class AudioTrack
-    {
-        public string type { get; set; }
-        public string title { get; set; }
-        public List<string> required { get; set; }
-        public Properties properties { get; set; }
-        public string typeType { get; set; }
-        public TypeName typeName { get; set; }
-        public List<string> propertiesOrder { get; set; }
-    }
-
-    public class ArtistWithAlbumsID3
-    {
-        public List<AllOf> allOf { get; set; }
-        public string typeType { get; set; }
-        public TypeName typeName { get; set; }
-        public List<string> propertiesOrder { get; set; }
-    }
-
-    public class Bookmark2
-    {
-        public string title { get; set; }
-        public List<AllOf> allOf { get; set; }
-        public string propertyType { get; set; }
-        public ElementName elementName { get; set; }
-    }
-
-    public class Bookmarks2
-    {
-        public string type { get; set; }
-        public string title { get; set; }
-        public Properties properties { get; set; }
-        public string typeType { get; set; }
-        public TypeName typeName { get; set; }
-        public List<string> propertiesOrder { get; set; }
-    }
-
-    public class Video
-    {
-        public string title { get; set; }
-        public List<AllOf> allOf { get; set; }
-        public string propertyType { get; set; }
-        public ElementName elementName { get; set; }
-    }
-
-    public class Videos2
-    {
-        public string type { get; set; }
-        public string title { get; set; }
-        public Properties properties { get; set; }
-        public string typeType { get; set; }
-        public TypeName typeName { get; set; }
-        public List<string> propertiesOrder { get; set; }
-    }
-
-    public class SearchResult32
-    {
-        public string type { get; set; }
-        public string title { get; set; }
-        public Properties properties { get; set; }
-        public string typeType { get; set; }
-        public TypeName typeName { get; set; }
-        public List<string> propertiesOrder { get; set; }
-    }
-
-    public class Notes
-    {
-        public string title { get; set; }
-        public List<AllOf> allOf { get; set; }
-        public string propertyType { get; set; }
-        public ElementName elementName { get; set; }
-    }
-
-    public class MusicBrainzId
-    {
-        public string title { get; set; }
-        public List<AllOf> allOf { get; set; }
-        public string propertyType { get; set; }
-        public ElementName elementName { get; set; }
-    }
-
-    public class LastFmUrl
-    {
-        public string title { get; set; }
-        public List<AllOf> allOf { get; set; }
-        public string propertyType { get; set; }
-        public ElementName elementName { get; set; }
-    }
-
-    public class SmallImageUrl
-    {
-        public string title { get; set; }
-        public List<AllOf> allOf { get; set; }
-        public string propertyType { get; set; }
-        public ElementName elementName { get; set; }
-    }
-
-    public class MediumImageUrl
-    {
-        public string title { get; set; }
-        public List<AllOf> allOf { get; set; }
-        public string propertyType { get; set; }
-        public ElementName elementName { get; set; }
-    }
-
-    public class LargeImageUrl
-    {
-        public string title { get; set; }
-        public List<AllOf> allOf { get; set; }
-        public string propertyType { get; set; }
-        public ElementName elementName { get; set; }
-    }
-
-    public class AlbumInfo2
-    {
-        public string type { get; set; }
-        public string title { get; set; }
-        public Properties properties { get; set; }
-        public string typeType { get; set; }
-        public TypeName typeName { get; set; }
-        public List<string> propertiesOrder { get; set; }
-    }
-
-    public class MusicFolder2
-    {
-        public string title { get; set; }
-        public List<AllOf> allOf { get; set; }
-        public string propertyType { get; set; }
-        public ElementName elementName { get; set; }
-    }
-
-    public class MusicFolders2
-    {
-        public string type { get; set; }
-        public string title { get; set; }
-        public Properties properties { get; set; }
-        public string typeType { get; set; }
-        public TypeName typeName { get; set; }
-        public List<string> propertiesOrder { get; set; }
-    }
-
-    public class Playlists2
-    {
-        public string type { get; set; }
-        public string title { get; set; }
-        public Properties properties { get; set; }
-        public string typeType { get; set; }
-        public TypeName typeName { get; set; }
-        public List<string> propertiesOrder { get; set; }
-    }
-
-    public class Share2
-    {
-        public string title { get; set; }
-        public List<AllOf> allOf { get; set; }
-        public string propertyType { get; set; }
-        public ElementName elementName { get; set; }
-    }
-
-    public class Shares2
-    {
-        public string type { get; set; }
-        public string title { get; set; }
-        public Properties properties { get; set; }
-        public string typeType { get; set; }
-        public TypeName typeName { get; set; }
-        public List<string> propertiesOrder { get; set; }
-    }
-
-    public class MinutesAgo
-    {
-        public string title { get; set; }
-        public List<AllOf> allOf { get; set; }
-        public string propertyType { get; set; }
-        public AttributeName attributeName { get; set; }
-    }
-
-    public class PlayerId
-    {
-        public string title { get; set; }
-        public List<AllOf> allOf { get; set; }
-        public string propertyType { get; set; }
-        public AttributeName attributeName { get; set; }
-    }
-
-    public class PlayerName
-    {
-        public string title { get; set; }
-        public List<AllOf> allOf { get; set; }
-        public string propertyType { get; set; }
-        public AttributeName attributeName { get; set; }
-    }
-
-    public class NowPlayingEntry
-    {
-        public List<string> required { get; set; }
-        public List<AllOf> allOf { get; set; }
-        public string typeType { get; set; }
-        public TypeName typeName { get; set; }
-        public List<string> propertiesOrder { get; set; }
-    }
-
-    public class CurrentIndex
-    {
-        public string title { get; set; }
-        public List<AllOf> allOf { get; set; }
-        public string propertyType { get; set; }
-        public AttributeName attributeName { get; set; }
-    }
-
-    public class Playing
-    {
-        public string title { get; set; }
-        public List<AllOf> allOf { get; set; }
-        public string propertyType { get; set; }
-        public AttributeName attributeName { get; set; }
-    }
-
-    public class Gain
-    {
-        public string title { get; set; }
-        public List<AllOf> allOf { get; set; }
-        public string propertyType { get; set; }
-        public AttributeName attributeName { get; set; }
-    }
-
-    public class JukeboxStatus2
-    {
-        public string type { get; set; }
-        public string title { get; set; }
-        public List<string> required { get; set; }
-        public Properties properties { get; set; }
-        public string typeType { get; set; }
-        public TypeName typeName { get; set; }
-        public List<string> propertiesOrder { get; set; }
-    }
-
-    public class InternetRadioStation2
-    {
-        public string title { get; set; }
-        public List<AllOf> allOf { get; set; }
-        public string propertyType { get; set; }
-        public ElementName elementName { get; set; }
-    }
-
-    public class InternetRadioStations2
-    {
-        public string type { get; set; }
-        public string title { get; set; }
-        public Properties properties { get; set; }
-        public string typeType { get; set; }
-        public TypeName typeName { get; set; }
-        public List<string> propertiesOrder { get; set; }
-    }
-
-    public class Title
-    {
-        public string title { get; set; }
-        public List<AllOf> allOf { get; set; }
-        public string propertyType { get; set; }
-        public AttributeName attributeName { get; set; }
-    }
-
-    public class Lyrics2
-    {
-        public string type { get; set; }
-        public string title { get; set; }
-        public Properties properties { get; set; }
-        public string typeType { get; set; }
-        public TypeName typeName { get; set; }
-        public List<string> propertiesOrder { get; set; }
-    }
-
-    public class Starred22
-    {
-        public string type { get; set; }
-        public string title { get; set; }
-        public Properties properties { get; set; }
-        public string typeType { get; set; }
-        public TypeName typeName { get; set; }
-        public List<string> propertiesOrder { get; set; }
-    }
-
-    public class Captions2
-    {
-        public string title { get; set; }
-        public List<AllOf> allOf { get; set; }
-        public string propertyType { get; set; }
-        public ElementName elementName { get; set; }
-    }
-
-    public class AudioTrack2
-    {
-        public string title { get; set; }
-        public List<AllOf> allOf { get; set; }
-        public string propertyType { get; set; }
-        public ElementName elementName { get; set; }
-    }
-
-    public class Conversion
-    {
-        public string title { get; set; }
-        public List<AllOf> allOf { get; set; }
-        public string propertyType { get; set; }
-        public ElementName elementName { get; set; }
-    }
-
-    public class VideoInfo2
-    {
-        public string type { get; set; }
-        public string title { get; set; }
-        public List<string> required { get; set; }
-        public Properties properties { get; set; }
-        public string typeType { get; set; }
-        public TypeName typeName { get; set; }
-        public List<string> propertiesOrder { get; set; }
-    }
-
-    public class Folder
-    {
-        public string title { get; set; }
-        public List<AllOf> allOf { get; set; }
-        public string propertyType { get; set; }
-        public ElementName elementName { get; set; }
-    }
-
-    public class ScrobblingEnabled
-    {
-        public string title { get; set; }
-        public List<AllOf> allOf { get; set; }
-        public string propertyType { get; set; }
-        public AttributeName attributeName { get; set; }
-    }
-
-    public class MaxBitRate
-    {
-        public string title { get; set; }
-        public List<AllOf> allOf { get; set; }
-        public string propertyType { get; set; }
-        public AttributeName attributeName { get; set; }
-    }
-
-    public class AdminRole
-    {
-        public string title { get; set; }
-        public List<AllOf> allOf { get; set; }
-        public string propertyType { get; set; }
-        public AttributeName attributeName { get; set; }
-    }
-
-    public class SettingsRole
-    {
-        public string title { get; set; }
-        public List<AllOf> allOf { get; set; }
-        public string propertyType { get; set; }
-        public AttributeName attributeName { get; set; }
-    }
-
-    public class DownloadRole
-    {
-        public string title { get; set; }
-        public List<AllOf> allOf { get; set; }
-        public string propertyType { get; set; }
-        public AttributeName attributeName { get; set; }
-    }
-
-    public class UploadRole
-    {
-        public string title { get; set; }
-        public List<AllOf> allOf { get; set; }
-        public string propertyType { get; set; }
-        public AttributeName attributeName { get; set; }
-    }
-
-    public class PlaylistRole
-    {
-        public string title { get; set; }
-        public List<AllOf> allOf { get; set; }
-        public string propertyType { get; set; }
-        public AttributeName attributeName { get; set; }
-    }
-
-    public class CoverArtRole
-    {
-        public string title { get; set; }
-        public List<AllOf> allOf { get; set; }
-        public string propertyType { get; set; }
-        public AttributeName attributeName { get; set; }
-    }
-
-    public class CommentRole
-    {
-        public string title { get; set; }
-        public List<AllOf> allOf { get; set; }
-        public string propertyType { get; set; }
-        public AttributeName attributeName { get; set; }
-    }
-
-    public class PodcastRole
-    {
-        public string title { get; set; }
-        public List<AllOf> allOf { get; set; }
-        public string propertyType { get; set; }
-        public AttributeName attributeName { get; set; }
-    }
-
-    public class StreamRole
-    {
-        public string title { get; set; }
-        public List<AllOf> allOf { get; set; }
-        public string propertyType { get; set; }
-        public AttributeName attributeName { get; set; }
-    }
-
-    public class JukeboxRole
-    {
-        public string title { get; set; }
-        public List<AllOf> allOf { get; set; }
-        public string propertyType { get; set; }
-        public AttributeName attributeName { get; set; }
-    }
-
-    public class ShareRole
-    {
-        public string title { get; set; }
-        public List<AllOf> allOf { get; set; }
-        public string propertyType { get; set; }
-        public AttributeName attributeName { get; set; }
-    }
-
-    public class VideoConversionRole
-    {
-        public string title { get; set; }
-        public List<AllOf> allOf { get; set; }
-        public string propertyType { get; set; }
-        public AttributeName attributeName { get; set; }
-    }
-
-    public class AvatarLastChanged
-    {
-        public string title { get; set; }
-        public List<AllOf> allOf { get; set; }
-        public string propertyType { get; set; }
-        public AttributeName attributeName { get; set; }
-    }
-
-    public class User3
-    {
-        public string type { get; set; }
-        public string title { get; set; }
-        public List<string> required { get; set; }
-        public Properties properties { get; set; }
-        public string typeType { get; set; }
-        public TypeName typeName { get; set; }
-        public List<string> propertiesOrder { get; set; }
-    }
-
-    public class Songs
-    {
-        public string type { get; set; }
-        public string title { get; set; }
-        public Properties properties { get; set; }
-        public string typeType { get; set; }
-        public TypeName typeName { get; set; }
-        public List<string> propertiesOrder { get; set; }
-    }
-
-    public class Biography
-    {
-        public string title { get; set; }
-        public List<AllOf> allOf { get; set; }
-        public string propertyType { get; set; }
-        public ElementName elementName { get; set; }
-    }
-
-    public class ArtistInfoBase
-    {
-        public string type { get; set; }
-        public string title { get; set; }
-        public Properties properties { get; set; }
-        public string typeType { get; set; }
-        public TypeName typeName { get; set; }
-        public List<string> propertiesOrder { get; set; }
-    }
-
-    public class Match
-    {
-        public string title { get; set; }
-        public List<AllOf> allOf { get; set; }
-        public string propertyType { get; set; }
-        public ElementName elementName { get; set; }
-    }
-
-    public class Offset
-    {
-        public string title { get; set; }
-        public List<AllOf> allOf { get; set; }
-        public string propertyType { get; set; }
-        public AttributeName attributeName { get; set; }
-    }
-
-    public class TotalHits
-    {
-        public string title { get; set; }
-        public List<AllOf> allOf { get; set; }
-        public string propertyType { get; set; }
-        public AttributeName attributeName { get; set; }
-    }
-
-    public class SearchResult4
-    {
-        public string type { get; set; }
-        public string title { get; set; }
-        public List<string> required { get; set; }
-        public Properties properties { get; set; }
-        public string typeType { get; set; }
-        public TypeName typeName { get; set; }
-        public List<string> propertiesOrder { get; set; }
-    }
-
-    public class AlbumList22
-    {
-        public string type { get; set; }
-        public string title { get; set; }
-        public Properties properties { get; set; }
-        public string typeType { get; set; }
-        public TypeName typeName { get; set; }
-        public List<string> propertiesOrder { get; set; }
-    }
-
-    public class IsDir
-    {
-        public string title { get; set; }
-        public List<AllOf> allOf { get; set; }
-        public string propertyType { get; set; }
-        public AttributeName attributeName { get; set; }
-    }
-
-    public class Track
-    {
-        public string title { get; set; }
-        public List<AllOf> allOf { get; set; }
-        public string propertyType { get; set; }
-        public AttributeName attributeName { get; set; }
-    }
-
-    public class Size
-    {
-        public string title { get; set; }
-        public List<AllOf> allOf { get; set; }
-        public string propertyType { get; set; }
-        public AttributeName attributeName { get; set; }
-    }
-
-    public class ContentType
-    {
-        public string title { get; set; }
-        public List<AllOf> allOf { get; set; }
-        public string propertyType { get; set; }
-        public AttributeName attributeName { get; set; }
-    }
-
-    public class Suffix
-    {
-        public string title { get; set; }
-        public List<AllOf> allOf { get; set; }
-        public string propertyType { get; set; }
-        public AttributeName attributeName { get; set; }
-    }
-
-    public class TranscodedContentType
-    {
-        public string title { get; set; }
-        public List<AllOf> allOf { get; set; }
-        public string propertyType { get; set; }
-        public AttributeName attributeName { get; set; }
-    }
-
-    public class TranscodedSuffix
-    {
-        public string title { get; set; }
-        public List<AllOf> allOf { get; set; }
-        public string propertyType { get; set; }
-        public AttributeName attributeName { get; set; }
-    }
-
-    public class BitRate
-    {
-        public string title { get; set; }
-        public List<AllOf> allOf { get; set; }
-        public string propertyType { get; set; }
-        public AttributeName attributeName { get; set; }
-    }
-
-    public class Path
-    {
-        public string title { get; set; }
-        public List<AllOf> allOf { get; set; }
-        public string propertyType { get; set; }
-        public AttributeName attributeName { get; set; }
-    }
-
-    public class IsVideo
-    {
-        public string title { get; set; }
-        public List<AllOf> allOf { get; set; }
-        public string propertyType { get; set; }
-        public AttributeName attributeName { get; set; }
-    }
-
-    public class DiscNumber
-    {
-        public string title { get; set; }
-        public List<AllOf> allOf { get; set; }
-        public string propertyType { get; set; }
-        public AttributeName attributeName { get; set; }
-    }
-
-    public class AlbumId
-    {
-        public string title { get; set; }
-        public List<AllOf> allOf { get; set; }
-        public string propertyType { get; set; }
-        public AttributeName attributeName { get; set; }
-    }
-
-    public class Type
-    {
-        public string title { get; set; }
-        public List<AllOf> allOf { get; set; }
-        public string propertyType { get; set; }
-        public AttributeName attributeName { get; set; }
-    }
-
-    public class BookmarkPosition
-    {
-        public string title { get; set; }
-        public List<AllOf> allOf { get; set; }
-        public string propertyType { get; set; }
-        public AttributeName attributeName { get; set; }
-    }
-
-    public class OriginalWidth
-    {
-        public string title { get; set; }
-        public List<AllOf> allOf { get; set; }
-        public string propertyType { get; set; }
-        public AttributeName attributeName { get; set; }
-    }
-
-    public class OriginalHeight
-    {
-        public string title { get; set; }
-        public List<AllOf> allOf { get; set; }
-        public string propertyType { get; set; }
-        public AttributeName attributeName { get; set; }
-    }
-
-    public class Child3
-    {
-        public string type { get; set; }
-        public string title { get; set; }
-        public List<string> required { get; set; }
-        public Properties properties { get; set; }
-        public string typeType { get; set; }
-        public TypeName typeName { get; set; }
-        public List<string> propertiesOrder { get; set; }
-    }
-
-    public class Channel
-    {
-        public string title { get; set; }
-        public List<AllOf> allOf { get; set; }
-        public string propertyType { get; set; }
-        public ElementName elementName { get; set; }
-    }
-
-    public class Podcasts2
-    {
-        public string type { get; set; }
-        public string title { get; set; }
-        public Properties properties { get; set; }
-        public string typeType { get; set; }
-        public TypeName typeName { get; set; }
-        public List<string> propertiesOrder { get; set; }
-    }
-
-    public class IndexID3
-    {
-        public string type { get; set; }
-        public string title { get; set; }
-        public List<string> required { get; set; }
-        public Properties properties { get; set; }
-        public string typeType { get; set; }
-        public TypeName typeName { get; set; }
-        public List<string> propertiesOrder { get; set; }
-    }
-
-    public class Time
-    {
-        public string title { get; set; }
-        public List<AllOf> allOf { get; set; }
-        public string propertyType { get; set; }
-        public AttributeName attributeName { get; set; }
-    }
-
-    public class ChatMessage2
-    {
-        public string type { get; set; }
-        public string title { get; set; }
-        public List<string> required { get; set; }
-        public Properties properties { get; set; }
-        public string typeType { get; set; }
-        public TypeName typeName { get; set; }
-        public List<string> propertiesOrder { get; set; }
-    }
-
-    public class Artist11
-    {
-        public string type { get; set; }
-        public string title { get; set; }
-        public List<string> required { get; set; }
-        public Properties properties { get; set; }
-        public string typeType { get; set; }
-        public TypeName typeName { get; set; }
-        public List<string> propertiesOrder { get; set; }
-    }
-
-    public class AlbumList3
-    {
-        public string type { get; set; }
-        public string title { get; set; }
-        public Properties properties { get; set; }
-        public string typeType { get; set; }
-        public TypeName typeName { get; set; }
-        public List<string> propertiesOrder { get; set; }
-    }
-
-    public class NowPlaying2
-    {
-        public string type { get; set; }
-        public string title { get; set; }
-        public Properties properties { get; set; }
-        public string typeType { get; set; }
-        public TypeName typeName { get; set; }
-        public List<string> propertiesOrder { get; set; }
-    }
-
-    public class Current
-    {
-        public string title { get; set; }
-        public List<AllOf> allOf { get; set; }
-        public string propertyType { get; set; }
-        public AttributeName attributeName { get; set; }
-    }
-
-    public class ChangedBy
-    {
-        public string title { get; set; }
-        public List<AllOf> allOf { get; set; }
-        public string propertyType { get; set; }
-        public AttributeName attributeName { get; set; }
-    }
-
-    public class PlayQueue2
-    {
-        public string type { get; set; }
-        public string title { get; set; }
-        public List<string> required { get; set; }
-        public Properties properties { get; set; }
-        public string typeType { get; set; }
-        public TypeName typeName { get; set; }
-        public List<string> propertiesOrder { get; set; }
-    }
-
-    public class AudioTrackId
-    {
-        public string title { get; set; }
-        public List<AllOf> allOf { get; set; }
-        public string propertyType { get; set; }
-        public AttributeName attributeName { get; set; }
-    }
-
-    public class VideoConversion
-    {
-        public string type { get; set; }
-        public string title { get; set; }
-        public List<string> required { get; set; }
-        public Properties properties { get; set; }
-        public string typeType { get; set; }
-        public TypeName typeName { get; set; }
-        public List<string> propertiesOrder { get; set; }
-    }
-
-    public class OriginalImageUrl
-    {
-        public string title { get; set; }
-        public List<AllOf> allOf { get; set; }
-        public string propertyType { get; set; }
-        public AttributeName attributeName { get; set; }
-    }
-
-    public class ErrorMessage
-    {
-        public string title { get; set; }
-        public List<AllOf> allOf { get; set; }
-        public string propertyType { get; set; }
-        public AttributeName attributeName { get; set; }
-    }
-
-    public class PodcastChannel
-    {
-        public string type { get; set; }
-        public string title { get; set; }
-        public List<string> required { get; set; }
-        public Properties properties { get; set; }
-        public string typeType { get; set; }
-        public TypeName typeName { get; set; }
-        public List<string> propertiesOrder { get; set; }
-    }
-
-    public class PodcastStatus
-    {
-        public List<AllOf> allOf { get; set; }
-        public string typeType { get; set; }
-        public TypeName typeName { get; set; }
-    }
-
-    public class MediaType
-    {
-        public List<AllOf> allOf { get; set; }
-        public string typeType { get; set; }
-        public TypeName typeName { get; set; }
-    }
-
-    public class ResponseStatus
-    {
-        public List<AllOf> allOf { get; set; }
-        public string typeType { get; set; }
-        public TypeName typeName { get; set; }
-    }
-
-    public class Definitions
+    public partial class Definitions
     {
         public PodcastEpisode PodcastEpisode { get; set; }
         public ArtistInfo ArtistInfo { get; set; }
-        public Response Response { get; set; }
+        public Child Response { get; set; }
         public NewestPodcasts NewestPodcasts { get; set; }
         public Share Share { get; set; }
         public InternetRadioStation InternetRadioStation { get; set; }
-        public PlaylistWithSongs PlaylistWithSongs { get; set; }
-        public MusicFolder MusicFolder { get; set; }
+        public JukeboxPlaylist PlaylistWithSongs { get; set; }
+        public Captions MusicFolder { get; set; }
         public Indexes Indexes { get; set; }
-        public AlbumWithSongsID3 AlbumWithSongsID3 { get; set; }
+        public AlbumWithSongsId3 AlbumWithSongsId3 { get; set; }
         public Directory Directory { get; set; }
         public ScanStatus ScanStatus { get; set; }
-        public ArtistsID3 ArtistsID3 { get; set; }
+        public ArtistsId3 ArtistsId3 { get; set; }
         public Error Error { get; set; }
         public SimilarSongs SimilarSongs { get; set; }
         public Genres Genres { get; set; }
-        public AlbumID3 AlbumID3 { get; set; }
+        public AlbumId3 AlbumId3 { get; set; }
         public Bookmark Bookmark { get; set; }
         public SearchResult2 SearchResult2 { get; set; }
         public Users Users { get; set; }
-        public Starred Starred { get; set; }
+        public SearchResult2 Starred { get; set; }
         public Playlist Playlist { get; set; }
         public ChatMessages ChatMessages { get; set; }
-        public TopSongs TopSongs { get; set; }
+        public SimilarSongs TopSongs { get; set; }
         public Captions Captions { get; set; }
         public JukeboxPlaylist JukeboxPlaylist { get; set; }
         public License License { get; set; }
-        public SimilarSongs2 SimilarSongs2 { get; set; }
+        public SimilarSongs SimilarSongs2 { get; set; }
         public Genre Genre { get; set; }
-        public ArtistInfo2 ArtistInfo2 { get; set; }
+        public ArtistInfo ArtistInfo2 { get; set; }
         public Index Index { get; set; }
-        public ArtistID3 ArtistID3 { get; set; }
+        public ArtistId3 ArtistId3 { get; set; }
         public AudioTrack AudioTrack { get; set; }
-        public ArtistWithAlbumsID3 ArtistWithAlbumsID3 { get; set; }
+        public ArtistWithAlbumsId3 ArtistWithAlbumsId3 { get; set; }
         public Bookmarks Bookmarks { get; set; }
         public Videos Videos { get; set; }
-        public SearchResult3 SearchResult3 { get; set; }
+        public SearchResult2 SearchResult3 { get; set; }
         public AlbumInfo AlbumInfo { get; set; }
         public MusicFolders MusicFolders { get; set; }
         public Playlists Playlists { get; set; }
@@ -2188,55 +102,976 @@
         public JukeboxStatus JukeboxStatus { get; set; }
         public InternetRadioStations InternetRadioStations { get; set; }
         public Lyrics Lyrics { get; set; }
-        public Starred2 Starred2 { get; set; }
+        public SearchResult2 Starred2 { get; set; }
         public VideoInfo VideoInfo { get; set; }
         public User User { get; set; }
-        public Songs Songs { get; set; }
-        public ArtistInfoBase ArtistInfoBase { get; set; }
+        public SimilarSongs Songs { get; set; }
+        public AlbumInfo ArtistInfoBase { get; set; }
         public SearchResult SearchResult { get; set; }
-        public AlbumList2 AlbumList2 { get; set; }
+        public AlbumList AlbumList2 { get; set; }
         public Child Child { get; set; }
         public Podcasts Podcasts { get; set; }
-        public IndexID3 IndexID3 { get; set; }
+        public Index IndexId3 { get; set; }
         public ChatMessage ChatMessage { get; set; }
-        public Artist Artist { get; set; }
+        public ArtistClass Artist { get; set; }
         public AlbumList AlbumList { get; set; }
         public NowPlaying NowPlaying { get; set; }
         public PlayQueue PlayQueue { get; set; }
         public VideoConversion VideoConversion { get; set; }
         public PodcastChannel PodcastChannel { get; set; }
-        public PodcastStatus PodcastStatus { get; set; }
+        public MediaType PodcastStatus { get; set; }
         public MediaType MediaType { get; set; }
-        public ResponseStatus ResponseStatus { get; set; }
+        public MediaType ResponseStatus { get; set; }
     }
 
-    public class LocalPart
+    public partial class AlbumId3
     {
-        public List<string> @enum { get; set; }
+        public string Type { get; set; }
+        public string Title { get; set; }
+        public string[] AlbumId3Required { get; set; }
+        public AlbumId3Properties Properties { get; set; }
+        public string TypeType { get; set; }
+        public Name TypeName { get; set; }
+        public string[] PropertiesOrder { get; set; }
     }
 
-    public class NamespaceURI
+    public partial class AlbumId3Properties
     {
-        public List<string> @enum { get; set; }
+        public Artist Id { get; set; }
+        public Artist Name { get; set; }
+        public Artist Artist { get; set; }
+        public Artist ArtistId { get; set; }
+        public Artist CoverArt { get; set; }
+        public Artist SongCount { get; set; }
+        public Artist Duration { get; set; }
+        public Artist PlayCount { get; set; }
+        public Artist Created { get; set; }
+        public Artist Starred { get; set; }
+        public Artist Year { get; set; }
+        public Artist Genre { get; set; }
     }
 
-    public class Value
+    public partial class Artist
     {
-        [JsonProperty("$ref")]
+        public string Title { get; set; }
+        public Value[] AllOf { get; set; }
+        public PropertyType PropertyType { get; set; }
+        public Name AttributeName { get; set; }
+        public Name ElementName { get; set; }
+    }
+
+    public partial class AlbumInfo
+    {
+        public string Type { get; set; }
+        public string Title { get; set; }
+        public AlbumInfoProperties Properties { get; set; }
+        public string TypeType { get; set; }
+        public Name TypeName { get; set; }
+        public string[] PropertiesOrder { get; set; }
+    }
+
+    public partial class AlbumInfoProperties
+    {
+        public Artist Notes { get; set; }
+        public Artist MusicBrainzId { get; set; }
+        public Artist LastFmUrl { get; set; }
+        public Artist SmallImageUrl { get; set; }
+        public Artist MediumImageUrl { get; set; }
+        public Artist LargeImageUrl { get; set; }
+        public Artist Biography { get; set; }
+    }
+
+    public partial class AlbumList
+    {
+        public string Type { get; set; }
+        public string Title { get; set; }
+        public AlbumListProperties Properties { get; set; }
+        public string TypeType { get; set; }
+        public Name TypeName { get; set; }
+        public PropertiesOrder[] PropertiesOrder { get; set; }
+    }
+
+    public partial class AlbumListProperties
+    {
+        public Album Album { get; set; }
+    }
+
+    public partial class Album
+    {
+        public string Title { get; set; }
+        public AlbumAllOf[] AllOf { get; set; }
+        public PropertyType PropertyType { get; set; }
+        public Name ElementName { get; set; }
+    }
+
+    public partial class AlbumAllOf
+    {
+        public TypeEnum Type { get; set; }
+        public Value Items { get; set; }
+        public long MinItems { get; set; }
+    }
+
+    public partial class AlbumWithSongsId3
+    {
+        public AlbumWithSongsId3AllOf[] AllOf { get; set; }
+        public string TypeType { get; set; }
+        public Name TypeName { get; set; }
+        public PropertiesOrder[] PropertiesOrder { get; set; }
+    }
+
+    public partial class AlbumWithSongsId3AllOf
+    {
         public string Ref { get; set; }
+        public string Type { get; set; }
+        public string Title { get; set; }
+        public SimilarSongsProperties Properties { get; set; }
     }
 
-    public class AnyOf
+    public partial class SimilarSongsProperties
     {
-        public string type { get; set; }
-        public Properties properties { get; set; }
-        public ElementName elementName { get; set; }
+        public Album Song { get; set; }
     }
 
-    public class Root
+    public partial class ArtistClass
     {
-        public string id { get; set; }
-        public Definitions definitions { get; set; }
-        public List<AnyOf> anyOf { get; set; }
+        public string Type { get; set; }
+        public string Title { get; set; }
+        public string[] ArtistRequired { get; set; }
+        public ArtistProperties Properties { get; set; }
+        public string TypeType { get; set; }
+        public Name TypeName { get; set; }
+        public string[] PropertiesOrder { get; set; }
     }
 
+    public partial class ArtistProperties
+    {
+        public Artist Id { get; set; }
+        public Artist Name { get; set; }
+        public Artist ArtistImageUrl { get; set; }
+        public Artist Starred { get; set; }
+        public Artist UserRating { get; set; }
+        public Artist AverageRating { get; set; }
+    }
+
+    public partial class ArtistId3
+    {
+        public string Type { get; set; }
+        public string Title { get; set; }
+        public string[] ArtistId3Required { get; set; }
+        public ArtistId3Properties Properties { get; set; }
+        public string TypeType { get; set; }
+        public Name TypeName { get; set; }
+        public string[] PropertiesOrder { get; set; }
+    }
+
+    public partial class ArtistId3Properties
+    {
+        public Artist Id { get; set; }
+        public Artist Name { get; set; }
+        public Artist CoverArt { get; set; }
+        public Artist ArtistImageUrl { get; set; }
+        public Artist AlbumCount { get; set; }
+        public Artist Starred { get; set; }
+    }
+
+    public partial class ArtistInfo
+    {
+        public ArtistInfoAllOf[] AllOf { get; set; }
+        public string TypeType { get; set; }
+        public Name TypeName { get; set; }
+        public string[] PropertiesOrder { get; set; }
+    }
+
+    public partial class ArtistInfoAllOf
+    {
+        public string Ref { get; set; }
+        public string Type { get; set; }
+        public string Title { get; set; }
+        public FluffyProperties Properties { get; set; }
+    }
+
+    public partial class FluffyProperties
+    {
+        public Album SimilarArtist { get; set; }
+    }
+
+    public partial class ArtistWithAlbumsId3
+    {
+        public ArtistWithAlbumsId3AllOf[] AllOf { get; set; }
+        public string TypeType { get; set; }
+        public Name TypeName { get; set; }
+        public PropertiesOrder[] PropertiesOrder { get; set; }
+    }
+
+    public partial class ArtistWithAlbumsId3AllOf
+    {
+        public string Ref { get; set; }
+        public string Type { get; set; }
+        public string Title { get; set; }
+        public AlbumListProperties Properties { get; set; }
+    }
+
+    public partial class ArtistsId3
+    {
+        public string Type { get; set; }
+        public string Title { get; set; }
+        public string[] ArtistsId3Required { get; set; }
+        public ArtistsId3Properties Properties { get; set; }
+        public string TypeType { get; set; }
+        public Name TypeName { get; set; }
+        public string[] PropertiesOrder { get; set; }
+    }
+
+    public partial class ArtistsId3Properties
+    {
+        public Album Index { get; set; }
+        public Artist IgnoredArticles { get; set; }
+    }
+
+    public partial class AudioTrack
+    {
+        public string Type { get; set; }
+        public string Title { get; set; }
+        public string[] AudioTrackRequired { get; set; }
+        public AudioTrackProperties Properties { get; set; }
+        public string TypeType { get; set; }
+        public Name TypeName { get; set; }
+        public string[] PropertiesOrder { get; set; }
+    }
+
+    public partial class AudioTrackProperties
+    {
+        public Artist Id { get; set; }
+        public Artist Name { get; set; }
+        public Artist LanguageCode { get; set; }
+    }
+
+    public partial class Bookmark
+    {
+        public string Type { get; set; }
+        public string Title { get; set; }
+        public string[] BookmarkRequired { get; set; }
+        public BookmarkProperties Properties { get; set; }
+        public string TypeType { get; set; }
+        public Name TypeName { get; set; }
+        public string[] PropertiesOrder { get; set; }
+    }
+
+    public partial class BookmarkProperties
+    {
+        public Artist Entry { get; set; }
+        public Artist Position { get; set; }
+        public Artist Username { get; set; }
+        public Artist Comment { get; set; }
+        public Artist Created { get; set; }
+        public Artist Changed { get; set; }
+    }
+
+    public partial class Bookmarks
+    {
+        public string Type { get; set; }
+        public string Title { get; set; }
+        public BookmarksProperties Properties { get; set; }
+        public string TypeType { get; set; }
+        public Name TypeName { get; set; }
+        public string[] PropertiesOrder { get; set; }
+    }
+
+    public partial class BookmarksProperties
+    {
+        public Album Bookmark { get; set; }
+    }
+
+    public partial class Captions
+    {
+        public string Type { get; set; }
+        public string Title { get; set; }
+        public string[] CaptionsRequired { get; set; }
+        public CaptionsProperties Properties { get; set; }
+        public string TypeType { get; set; }
+        public Name TypeName { get; set; }
+        public string[] PropertiesOrder { get; set; }
+    }
+
+    public partial class CaptionsProperties
+    {
+        public Artist Id { get; set; }
+        public Artist Name { get; set; }
+    }
+
+    public partial class ChatMessage
+    {
+        public string Type { get; set; }
+        public string Title { get; set; }
+        public string[] ChatMessageRequired { get; set; }
+        public ChatMessageProperties Properties { get; set; }
+        public string TypeType { get; set; }
+        public Name TypeName { get; set; }
+        public string[] PropertiesOrder { get; set; }
+    }
+
+    public partial class ChatMessageProperties
+    {
+        public Artist Username { get; set; }
+        public Artist Time { get; set; }
+        public Artist Message { get; set; }
+    }
+
+    public partial class ChatMessages
+    {
+        public string Type { get; set; }
+        public string Title { get; set; }
+        public ChatMessagesProperties Properties { get; set; }
+        public string TypeType { get; set; }
+        public Name TypeName { get; set; }
+        public string[] PropertiesOrder { get; set; }
+    }
+
+    public partial class ChatMessagesProperties
+    {
+        public Album ChatMessage { get; set; }
+    }
+
+    public partial class Child
+    {
+        public string Type { get; set; }
+        public string Title { get; set; }
+        public string[] ChildRequired { get; set; }
+        public Dictionary<string, Artist> Properties { get; set; }
+        public string TypeType { get; set; }
+        public Name TypeName { get; set; }
+        public string[] PropertiesOrder { get; set; }
+    }
+
+    public partial class Directory
+    {
+        public string Type { get; set; }
+        public string Title { get; set; }
+        public string[] DirectoryRequired { get; set; }
+        public DirectoryProperties Properties { get; set; }
+        public string TypeType { get; set; }
+        public Name TypeName { get; set; }
+        public string[] PropertiesOrder { get; set; }
+    }
+
+    public partial class DirectoryProperties
+    {
+        public Album Child { get; set; }
+        public Artist Id { get; set; }
+        public Artist Parent { get; set; }
+        public Artist Name { get; set; }
+        public Artist Starred { get; set; }
+        public Artist UserRating { get; set; }
+        public Artist AverageRating { get; set; }
+        public Artist PlayCount { get; set; }
+    }
+
+    public partial class Error
+    {
+        public string Type { get; set; }
+        public string Title { get; set; }
+        public string[] ErrorRequired { get; set; }
+        public ErrorProperties Properties { get; set; }
+        public string TypeType { get; set; }
+        public Name TypeName { get; set; }
+        public string[] PropertiesOrder { get; set; }
+    }
+
+    public partial class ErrorProperties
+    {
+        public Artist Code { get; set; }
+        public Artist Message { get; set; }
+    }
+
+    public partial class Genre
+    {
+        public string Type { get; set; }
+        public string Title { get; set; }
+        public string[] GenreRequired { get; set; }
+        public GenreProperties Properties { get; set; }
+        public string TypeType { get; set; }
+        public Name TypeName { get; set; }
+        public string[] PropertiesOrder { get; set; }
+    }
+
+    public partial class GenreProperties
+    {
+        public Artist Content { get; set; }
+        public Artist SongCount { get; set; }
+        public Artist AlbumCount { get; set; }
+    }
+
+    public partial class Genres
+    {
+        public string Type { get; set; }
+        public string Title { get; set; }
+        public GenresProperties Properties { get; set; }
+        public string TypeType { get; set; }
+        public Name TypeName { get; set; }
+        public string[] PropertiesOrder { get; set; }
+    }
+
+    public partial class GenresProperties
+    {
+        public Album Genre { get; set; }
+    }
+
+    public partial class Index
+    {
+        public string Type { get; set; }
+        public string Title { get; set; }
+        public string[] IndexRequired { get; set; }
+        public IndexProperties Properties { get; set; }
+        public string TypeType { get; set; }
+        public Name TypeName { get; set; }
+        public string[] PropertiesOrder { get; set; }
+    }
+
+    public partial class IndexProperties
+    {
+        public Album Artist { get; set; }
+        public Artist Name { get; set; }
+    }
+
+    public partial class Indexes
+    {
+        public string Type { get; set; }
+        public string Title { get; set; }
+        public string[] IndexesRequired { get; set; }
+        public IndexesProperties Properties { get; set; }
+        public string TypeType { get; set; }
+        public Name TypeName { get; set; }
+        public string[] PropertiesOrder { get; set; }
+    }
+
+    public partial class IndexesProperties
+    {
+        public Album Shortcut { get; set; }
+        public Album Index { get; set; }
+        public Album Child { get; set; }
+        public Artist LastModified { get; set; }
+        public Artist IgnoredArticles { get; set; }
+    }
+
+    public partial class InternetRadioStation
+    {
+        public string Type { get; set; }
+        public string Title { get; set; }
+        public string[] InternetRadioStationRequired { get; set; }
+        public InternetRadioStationProperties Properties { get; set; }
+        public string TypeType { get; set; }
+        public Name TypeName { get; set; }
+        public string[] PropertiesOrder { get; set; }
+    }
+
+    public partial class InternetRadioStationProperties
+    {
+        public Artist Id { get; set; }
+        public Artist Name { get; set; }
+        public Artist StreamUrl { get; set; }
+        public Artist HomePageUrl { get; set; }
+    }
+
+    public partial class InternetRadioStations
+    {
+        public string Type { get; set; }
+        public string Title { get; set; }
+        public InternetRadioStationsProperties Properties { get; set; }
+        public string TypeType { get; set; }
+        public Name TypeName { get; set; }
+        public string[] PropertiesOrder { get; set; }
+    }
+
+    public partial class InternetRadioStationsProperties
+    {
+        public Album InternetRadioStation { get; set; }
+    }
+
+    public partial class JukeboxPlaylist
+    {
+        public JukeboxPlaylistAllOf[] AllOf { get; set; }
+        public string TypeType { get; set; }
+        public Name TypeName { get; set; }
+        public string[] PropertiesOrder { get; set; }
+    }
+
+    public partial class JukeboxPlaylistAllOf
+    {
+        public string Ref { get; set; }
+        public string Type { get; set; }
+        public string Title { get; set; }
+        public NowPlayingProperties Properties { get; set; }
+    }
+
+    public partial class NowPlayingProperties
+    {
+        public Album Entry { get; set; }
+    }
+
+    public partial class JukeboxStatus
+    {
+        public string Type { get; set; }
+        public string Title { get; set; }
+        public string[] JukeboxStatusRequired { get; set; }
+        public JukeboxStatusProperties Properties { get; set; }
+        public string TypeType { get; set; }
+        public Name TypeName { get; set; }
+        public string[] PropertiesOrder { get; set; }
+    }
+
+    public partial class JukeboxStatusProperties
+    {
+        public Artist CurrentIndex { get; set; }
+        public Artist Playing { get; set; }
+        public Artist Gain { get; set; }
+        public Artist Position { get; set; }
+    }
+
+    public partial class License
+    {
+        public string Type { get; set; }
+        public string Title { get; set; }
+        public string[] LicenseRequired { get; set; }
+        public LicenseProperties Properties { get; set; }
+        public string TypeType { get; set; }
+        public Name TypeName { get; set; }
+        public string[] PropertiesOrder { get; set; }
+    }
+
+    public partial class LicenseProperties
+    {
+        public Artist Valid { get; set; }
+        public Artist Email { get; set; }
+        public Artist LicenseExpires { get; set; }
+        public Artist TrialExpires { get; set; }
+    }
+
+    public partial class Lyrics
+    {
+        public string Type { get; set; }
+        public string Title { get; set; }
+        public LyricsProperties Properties { get; set; }
+        public string TypeType { get; set; }
+        public Name TypeName { get; set; }
+        public string[] PropertiesOrder { get; set; }
+    }
+
+    public partial class LyricsProperties
+    {
+        public Artist Content { get; set; }
+        public Artist Artist { get; set; }
+        public Artist Title { get; set; }
+    }
+
+    public partial class MediaType
+    {
+        public MediaTypeAllOf[] AllOf { get; set; }
+        public string TypeType { get; set; }
+        public Name TypeName { get; set; }
+    }
+
+    public partial class MediaTypeAllOf
+    {
+        public Uri Ref { get; set; }
+        public string[] Enum { get; set; }
+    }
+
+    public partial class MusicFolders
+    {
+        public string Type { get; set; }
+        public string Title { get; set; }
+        public MusicFoldersProperties Properties { get; set; }
+        public string TypeType { get; set; }
+        public Name TypeName { get; set; }
+        public string[] PropertiesOrder { get; set; }
+    }
+
+    public partial class MusicFoldersProperties
+    {
+        public Album MusicFolder { get; set; }
+    }
+
+    public partial class NewestPodcasts
+    {
+        public string Type { get; set; }
+        public string Title { get; set; }
+        public NewestPodcastsProperties Properties { get; set; }
+        public string TypeType { get; set; }
+        public Name TypeName { get; set; }
+        public string[] PropertiesOrder { get; set; }
+    }
+
+    public partial class NewestPodcastsProperties
+    {
+        public Album Episode { get; set; }
+    }
+
+    public partial class NowPlaying
+    {
+        public string Type { get; set; }
+        public string Title { get; set; }
+        public NowPlayingProperties Properties { get; set; }
+        public string TypeType { get; set; }
+        public Name TypeName { get; set; }
+        public string[] PropertiesOrder { get; set; }
+    }
+
+    public partial class NowPlayingEntry
+    {
+        public string[] NowPlayingEntryRequired { get; set; }
+        public NowPlayingEntryAllOf[] AllOf { get; set; }
+        public string TypeType { get; set; }
+        public Name TypeName { get; set; }
+        public string[] PropertiesOrder { get; set; }
+    }
+
+    public partial class NowPlayingEntryAllOf
+    {
+        public string Ref { get; set; }
+        public string Type { get; set; }
+        public string Title { get; set; }
+        public TentacledProperties Properties { get; set; }
+    }
+
+    public partial class TentacledProperties
+    {
+        public Artist Username { get; set; }
+        public Artist MinutesAgo { get; set; }
+        public Artist PlayerId { get; set; }
+        public Artist PlayerName { get; set; }
+    }
+
+    public partial class PlayQueue
+    {
+        public string Type { get; set; }
+        public string Title { get; set; }
+        public string[] PlayQueueRequired { get; set; }
+        public PlayQueueProperties Properties { get; set; }
+        public string TypeType { get; set; }
+        public Name TypeName { get; set; }
+        public string[] PropertiesOrder { get; set; }
+    }
+
+    public partial class PlayQueueProperties
+    {
+        public Album Entry { get; set; }
+        public Artist Current { get; set; }
+        public Artist Position { get; set; }
+        public Artist Username { get; set; }
+        public Artist Changed { get; set; }
+        public Artist ChangedBy { get; set; }
+    }
+
+    public partial class Playlist
+    {
+        public string Type { get; set; }
+        public string Title { get; set; }
+        public string[] PlaylistRequired { get; set; }
+        public PlaylistProperties Properties { get; set; }
+        public string TypeType { get; set; }
+        public Name TypeName { get; set; }
+        public string[] PropertiesOrder { get; set; }
+    }
+
+    public partial class PlaylistProperties
+    {
+        public Album AllowedUser { get; set; }
+        public Artist Id { get; set; }
+        public Artist Name { get; set; }
+        public Artist Comment { get; set; }
+        public Artist Owner { get; set; }
+        public Artist Public { get; set; }
+        public Artist SongCount { get; set; }
+        public Artist Duration { get; set; }
+        public Artist Created { get; set; }
+        public Artist Changed { get; set; }
+        public Artist CoverArt { get; set; }
+    }
+
+    public partial class Playlists
+    {
+        public string Type { get; set; }
+        public string Title { get; set; }
+        public PlaylistsProperties Properties { get; set; }
+        public string TypeType { get; set; }
+        public Name TypeName { get; set; }
+        public string[] PropertiesOrder { get; set; }
+    }
+
+    public partial class PlaylistsProperties
+    {
+        public Album Playlist { get; set; }
+    }
+
+    public partial class PodcastChannel
+    {
+        public string Type { get; set; }
+        public string Title { get; set; }
+        public string[] PodcastChannelRequired { get; set; }
+        public PodcastChannelProperties Properties { get; set; }
+        public string TypeType { get; set; }
+        public Name TypeName { get; set; }
+        public string[] PropertiesOrder { get; set; }
+    }
+
+    public partial class PodcastChannelProperties
+    {
+        public Album Episode { get; set; }
+        public Artist Id { get; set; }
+        public Artist Url { get; set; }
+        public Artist Title { get; set; }
+        public Artist Description { get; set; }
+        public Artist CoverArt { get; set; }
+        public Artist OriginalImageUrl { get; set; }
+        public Artist Status { get; set; }
+        public Artist ErrorMessage { get; set; }
+    }
+
+    public partial class PodcastEpisode
+    {
+        public string[] PodcastEpisodeRequired { get; set; }
+        public PodcastEpisodeAllOf[] AllOf { get; set; }
+        public string TypeType { get; set; }
+        public Name TypeName { get; set; }
+        public string[] PropertiesOrder { get; set; }
+    }
+
+    public partial class PodcastEpisodeAllOf
+    {
+        public string Ref { get; set; }
+        public string Type { get; set; }
+        public string Title { get; set; }
+        public StickyProperties Properties { get; set; }
+    }
+
+    public partial class StickyProperties
+    {
+        public Artist StreamId { get; set; }
+        public Artist ChannelId { get; set; }
+        public Artist Description { get; set; }
+        public Artist Status { get; set; }
+        public Artist PublishDate { get; set; }
+    }
+
+    public partial class Podcasts
+    {
+        public string Type { get; set; }
+        public string Title { get; set; }
+        public PodcastsProperties Properties { get; set; }
+        public string TypeType { get; set; }
+        public Name TypeName { get; set; }
+        public string[] PropertiesOrder { get; set; }
+    }
+
+    public partial class PodcastsProperties
+    {
+        public Album Channel { get; set; }
+    }
+
+    public partial class ScanStatus
+    {
+        public string Type { get; set; }
+        public string Title { get; set; }
+        public string[] ScanStatusRequired { get; set; }
+        public ScanStatusProperties Properties { get; set; }
+        public string TypeType { get; set; }
+        public Name TypeName { get; set; }
+        public string[] PropertiesOrder { get; set; }
+    }
+
+    public partial class ScanStatusProperties
+    {
+        public Artist Scanning { get; set; }
+        public Artist Count { get; set; }
+    }
+
+    public partial class SearchResult
+    {
+        public string Type { get; set; }
+        public string Title { get; set; }
+        public string[] SearchResultRequired { get; set; }
+        public SearchResultProperties Properties { get; set; }
+        public string TypeType { get; set; }
+        public Name TypeName { get; set; }
+        public string[] PropertiesOrder { get; set; }
+    }
+
+    public partial class SearchResultProperties
+    {
+        public Album Match { get; set; }
+        public Artist Offset { get; set; }
+        public Artist TotalHits { get; set; }
+    }
+
+    public partial class SearchResult2
+    {
+        public string Type { get; set; }
+        public string Title { get; set; }
+        public SearchResult2Properties Properties { get; set; }
+        public string TypeType { get; set; }
+        public Name TypeName { get; set; }
+        public PropertiesOrder[] PropertiesOrder { get; set; }
+    }
+
+    public partial class SearchResult2Properties
+    {
+        public Album Artist { get; set; }
+        public Album Album { get; set; }
+        public Album Song { get; set; }
+    }
+
+    public partial class Share
+    {
+        public string Type { get; set; }
+        public string Title { get; set; }
+        public string[] ShareRequired { get; set; }
+        public ShareProperties Properties { get; set; }
+        public string TypeType { get; set; }
+        public Name TypeName { get; set; }
+        public string[] PropertiesOrder { get; set; }
+    }
+
+    public partial class ShareProperties
+    {
+        public Album Entry { get; set; }
+        public Artist Id { get; set; }
+        public Artist Url { get; set; }
+        public Artist Description { get; set; }
+        public Artist Username { get; set; }
+        public Artist Created { get; set; }
+        public Artist Expires { get; set; }
+        public Artist LastVisited { get; set; }
+        public Artist VisitCount { get; set; }
+    }
+
+    public partial class Shares
+    {
+        public string Type { get; set; }
+        public string Title { get; set; }
+        public SharesProperties Properties { get; set; }
+        public string TypeType { get; set; }
+        public Name TypeName { get; set; }
+        public string[] PropertiesOrder { get; set; }
+    }
+
+    public partial class SharesProperties
+    {
+        public Album Share { get; set; }
+    }
+
+    public partial class SimilarSongs
+    {
+        public string Type { get; set; }
+        public string Title { get; set; }
+        public SimilarSongsProperties Properties { get; set; }
+        public string TypeType { get; set; }
+        public Name TypeName { get; set; }
+        public PropertiesOrder[] PropertiesOrder { get; set; }
+    }
+
+    public partial class User
+    {
+        public string Type { get; set; }
+        public string Title { get; set; }
+        public string[] UserRequired { get; set; }
+        public UserProperties Properties { get; set; }
+        public string TypeType { get; set; }
+        public Name TypeName { get; set; }
+        public string[] PropertiesOrder { get; set; }
+    }
+
+    public partial class UserProperties
+    {
+        public Album Folder { get; set; }
+        public Artist Username { get; set; }
+        public Artist Email { get; set; }
+        public Artist ScrobblingEnabled { get; set; }
+        public Artist MaxBitRate { get; set; }
+        public Artist AdminRole { get; set; }
+        public Artist SettingsRole { get; set; }
+        public Artist DownloadRole { get; set; }
+        public Artist UploadRole { get; set; }
+        public Artist PlaylistRole { get; set; }
+        public Artist CoverArtRole { get; set; }
+        public Artist CommentRole { get; set; }
+        public Artist PodcastRole { get; set; }
+        public Artist StreamRole { get; set; }
+        public Artist JukeboxRole { get; set; }
+        public Artist ShareRole { get; set; }
+        public Artist VideoConversionRole { get; set; }
+        public Artist AvatarLastChanged { get; set; }
+    }
+
+    public partial class Users
+    {
+        public string Type { get; set; }
+        public string Title { get; set; }
+        public UsersProperties Properties { get; set; }
+        public string TypeType { get; set; }
+        public Name TypeName { get; set; }
+        public string[] PropertiesOrder { get; set; }
+    }
+
+    public partial class UsersProperties
+    {
+        public Album User { get; set; }
+    }
+
+    public partial class VideoConversion
+    {
+        public string Type { get; set; }
+        public string Title { get; set; }
+        public string[] VideoConversionRequired { get; set; }
+        public VideoConversionProperties Properties { get; set; }
+        public string TypeType { get; set; }
+        public Name TypeName { get; set; }
+        public string[] PropertiesOrder { get; set; }
+    }
+
+    public partial class VideoConversionProperties
+    {
+        public Artist Id { get; set; }
+        public Artist BitRate { get; set; }
+        public Artist AudioTrackId { get; set; }
+    }
+
+    public partial class VideoInfo
+    {
+        public string Type { get; set; }
+        public string Title { get; set; }
+        public string[] VideoInfoRequired { get; set; }
+        public VideoInfoProperties Properties { get; set; }
+        public string TypeType { get; set; }
+        public Name TypeName { get; set; }
+        public string[] PropertiesOrder { get; set; }
+    }
+
+    public partial class VideoInfoProperties
+    {
+        public Album Captions { get; set; }
+        public Album AudioTrack { get; set; }
+        public Album Conversion { get; set; }
+        public Artist Id { get; set; }
+    }
+
+    public partial class Videos
+    {
+        public string Type { get; set; }
+        public string Title { get; set; }
+        public VideosProperties Properties { get; set; }
+        public string TypeType { get; set; }
+        public Name TypeName { get; set; }
+        public string[] PropertiesOrder { get; set; }
+    }
+
+    public partial class VideosProperties
+    {
+        public Album Video { get; set; }
+    }
+
+    public enum PropertyType { Attribute, Element, Value };
+
+    public enum TypeEnum { Array };
+
+    public enum PropertiesOrder { Album, Artist, Song };
+}

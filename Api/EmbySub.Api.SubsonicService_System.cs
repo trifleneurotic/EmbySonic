@@ -134,38 +134,38 @@ namespace EmbySub.Api
           return await client.PostAsync(url, body);
         }
 
-        private static string GetErrorObject(SystemBase req)
+        private static string GetErrorObject(SystemBase req, out string type)
         {
           if (String.IsNullOrEmpty(req.f))
           {
             var subReq = new EmbySub.XmlResponse();
-            var e = new EmbySub.Error();
+            var e = new EmbySub.Error2();
             e.code = 0;
             e.message = "Login failed";
             subReq.status = EmbySub.ResponseStatus.failed;
             subReq.Item = e;
             subReq.ItemElementName = EmbySub.ItemChoiceType.error;
             subReq.version = SupportedSubsonicApiVersion;
+            type = "text/xml";
             return Serializer<EmbySub.XmlResponse>.Serialize(subReq);
           }
           if (req.f.Equals("json"))
           {
             var subReq = new EmbySub.JsonResponse();
-            var ep = new EmbySub.ErrorProperties();
-            ep.Code = 0;
-            ep.Message = "Login failed";
             var e = new EmbySub.Error();
-            e.Properties = ep;
-            var d = new EmbySub.Definitions();
-            d.Error = e;
-            subReq.Definitions = d;
+            e.Code = 0;
+            e.Message = "Login failed";
+            subReq.root["error"] = e;
+            subReq.root["_status"] = "failed";
             var options = new JsonSerializerOptions
               {
                   IgnoreNullValues = true,
                   WriteIndented = true
               };
+            type = "text/json";
             return JsonSerializer.Serialize(subReq, options);
           }
+          type = String.Empty;
           return null;
         }
 
@@ -177,7 +177,7 @@ namespace EmbySub.Api
 
           if (!hrm.IsSuccessStatusCode)
           {
-           str = GetErrorObject(req);
+           str = GetErrorObject(req, out contentType);
           }
           else
           {
@@ -201,6 +201,7 @@ namespace EmbySub.Api
           }
 
           _logger.Info("*************");
+          _logger.Info(contentType);
           _logger.Info(str);
           _logger.Info("*************");
           return ResultFactory.GetResult(Request, Encoding.UTF8.GetBytes(str), contentType, null);
@@ -214,7 +215,7 @@ namespace EmbySub.Api
 
           if (!hrm.IsSuccessStatusCode)
           {
-           str = GetErrorObject(req);
+           str = GetErrorObject(req, out contentType);
           }
           else
           {
@@ -232,19 +233,16 @@ namespace EmbySub.Api
             else if (req.f.Equals("json"))
             {
               EmbySub.JsonResponse r = new EmbySub.JsonResponse();
-              var lp = new EmbySub.LicenseProperties();
+              var lp = new EmbySub.License();
               lp.Valid = true;
               lp.Email = "billingsupport@emby.media";
-              var l = new EmbySub.License();
-              l.Properties = lp;
-              var d = new EmbySub.Definitions();
-              d.License = l;
-              r.Definitions = d;
               var options = new JsonSerializerOptions
               {
                   IgnoreNullValues = true,
                   WriteIndented = true
               };
+              r.root[""] = lp;
+              r.root["_status"] = "ok";
               str = JsonSerializer.Serialize(r, options);
               contentType = "text/json";
             }

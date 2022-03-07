@@ -3,73 +3,18 @@ using System.Text.Json.Serialization;
 
 namespace EmbySub
 {
+ 
 
     public partial class JsonResponse
     {
-        public Uri Id { get; set; }
-        public Definitions Definitions { get; set; }
-        public AnyOf[] AnyOf { get; set; }
 
         [JsonPropertyName("subsonic-response")]
-        public Dictionary<string, string> root { get; set; } = new Dictionary<string, string>()
+        public Dictionary<string, object> root { get; set; } = new Dictionary<string, object>()
         {
             {"_xmlns", "http://subsonic.org/restapi"},
-            {"_status", "ok"},
             {"_version", "1.16.1"}
         };
 
-
-    }
-
-    public partial class AnyOf
-    {
-        public string Type { get; set; }
-        public AnyOfProperties Properties { get; set; }
-        public Name ElementName { get; set; }
-    }
-
-    public partial class Name
-    {
-        public string LocalPart { get; set; }
-        public string NamespaceUri { get; set; }
-    }
-
-    public partial class AnyOfProperties
-    {
-        public NameClass Name { get; set; }
-        public Value Value { get; set; }
-    }
-
-    public partial class NameClass
-    {
-        public NameAllOf[] AllOf { get; set; }
-    }
-
-    public partial class NameAllOf
-    {
-        public Uri Ref { get; set; }
-        public string Type { get; set; }
-        public PurpleProperties Properties { get; set; }
-    }
-
-    public partial class PurpleProperties
-    {
-        public LocalPart LocalPart { get; set; }
-        public LocalPart NamespaceUri { get; set; }
-    }
-
-    public partial class LocalPart
-    {
-        public string[] Enum { get; set; }
-    }
-
-    public partial class Value
-    {
-        public string Ref { get; set; }
-    }
-
-    public partial class Definitions
-    {
         public PodcastEpisode PodcastEpisode { get; set; }
         public ArtistInfo ArtistInfo { get; set; }
         public Child Response { get; set; }
@@ -83,6 +28,8 @@ namespace EmbySub
         public Directory Directory { get; set; }
         public ScanStatus ScanStatus { get; set; }
         public ArtistsId3 ArtistsId3 { get; set; }
+
+        [JsonPropertyName("error")]
         public Error Error { get; set; }
         public SimilarSongs SimilarSongs { get; set; }
         public Genres Genres { get; set; }
@@ -135,6 +82,54 @@ namespace EmbySub
         public MediaType PodcastStatus { get; set; }
         public MediaType MediaType { get; set; }
         public MediaType ResponseStatus { get; set; }
+    }
+
+
+    public partial class AnyOf
+    {
+        public string Type { get; set; }
+        public AnyOfProperties Properties { get; set; }
+        public Name ElementName { get; set; }
+    }
+
+    public partial class Name
+    {
+        public string LocalPart { get; set; }
+        public string NamespaceUri { get; set; }
+    }
+
+    public partial class AnyOfProperties
+    {
+        public NameClass Name { get; set; }
+        public Value Value { get; set; }
+    }
+
+    public partial class NameClass
+    {
+        public NameAllOf[] AllOf { get; set; }
+    }
+
+    public partial class NameAllOf
+    {
+        public Uri Ref { get; set; }
+        public string Type { get; set; }
+        public PurpleProperties Properties { get; set; }
+    }
+
+    public partial class PurpleProperties
+    {
+        public LocalPart LocalPart { get; set; }
+        public LocalPart NamespaceUri { get; set; }
+    }
+
+    public partial class LocalPart
+    {
+        public string[] Enum { get; set; }
+    }
+
+    public partial class Value
+    {
+        public string Ref { get; set; }
     }
 
     public partial class AlbumId3
@@ -481,18 +476,10 @@ namespace EmbySub
 
     public partial class Error
     {
-        public string Type { get; set; }
-        public string Title { get; set; }
-        public string[] ErrorRequired { get; set; }
-        public ErrorProperties Properties { get; set; }
-        public string TypeType { get; set; }
-        public Name TypeName { get; set; }
-        public string[] PropertiesOrder { get; set; }
-    }
-
-    public partial class ErrorProperties
-    {
+        [JsonPropertyName("code")]
         public int Code { get; set; }
+
+        [JsonPropertyName("message")]
         public string Message { get; set; }
     }
 
@@ -642,21 +629,11 @@ namespace EmbySub
 
     public partial class License
     {
-        public string Type { get; set; }
-        public string Title { get; set; }
-        public string[] LicenseRequired { get; set; }
-        public LicenseProperties Properties { get; set; }
-        public string TypeType { get; set; }
-        public Name TypeName { get; set; }
-        public string[] PropertiesOrder { get; set; }
-    }
-
-    public partial class LicenseProperties
-    {
+        [JsonPropertyName("valid")]
         public bool Valid { get; set; }
+
+        [JsonPropertyName("email")]
         public string Email { get; set; }
-        public Artist LicenseExpires { get; set; }
-        public Artist TrialExpires { get; set; }
     }
 
     public partial class Lyrics

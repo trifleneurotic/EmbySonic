@@ -44,7 +44,7 @@ namespace EmbySub {
         [System.Xml.Serialization.XmlElementAttribute("bookmarks", typeof(Bookmarks))]
         [System.Xml.Serialization.XmlElementAttribute("chatMessages", typeof(ChatMessages))]
         [System.Xml.Serialization.XmlElementAttribute("directory", typeof(Directory))]
-        [System.Xml.Serialization.XmlElementAttribute("error", typeof(Error))]
+        [System.Xml.Serialization.XmlElementAttribute("error", typeof(Error2))]
         [System.Xml.Serialization.XmlElementAttribute("genres", typeof(Genres))]
         [System.Xml.Serialization.XmlElementAttribute("indexes", typeof(Indexes))]
         [System.Xml.Serialization.XmlElementAttribute("internetRadioStations", typeof(InternetRadioStations))]
@@ -789,7 +789,7 @@ namespace EmbySub {
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://subsonic.org/restapi")]
-    public partial class Error {
+    public partial class Error2 {
         
         private int codeField;
         

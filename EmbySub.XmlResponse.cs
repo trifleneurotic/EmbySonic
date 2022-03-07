@@ -50,7 +50,7 @@ namespace EmbySub {
         [System.Xml.Serialization.XmlElementAttribute("internetRadioStations", typeof(InternetRadioStations))]
         [System.Xml.Serialization.XmlElementAttribute("jukeboxPlaylist", typeof(JukeboxPlaylist))]
         [System.Xml.Serialization.XmlElementAttribute("jukeboxStatus", typeof(JukeboxStatus))]
-        [System.Xml.Serialization.XmlElementAttribute("license", typeof(License))]
+        [System.Xml.Serialization.XmlElementAttribute("license", typeof(License2))]
         [System.Xml.Serialization.XmlElementAttribute("lyrics", typeof(Lyrics))]
         [System.Xml.Serialization.XmlElementAttribute("musicFolders", typeof(MusicFolders))]
         [System.Xml.Serialization.XmlElementAttribute("newestPodcasts", typeof(NewestPodcasts))]
@@ -2931,7 +2931,7 @@ namespace EmbySub {
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://subsonic.org/restapi")]
-    public partial class License {
+    public partial class License2 {
         
         private bool validField;
         

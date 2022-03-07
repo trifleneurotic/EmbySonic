@@ -222,12 +222,12 @@ namespace EmbySub.Api
             if (String.IsNullOrEmpty(req.f))
             {
               EmbySub.XmlResponse r = new EmbySub.XmlResponse();
-              EmbySub.License l = new EmbySub.License();
+              EmbySub.License2 l = new EmbySub.License2();
               l.valid = true;
               l.email = "billingsupport@emby.media";
               r.Item = l;
               r.ItemElementName = EmbySub.ItemChoiceType.license;
-              str = Serializer<EmbySub.Response>.Serialize(r);
+              str = Serializer<EmbySub.XmlResponse>.Serialize(r);
               contentType = "text/xml";
             }
             else if (req.f.Equals("json"))

@@ -1,4 +1,7 @@
-﻿namespace EmbySub
+﻿using System.Text.Json;
+using System.Text.Json.Serialization;
+
+namespace EmbySub
 {
 
     public partial class JsonResponse
@@ -6,6 +9,16 @@
         public Uri Id { get; set; }
         public Definitions Definitions { get; set; }
         public AnyOf[] AnyOf { get; set; }
+
+        [JsonPropertyName("subsonic-response")]
+        public Dictionary<string, string> root { get; set; } = new Dictionary<string, string>()
+        {
+            {"_xmlns", "http://subsonic.org/restapi"},
+            {"_status", "ok"},
+            {"_version", "1.16.1"}
+        };
+
+
     }
 
     public partial class AnyOf
@@ -432,7 +445,7 @@
         public Album ChatMessage { get; set; }
     }
 
-    public partial class Child
+    public partial class Child2
     {
         public string Type { get; set; }
         public string Title { get; set; }
@@ -479,8 +492,8 @@
 
     public partial class ErrorProperties
     {
-        public Artist Code { get; set; }
-        public Artist Message { get; set; }
+        public int Code { get; set; }
+        public string Message { get; set; }
     }
 
     public partial class Genre
@@ -640,8 +653,8 @@
 
     public partial class LicenseProperties
     {
-        public Artist Valid { get; set; }
-        public Artist Email { get; set; }
+        public bool Valid { get; set; }
+        public string Email { get; set; }
         public Artist LicenseExpires { get; set; }
         public Artist TrialExpires { get; set; }
     }

@@ -22,7 +22,7 @@ namespace EmbySub {
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://subsonic.org/restapi")]
     [System.Xml.Serialization.XmlRootAttribute("subsonic-response", Namespace="http://subsonic.org/restapi", IsNullable=false)]
-    public partial class Response {
+    public partial class XmlResponse : Response {
         
         private object itemField;
         
@@ -230,7 +230,7 @@ namespace EmbySub {
         
         private string artistIdField;
         
-        private MediaType typeField;
+        private MediaType2 typeField;
         
         private bool typeFieldSpecified;
         
@@ -677,7 +677,7 @@ namespace EmbySub {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
-        public MediaType type {
+        public MediaType2 type {
             get {
                 return this.typeField;
             }
@@ -768,7 +768,7 @@ namespace EmbySub {
     [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.8.3928.0")]
     [System.SerializableAttribute()]
     [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://subsonic.org/restapi")]
-    public enum MediaType {
+    public enum MediaType2 {
         
         /// <remarks/>
         music,

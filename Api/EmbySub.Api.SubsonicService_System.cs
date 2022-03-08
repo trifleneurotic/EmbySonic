@@ -241,7 +241,7 @@ namespace EmbySub.Api
                   IgnoreNullValues = true,
                   WriteIndented = true
               };
-              r.root[""] = lp;
+              r.root["license"] = lp;
               r.root["_status"] = "ok";
               str = JsonSerializer.Serialize(r, options);
               contentType = "text/json";

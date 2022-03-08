@@ -17,7 +17,7 @@ namespace EmbySub
 
         public PodcastEpisode PodcastEpisode { get; set; }
         public ArtistInfo ArtistInfo { get; set; }
-        public Child Response { get; set; }
+        public Child2 Response { get; set; }
         public NewestPodcasts NewestPodcasts { get; set; }
         public Share Share { get; set; }
         public InternetRadioStation InternetRadioStation { get; set; }
@@ -69,11 +69,13 @@ namespace EmbySub
         public AlbumInfo ArtistInfoBase { get; set; }
         public SearchResult SearchResult { get; set; }
         public AlbumList AlbumList2 { get; set; }
-        public Child Child { get; set; }
+        public Child2 Child { get; set; }
         public Podcasts Podcasts { get; set; }
         public Index IndexId3 { get; set; }
         public ChatMessage ChatMessage { get; set; }
         public ArtistClass Artist { get; set; }
+        
+        [JsonPropertyName("albumList")]
         public AlbumList AlbumList { get; set; }
         public NowPlaying NowPlaying { get; set; }
         public PlayQueue PlayQueue { get; set; }
@@ -191,12 +193,7 @@ namespace EmbySub
 
     public partial class AlbumList
     {
-        public string Type { get; set; }
-        public string Title { get; set; }
-        public AlbumListProperties Properties { get; set; }
-        public string TypeType { get; set; }
-        public Name TypeName { get; set; }
-        public PropertiesOrder[] PropertiesOrder { get; set; }
+        public List<Child2> Albums { get; set; }
     }
 
     public partial class AlbumListProperties
@@ -442,14 +439,617 @@ namespace EmbySub
 
     public partial class Child2
     {
-        public string Type { get; set; }
-        public string Title { get; set; }
-        public string[] ChildRequired { get; set; }
-        public Dictionary<string, Artist> Properties { get; set; }
-        public string TypeType { get; set; }
-        public Name TypeName { get; set; }
-        public string[] PropertiesOrder { get; set; }
+        private string idField;
+        
+        private string parentField;
+        
+        private bool isDirField;
+        
+        private string titleField;
+        
+        private string albumField;
+        
+        private string artistField;
+        
+        private int trackField;
+        
+        private bool trackFieldSpecified;
+        
+        private int yearField;
+        
+        private bool yearFieldSpecified;
+        
+        private string genreField;
+        
+        private string coverArtField;
+        
+        private long sizeField;
+        
+        private bool sizeFieldSpecified;
+        
+        private string contentTypeField;
+        
+        private string suffixField;
+        
+        private string transcodedContentTypeField;
+        
+        private string transcodedSuffixField;
+        
+        private int durationField;
+        
+        private bool durationFieldSpecified;
+        
+        private int bitRateField;
+        
+        private bool bitRateFieldSpecified;
+        
+        private string pathField;
+        
+        private bool isVideoField;
+        
+        private bool isVideoFieldSpecified;
+        
+        private int userRatingField;
+        
+        private bool userRatingFieldSpecified;
+        
+        private double averageRatingField;
+        
+        private bool averageRatingFieldSpecified;
+        
+        private long playCountField;
+        
+        private bool playCountFieldSpecified;
+        
+        private int discNumberField;
+        
+        private bool discNumberFieldSpecified;
+        
+        private System.DateTime createdField;
+        
+        private bool createdFieldSpecified;
+        
+        private System.DateTime starredField;
+        
+        private bool starredFieldSpecified;
+        
+        private string albumIdField;
+        
+        private string artistIdField;
+        
+        private MediaType2 typeField;
+        
+        private bool typeFieldSpecified;
+        
+        private long bookmarkPositionField;
+        
+        private bool bookmarkPositionFieldSpecified;
+        
+        private int originalWidthField;
+        
+        private bool originalWidthFieldSpecified;
+        
+        private int originalHeightField;
+        
+        private bool originalHeightFieldSpecified;
+        
+        
+        [JsonPropertyName("id")]
+        public string id {
+            get {
+                return this.idField;
+            }
+            set {
+                this.idField = value;
+            }
+        }
+        
+        
+        [JsonPropertyName("parent")]
+        public string parent {
+            get {
+                return this.parentField;
+            }
+            set {
+                this.parentField = value;
+            }
+        }
+        
+        
+        [JsonPropertyName("isDir")]
+        public bool isDir {
+            get {
+                return this.isDirField;
+            }
+            set {
+                this.isDirField = value;
+            }
+        }
+        
+        
+        [JsonPropertyName("title")]
+        public string title {
+            get {
+                return this.titleField;
+            }
+            set {
+                this.titleField = value;
+            }
+        }
+        
+        
+        
+        public string album {
+            get {
+                return this.albumField;
+            }
+            set {
+                this.albumField = value;
+            }
+        }
+        
+        
+        
+        public string artist {
+            get {
+                return this.artistField;
+            }
+            set {
+                this.artistField = value;
+            }
+        }
+        
+        
+        
+        public int track {
+            get {
+                return this.trackField;
+            }
+            set {
+                this.trackField = value;
+            }
+        }
+        
+        
+        [System.Xml.Serialization.XmlIgnoreAttribute()]
+        public bool trackSpecified {
+            get {
+                return this.trackFieldSpecified;
+            }
+            set {
+                this.trackFieldSpecified = value;
+            }
+        }
+        
+        
+        
+        public int year {
+            get {
+                return this.yearField;
+            }
+            set {
+                this.yearField = value;
+            }
+        }
+        
+        
+        public bool yearSpecified {
+            get {
+                return this.yearFieldSpecified;
+            }
+            set {
+                this.yearFieldSpecified = value;
+            }
+        }
+        
+        
+        
+        public string genre {
+            get {
+                return this.genreField;
+            }
+            set {
+                this.genreField = value;
+            }
+        }
+        
+        
+        [JsonPropertyName("covertArt")]
+        public string coverArt {
+            get {
+                return this.coverArtField;
+            }
+            set {
+                this.coverArtField = value;
+            }
+        }
+        
+        
+        
+        public long size {
+            get {
+                return this.sizeField;
+            }
+            set {
+                this.sizeField = value;
+            }
+        }
+        
+        
+        [System.Xml.Serialization.XmlIgnoreAttribute()]
+        public bool sizeSpecified {
+            get {
+                return this.sizeFieldSpecified;
+            }
+            set {
+                this.sizeFieldSpecified = value;
+            }
+        }
+        
+        
+        
+        public string contentType {
+            get {
+                return this.contentTypeField;
+            }
+            set {
+                this.contentTypeField = value;
+            }
+        }
+        
+        
+        
+        public string suffix {
+            get {
+                return this.suffixField;
+            }
+            set {
+                this.suffixField = value;
+            }
+        }
+        
+        
+        
+        public string transcodedContentType {
+            get {
+                return this.transcodedContentTypeField;
+            }
+            set {
+                this.transcodedContentTypeField = value;
+            }
+        }
+        
+        
+        
+        public string transcodedSuffix {
+            get {
+                return this.transcodedSuffixField;
+            }
+            set {
+                this.transcodedSuffixField = value;
+            }
+        }
+        
+        
+        
+        public int duration {
+            get {
+                return this.durationField;
+            }
+            set {
+                this.durationField = value;
+            }
+        }
+        
+        
+        [System.Xml.Serialization.XmlIgnoreAttribute()]
+        public bool durationSpecified {
+            get {
+                return this.durationFieldSpecified;
+            }
+            set {
+                this.durationFieldSpecified = value;
+            }
+        }
+        
+        
+        
+        public int bitRate {
+            get {
+                return this.bitRateField;
+            }
+            set {
+                this.bitRateField = value;
+            }
+        }
+        
+        
+        [System.Xml.Serialization.XmlIgnoreAttribute()]
+        public bool bitRateSpecified {
+            get {
+                return this.bitRateFieldSpecified;
+            }
+            set {
+                this.bitRateFieldSpecified = value;
+            }
+        }
+        
+        
+        
+        public string path {
+            get {
+                return this.pathField;
+            }
+            set {
+                this.pathField = value;
+            }
+        }
+        
+        
+        
+        public bool isVideo {
+            get {
+                return this.isVideoField;
+            }
+            set {
+                this.isVideoField = value;
+            }
+        }
+        
+        
+        [System.Xml.Serialization.XmlIgnoreAttribute()]
+        public bool isVideoSpecified {
+            get {
+                return this.isVideoFieldSpecified;
+            }
+            set {
+                this.isVideoFieldSpecified = value;
+            }
+        }
+        
+        
+        
+        public int userRating {
+            get {
+                return this.userRatingField;
+            }
+            set {
+                this.userRatingField = value;
+            }
+        }
+        
+        
+        [System.Xml.Serialization.XmlIgnoreAttribute()]
+        public bool userRatingSpecified {
+            get {
+                return this.userRatingFieldSpecified;
+            }
+            set {
+                this.userRatingFieldSpecified = value;
+            }
+        }
+        
+        
+        
+        public double averageRating {
+            get {
+                return this.averageRatingField;
+            }
+            set {
+                this.averageRatingField = value;
+            }
+        }
+        
+        
+        [System.Xml.Serialization.XmlIgnoreAttribute()]
+        public bool averageRatingSpecified {
+            get {
+                return this.averageRatingFieldSpecified;
+            }
+            set {
+                this.averageRatingFieldSpecified = value;
+            }
+        }
+        
+        
+        
+        public long playCount {
+            get {
+                return this.playCountField;
+            }
+            set {
+                this.playCountField = value;
+            }
+        }
+        
+        
+        [System.Xml.Serialization.XmlIgnoreAttribute()]
+        public bool playCountSpecified {
+            get {
+                return this.playCountFieldSpecified;
+            }
+            set {
+                this.playCountFieldSpecified = value;
+            }
+        }
+        
+        
+        
+        public int discNumber {
+            get {
+                return this.discNumberField;
+            }
+            set {
+                this.discNumberField = value;
+            }
+        }
+        
+        
+        [System.Xml.Serialization.XmlIgnoreAttribute()]
+        public bool discNumberSpecified {
+            get {
+                return this.discNumberFieldSpecified;
+            }
+            set {
+                this.discNumberFieldSpecified = value;
+            }
+        }
+        
+        
+        
+        public System.DateTime created {
+            get {
+                return this.createdField;
+            }
+            set {
+                this.createdField = value;
+            }
+        }
+        
+        
+        [System.Xml.Serialization.XmlIgnoreAttribute()]
+        public bool createdSpecified {
+            get {
+                return this.createdFieldSpecified;
+            }
+            set {
+                this.createdFieldSpecified = value;
+            }
+        }
+        
+        
+        
+        public System.DateTime starred {
+            get {
+                return this.starredField;
+            }
+            set {
+                this.starredField = value;
+            }
+        }
+        
+        
+        [System.Xml.Serialization.XmlIgnoreAttribute()]
+        public bool starredSpecified {
+            get {
+                return this.starredFieldSpecified;
+            }
+            set {
+                this.starredFieldSpecified = value;
+            }
+        }
+        
+        
+        
+        public string albumId {
+            get {
+                return this.albumIdField;
+            }
+            set {
+                this.albumIdField = value;
+            }
+        }
+        
+        
+        
+        public string artistId {
+            get {
+                return this.artistIdField;
+            }
+            set {
+                this.artistIdField = value;
+            }
+        }
+        
+        
+        
+        public MediaType2 type {
+            get {
+                return this.typeField;
+            }
+            set {
+                this.typeField = value;
+            }
+        }
+        
+        
+        [System.Xml.Serialization.XmlIgnoreAttribute()]
+        public bool typeSpecified {
+            get {
+                return this.typeFieldSpecified;
+            }
+            set {
+                this.typeFieldSpecified = value;
+            }
+        }
+        
+        
+        
+        public long bookmarkPosition {
+            get {
+                return this.bookmarkPositionField;
+            }
+            set {
+                this.bookmarkPositionField = value;
+            }
+        }
+        
+        
+        [System.Xml.Serialization.XmlIgnoreAttribute()]
+        public bool bookmarkPositionSpecified {
+            get {
+                return this.bookmarkPositionFieldSpecified;
+            }
+            set {
+                this.bookmarkPositionFieldSpecified = value;
+            }
+        }
+        
+        
+        
+        public int originalWidth {
+            get {
+                return this.originalWidthField;
+            }
+            set {
+                this.originalWidthField = value;
+            }
+        }
+        
+        
+        [System.Xml.Serialization.XmlIgnoreAttribute()]
+        public bool originalWidthSpecified {
+            get {
+                return this.originalWidthFieldSpecified;
+            }
+            set {
+                this.originalWidthFieldSpecified = value;
+            }
+        }
+        
+        
+        
+        public int originalHeight {
+            get {
+                return this.originalHeightField;
+            }
+            set {
+                this.originalHeightField = value;
+            }
+        }
+        
+        
+        [System.Xml.Serialization.XmlIgnoreAttribute()]
+        public bool originalHeightSpecified {
+            get {
+                return this.originalHeightFieldSpecified;
+            }
+            set {
+                this.originalHeightFieldSpecified = value;
+            }
+        }
     }
+    
 
     public partial class Directory
     {

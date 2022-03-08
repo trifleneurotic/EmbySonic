@@ -200,10 +200,6 @@ namespace EmbySub.Api
             }
           }
 
-          _logger.Info("*************");
-          _logger.Info(contentType);
-          _logger.Info(str);
-          _logger.Info("*************");
           return ResultFactory.GetResult(Request, Encoding.UTF8.GetBytes(str), contentType, null);
         }
 
@@ -248,10 +244,6 @@ namespace EmbySub.Api
             }
           }
 
-          _logger.Info("*************");
-          _logger.Info(contentType);
-          _logger.Info(str);
-          _logger.Info("*************");
           return ResultFactory.GetResult(Request, Encoding.UTF8.GetBytes(str), contentType, null);
          }
         }

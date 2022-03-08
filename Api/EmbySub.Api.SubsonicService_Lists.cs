@@ -127,44 +127,33 @@ namespace EmbySub.Api
 
           JsonElement allArtists = j.RootElement.GetProperty("Items");
 
+          StringBuilder sb = new StringBuilder();
+
+          // now let's get each artist ID into an exclusion list because....
+          foreach (JsonElement artist in allArtists.EnumerateArray())
+          {
+            sb.AppendFormat("{0},", artist.GetProperty("Id").ToString());
+          }
+
+          String sz = Convert.ToString(req.size  == 0 ? 10 : req.size);
+          String ty = GetEmbyListType(req.type);
+
+          // ....we want to exclude artist-only records in our hierarchical library....
+          url = String.Format("http://localhost:{0}/emby/Items?Recursive=true&ParentId={1}&IncludeItemTypes=Folder&ExcludeItemTypes=Audio&ExcludeItemIds={2}&SortBy={3}&Limit={4}&Fields=ParentId", Plugin.Instance.Configuration.LocalEmbyPort, musicLibId, sb.ToString(), ty, sz);
+          hrm = await c.GetAsync(url);
+          hrmraw = await hrm.Content.ReadAsStringAsync();
+          JsonDocument k = JsonDocument.Parse(hrmraw);
+
+          JsonElement returnedAlbums = k.RootElement.GetProperty("Items");
+
           if (req.f.Equals("json"))
           {
+            List<EmbySub.Child2> albums;
+            AddAlbumsToList(returnedAlbums, req, out albums);
             EmbySub.JsonResponse r = new EmbySub.JsonResponse();
-            List<EmbySub.Child2> albums = new List<EmbySub.Child2>();
             contentType = "text/json";
 
-            StringBuilder sb = new StringBuilder();
-
-             // now let's get each artist ID into an exclusion list because....
-            foreach (JsonElement artist in allArtists.EnumerateArray())
-            {
-              sb.AppendFormat("{0},", artist.GetProperty("Id").ToString());
-            }
-
-            String sz = Convert.ToString(req.size  == 0 ? 10 : req.size);
-            String ty = GetEmbyListType(req.type);
-
-            // ....we want to exclude artist-only records in our hierarchical library....
-            url = String.Format("http://localhost:{0}/emby/Items?Recursive=true&ParentId={1}&IncludeItemTypes=Folder&ExcludeItemTypes=Audio&ExcludeItemIds={2}&SortBy={3}&Limit={4}&Fields=ParentId", Plugin.Instance.Configuration.LocalEmbyPort, musicLibId, sb.ToString(), ty, sz);
-            hrm = await c.GetAsync(url);
-            hrmraw = await hrm.Content.ReadAsStringAsync();
-            JsonDocument k = JsonDocument.Parse(hrmraw);
-
-            JsonElement returnedAlbums = k.RootElement.GetProperty("Items");
-
-            // ....and then add each album to our list
-            foreach (JsonElement album in returnedAlbums.EnumerateArray())
-            {
-              EmbySub.Child2 ch = new EmbySub.Child2();
-              ch.isDir = album.GetProperty("IsFolder").GetBoolean();
-              ch.id = album.GetProperty("Id").ToString();
-              ch.parent = album.GetProperty("ParentId").ToString();
-              ch.title = album.GetProperty("Name").ToString();
-              ch.coverArt = album.GetProperty("ImageTags").GetProperty("Primary").ToString();
-              albums.Add(ch);
-            }
-            // lastly let's convert the above list and add to our Subsonic XML to return
-            var options = new JsonSerializerOptions
+             var options = new JsonSerializerOptions
             {
                 IgnoreNullValues = true,
                 WriteIndented = true
@@ -174,56 +163,52 @@ namespace EmbySub.Api
             str = JsonSerializer.Serialize(r, options);
             str = Serializer<EmbySub.JsonResponse>.Serialize(r);
           }
-          else
+          else if (string.IsNullOrEmpty(req.f))
           {
             EmbySub.XmlResponse r = new EmbySub.XmlResponse();
-            r.ItemElementName = EmbySub.ItemChoiceType.albumList;
+            r.ItemElementName = EmbySub.ItemChoiceType.albumList3;
             List<EmbySub.Child> albums = new List<EmbySub.Child>();
+            AddAlbumsToList(returnedAlbums, req, out albums);
             contentType = "text/xml";
 
-            StringBuilder sb = new StringBuilder();
-
-            // now let's get each artist ID into an exclusion list because....
-            foreach (JsonElement artist in allArtists.EnumerateArray())
-            {
-              sb.AppendFormat("{0},", artist.GetProperty("Id").ToString());
-            }
-
-            String sz = Convert.ToString(req.size  == 0 ? 10 : req.size);
-            String ty = GetEmbyListType(req.type);
-
-            // ....we want to exclude artist-only records in our hierarchical library....
-            url = String.Format("http://localhost:{0}/emby/Items?Recursive=true&ParentId={1}&IncludeItemTypes=Folder&ExcludeItemTypes=Audio&ExcludeItemIds={2}&SortBy={3}&Limit={4}&Fields=ParentId", Plugin.Instance.Configuration.LocalEmbyPort, musicLibId, sb.ToString(), ty, sz);
-            hrm = await c.GetAsync(url);
-            hrmraw = await hrm.Content.ReadAsStringAsync();
-            JsonDocument k = JsonDocument.Parse(hrmraw);
-
-            JsonElement returnedAlbums = k.RootElement.GetProperty("Items");
-
-            // ....and then add each album to our list
-            foreach (JsonElement album in returnedAlbums.EnumerateArray())
-            {
-              EmbySub.Child ch = new EmbySub.Child();
-              ch.isDir = album.GetProperty("IsFolder").GetBoolean();
-              ch.id = album.GetProperty("Id").ToString();
-              ch.parent = album.GetProperty("ParentId").ToString();
-              ch.title = album.GetProperty("Name").ToString();
-              ch.coverArt = album.GetProperty("ImageTags").GetProperty("Primary").ToString();
-              albums.Add(ch);
-            }
-
-            // lastly let's convert the above list and add to our Subsonic XML to return
-            EmbySub.AlbumList al = new EmbySub.AlbumList();
+            EmbySub.AlbumList3 al = new EmbySub.AlbumList3();
             al.album = albums.ToArray();
             r.Item = al;
             r.version = SupportedSubsonicApiVersion;
             str = Serializer<EmbySub.XmlResponse>.Serialize(r);
+          }
+          }
+          url = String.Format("http://localhost:{0}/emby/Sessions/Logout", Plugin.Instance.Configuration.LocalEmbyPort);
+           await c.PostAsync(url, null);
+           return ResultFactory.GetResult(Request, Encoding.UTF8.GetBytes(str), contentType, null);
+        }
 
-          }
-          }
-            url = String.Format("http://localhost:{0}/emby/Sessions/Logout", Plugin.Instance.Configuration.LocalEmbyPort);
-            await c.PostAsync(url, null);
-            return ResultFactory.GetResult(Request, Encoding.UTF8.GetBytes(str), contentType, null);
+         private static void AddAlbumsToList(JsonElement ra, ListAlbum r, out List<EmbySub.Child> l)
+        {
+          l = new List<EmbySub.Child>();
+          foreach (JsonElement album in ra.EnumerateArray())
+            {
+              EmbySub.Child ch = new EmbySub.Child();
+              ch.id = album.GetProperty("Id").ToString();
+              ch.parent = album.GetProperty("ParentId").ToString();
+              ch.title = album.GetProperty("Name").ToString();
+              ch.coverArt = album.GetProperty("ImageTags").GetProperty("Primary").ToString();
+              l.Add(ch);
+            }
+        }
+
+         private static void AddAlbumsToList(JsonElement ra, ListAlbum r, out List<EmbySub.Child2> l)
+        {
+          l = new List<EmbySub.Child2>();
+          foreach (JsonElement album in ra.EnumerateArray())
+            {
+              EmbySub.Child2 ch = new EmbySub.Child2();
+              ch.id = album.GetProperty("Id").ToString();
+              ch.parent = album.GetProperty("ParentId").ToString();
+              ch.title = album.GetProperty("Name").ToString();
+              ch.coverArt = album.GetProperty("ImageTags").GetProperty("Primary").ToString();
+              l.Add(ch);
+            }
         }
     }
 }

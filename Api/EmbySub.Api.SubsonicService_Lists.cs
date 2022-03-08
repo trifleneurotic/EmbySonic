@@ -146,7 +146,21 @@ namespace EmbySub.Api
 
           JsonElement returnedAlbums = k.RootElement.GetProperty("Items");
 
-          if (req.f.Equals("json"))
+          if (string.IsNullOrEmpty(req.f))
+          {
+            EmbySub.XmlResponse r = new EmbySub.XmlResponse();
+            r.ItemElementName = EmbySub.ItemChoiceType.albumList;
+            List<EmbySub.Child> albums = new List<EmbySub.Child>();
+            AddAlbumsToList(returnedAlbums, req, out albums);
+            contentType = "text/xml";
+
+            EmbySub.AlbumList3 al = new EmbySub.AlbumList3();
+            al.album = albums.ToArray();
+            r.Item = al;
+            r.version = SupportedSubsonicApiVersion;
+            str = Serializer<EmbySub.XmlResponse>.Serialize(r);
+          }
+          else if (req.f.Equals("json"))
           {
             List<EmbySub.Child2> albums;
             AddAlbumsToList(returnedAlbums, req, out albums);
@@ -161,21 +175,6 @@ namespace EmbySub.Api
             r.root["_status"] = "ok";
             r.root["albumList"] = albums;
             str = JsonSerializer.Serialize(r, options);
-            str = Serializer<EmbySub.JsonResponse>.Serialize(r);
-          }
-          else if (string.IsNullOrEmpty(req.f))
-          {
-            EmbySub.XmlResponse r = new EmbySub.XmlResponse();
-            r.ItemElementName = EmbySub.ItemChoiceType.albumList3;
-            List<EmbySub.Child> albums = new List<EmbySub.Child>();
-            AddAlbumsToList(returnedAlbums, req, out albums);
-            contentType = "text/xml";
-
-            EmbySub.AlbumList3 al = new EmbySub.AlbumList3();
-            al.album = albums.ToArray();
-            r.Item = al;
-            r.version = SupportedSubsonicApiVersion;
-            str = Serializer<EmbySub.XmlResponse>.Serialize(r);
           }
           }
           url = String.Format("http://localhost:{0}/emby/Sessions/Logout", Plugin.Instance.Configuration.LocalEmbyPort);

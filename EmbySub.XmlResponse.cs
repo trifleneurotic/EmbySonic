@@ -35,7 +35,7 @@ namespace EmbySub {
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute("album", typeof(AlbumWithSongsID3))]
         [System.Xml.Serialization.XmlElementAttribute("albumInfo", typeof(AlbumInfo))]
-        [System.Xml.Serialization.XmlElementAttribute("albumList3", typeof(AlbumList3))]
+        [System.Xml.Serialization.XmlElementAttribute("albumList", typeof(AlbumList3))]
         [System.Xml.Serialization.XmlElementAttribute("albumList2", typeof(AlbumList2))]
         [System.Xml.Serialization.XmlElementAttribute("artist", typeof(ArtistWithAlbumsID3))]
         [System.Xml.Serialization.XmlElementAttribute("artistInfo", typeof(ArtistInfo))]
@@ -4270,7 +4270,7 @@ namespace EmbySub {
         albumInfo,
         
         /// <remarks/>
-        albumList3,
+        albumList,
         
         /// <remarks/>
         albumList2,

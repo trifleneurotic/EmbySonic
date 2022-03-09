@@ -165,6 +165,7 @@ namespace EmbySub {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlIgnoreAttribute()]
+        [JsonIgnore]
         public ItemChoiceType ItemElementName {
             get {
                 return this.itemElementNameField;
@@ -176,6 +177,7 @@ namespace EmbySub {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
+        [JsonIgnore]
         public ResponseStatus status {
             get {
                 return this.statusField;
@@ -1107,11 +1109,11 @@ namespace EmbySub {
     [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://subsonic.org/restapi")]
     public partial class ArtistInfo2 : ArtistInfoBase {
         
-        private ArtistID3Xml[] similarArtistField;
+        private ArtistID3[] similarArtistField;
         
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute("similarArtist")]
-        public ArtistID3Xml[] similarArtist {
+        public ArtistID3[] similarArtist {
             get {
                 return this.similarArtistField;
             }
@@ -1128,7 +1130,7 @@ namespace EmbySub {
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://subsonic.org/restapi")]
-    public partial class ArtistID3Xml {
+    public partial class ArtistID3 {
         
         private string idField;
         
@@ -1228,7 +1230,7 @@ namespace EmbySub {
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://subsonic.org/restapi")]
-    public partial class ArtistWithAlbumsID3 : ArtistID3Xml {
+    public partial class ArtistWithAlbumsID3 : ArtistID3 {
         
         private AlbumID3[] albumField;
         
@@ -1686,7 +1688,7 @@ namespace EmbySub {
     [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://subsonic.org/restapi")]
     public partial class Starred2 {
         
-        private ArtistID3Xml[] artistField;
+        private ArtistID3[] artistField;
         
         private AlbumID3[] albumField;
         
@@ -1694,7 +1696,7 @@ namespace EmbySub {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute("artist")]
-        public ArtistID3Xml[] artist {
+        public ArtistID3[] artist {
             get {
                 return this.artistField;
             }
@@ -3413,7 +3415,7 @@ namespace EmbySub {
     [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://subsonic.org/restapi")]
     public partial class SearchResult3 {
         
-        private ArtistID3Xml[] artistField;
+        private ArtistID3[] artistField;
         
         private AlbumID3[] albumField;
         
@@ -3421,7 +3423,7 @@ namespace EmbySub {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute("artist")]
-        public ArtistID3Xml[] artist {
+        public ArtistID3[] artist {
             get {
                 return this.artistField;
             }
@@ -3878,15 +3880,15 @@ namespace EmbySub {
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://subsonic.org/restapi")]
-    public partial class IndexID3Xml {
+    public partial class IndexID3 {
         
-        private ArtistID3Xml[] artistField;
+        private ArtistID3[] artistField;
         
         private string nameField;
         
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute("artist")]
-        public ArtistID3Xml[] artist {
+        public ArtistID3[] artist {
             get {
                 return this.artistField;
             }
@@ -3915,13 +3917,13 @@ namespace EmbySub {
     [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://subsonic.org/restapi")]
     public partial class ArtistsID3 {
         
-        private IndexID3Xml[] indexField;
+        private IndexID3[] indexField;
         
         private string ignoredArticlesField;
         
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute("index")]
-        public IndexID3Xml[] index {
+        public IndexID3[] index {
             get {
                 return this.indexField;
             }
@@ -4360,6 +4362,8 @@ namespace EmbySub {
         
         /// <remarks/>
         albumList,
+        /// <remarks/>
+        albumList2,
         
         /// <remarks/>
         artist,

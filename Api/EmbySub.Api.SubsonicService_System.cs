@@ -195,6 +195,7 @@ namespace EmbySub.Api
                   IgnoreNullValues = true,
                   WriteIndented = true
               };
+              r.root["_status"] = "ok";
               str = JsonSerializer.Serialize(r, options);
               contentType = "text/json";
             }

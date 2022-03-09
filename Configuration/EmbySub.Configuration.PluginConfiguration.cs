@@ -7,13 +7,13 @@ namespace EmbySub.Configuration
     /// </summary>
     public class PluginConfiguration : BasePluginConfiguration
     {
-      public PluginConfiguration()
-      {
-        LocalEmbyPort = 8096;
-        MusicLibraryName = "EmbyMusic";
-      }
+        public PluginConfiguration()
+        {
+            LocalEmbyPort = 8096;
+            MusicLibraryName = "EmbyMusic";
+        }
 
-      public int LocalEmbyPort { get; set; }
-      public string MusicLibraryName { get; set; }
+        public int LocalEmbyPort { get; set; }
+        public string MusicLibraryName { get; set; }
     }
 }

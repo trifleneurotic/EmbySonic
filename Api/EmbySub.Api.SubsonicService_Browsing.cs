@@ -4,33 +4,33 @@ using System.Text.Json;
 
 namespace EmbySub.Api
 {
-    [Route("/rest/getAlbum", "GET", Description = "Returns an individual album")]
+    [Route("/rest/getAlbum.view", "GET", Description = "Returns an individual album")]
     public class BrowsingGetAlbum : SystemBase
     {
         [ApiMember(Name = "Album ID", Description = "Emby ID of album", IsRequired = true, DataType = "string", ParameterType = "query", Verb = "GET")]
         public string? id { get; set; }
     }
 
-    [Route("/rest/getArtists", "GET", Description = "Returns an ID3 (non-folder) list of all artists")]
+    [Route("/rest/getArtists.view", "GET", Description = "Returns an ID3 (non-folder) list of all artists")]
     public class BrowsingGetArtists : SystemBase
     {
       [ApiMember(Name = "Music Folder ID", Description = "Emby ID of music folder", IsRequired = false, DataType = "string", ParameterType = "query", Verb = "GET")]
       public string? musicFolderId { get; set; }
     }
 
-    [Route("/rest/getIndexes", "GET", Description = "Returns an indexed list of all artists")]
+    [Route("/rest/getIndexes.view", "GET", Description = "Returns an indexed list of all artists")]
     public class BrowsingGetIndexes : SystemBase
     {
       [ApiMember(Name = "Music Folder ID", Description = "Emby ID of music folder", IsRequired = false, DataType = "string", ParameterType = "query", Verb = "GET")]
       public string? musicFolderId { get; set; }
     }
 
-    [Route("/rest/getMusicFolders", "GET", Description = "Returns top level music folder configured for plugin")]
+    [Route("/rest/getMusicFolders.view", "GET", Description = "Returns top level music folder configured for plugin")]
     public class BrowsingGetMusicFolders : SystemBase
     {
     }
 
-    [Route("/rest/getMusicDirectory", "GET", Description = "Returns specific music directory")]
+    [Route("/rest/getMusicDirectory.view", "GET", Description = "Returns specific music directory")]
     public class BrowsingGetMusicDirectory : SystemBase
     {
       [ApiMember(Name = "Music Folder ID", Description = "Emby ID of music folder", IsRequired = true, DataType = "string", ParameterType = "query", Verb = "GET")]
@@ -55,6 +55,13 @@ namespace EmbySub.Api
           bgi.musicFolderId = req.id;
           bgi.u = req.u;
           bgi.p = req.p;
+          bgi.c = req.c;
+          bgi.v = req.v;
+
+          if (!String.IsNullOrEmpty(req.f))
+          {
+            bgi.f = req.f;
+          }
           return await this.Get(bgi);
         }
 
@@ -143,6 +150,7 @@ namespace EmbySub.Api
 
           List<EmbySub.IndexID3> li = this.GetLetterIndex(q);
           EmbySub.ArtistsID3 a = new EmbySub.ArtistsID3();
+          a.ignoredArticles = "The El La Los Las Le Les";
           a.index = li.ToArray();
 
           if (string.IsNullOrEmpty(req.f))

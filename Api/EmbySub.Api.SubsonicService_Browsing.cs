@@ -95,7 +95,7 @@ namespace EmbySub.Api
           Dictionary<String, HashSet<String>> d = new Dictionary<String, HashSet<String>>();
 
           // make an artist ID lookup dictionary for convenience
-          Dictionary<String, String> artistWithId = new Dictionary<String, String>();
+          Dictionary<String, ArtistPackage> artistWithId = new Dictionary<String, ArtistPackage>();
 
           String albumArtist = string.Empty;
           String artistId = string.Empty;
@@ -131,7 +131,10 @@ namespace EmbySub.Api
 
             if (!artistWithId.ContainsKey(albumArtist))
             {
-              artistWithId.Add(albumArtist, artistId);
+              ArtistPackage ta = new ArtistPackage();
+              ta.artistName = albumArtist;
+              ta.artistId = artistId;
+              artistWithId.Add(albumArtist, ta);
             }
           }
 
@@ -141,10 +144,8 @@ namespace EmbySub.Api
           Queue<ArtistPackage> q = new Queue<ArtistPackage>();
           foreach(KeyValuePair<string, HashSet<String>> entry in sortedDict)
           {
-            ArtistPackage ap = new ArtistPackage();
-            ap.artistName = entry.Key;
+            ArtistPackage ap = artistWithId[entry.Key];
             ap.albums = entry.Value;
-            ap.artistId = artistWithId[ap.artistName];
             q.Enqueue(ap);
           }
 
@@ -233,7 +234,6 @@ namespace EmbySub.Api
               break;
             }
         }
-
         return letterIndex;
         
         }

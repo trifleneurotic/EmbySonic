@@ -1249,6 +1249,7 @@ namespace EmbySub {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
+        [JsonIgnore]
         public System.DateTime starred {
             get {
                 return this.starredField;
@@ -1260,6 +1261,7 @@ namespace EmbySub {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlIgnoreAttribute()]
+        [JsonIgnore]
         public bool starredSpecified {
             get {
                 return this.starredFieldSpecified;

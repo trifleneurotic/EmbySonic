@@ -139,12 +139,12 @@ namespace EmbySub.Api
           if (String.IsNullOrEmpty(req.f))
           {
             var subReq = new EmbySub.XmlResponse();
-            var e = new EmbySub.Error2();
+            var e = new EmbySub.ErrorXml();
             e.code = 0;
             e.message = "Login failed";
             subReq.status = EmbySub.ResponseStatus.failed;
             subReq.Item = e;
-            subReq.ItemElementName = EmbySub.ItemChoiceType.error;
+            subReq.ItemElementName = EmbySub.ItemChoiceType.errorXml;
             subReq.version = SupportedSubsonicApiVersion;
             type = "text/xml";
             return Serializer<EmbySub.XmlResponse>.Serialize(subReq);
@@ -152,7 +152,7 @@ namespace EmbySub.Api
           if (req.f.Equals("json"))
           {
             var subReq = new EmbySub.JsonResponse();
-            var e = new EmbySub.Error();
+            var e = new EmbySub.ErrorJson();
             e.Code = 0;
             e.Message = "Login failed";
             subReq.root["error"] = e;
@@ -218,7 +218,7 @@ namespace EmbySub.Api
             if (String.IsNullOrEmpty(req.f))
             {
               EmbySub.XmlResponse r = new EmbySub.XmlResponse();
-              EmbySub.License2 l = new EmbySub.License2();
+              EmbySub.LicenseXml l = new EmbySub.LicenseXml();
               l.valid = true;
               l.email = "billingsupport@emby.media";
               r.Item = l;
@@ -229,7 +229,7 @@ namespace EmbySub.Api
             else if (req.f.Equals("json"))
             {
               EmbySub.JsonResponse r = new EmbySub.JsonResponse();
-              var lp = new EmbySub.License();
+              var lp = new EmbySub.LicenseJson();
               lp.Valid = true;
               lp.Email = "billingsupport@emby.media";
               var options = new JsonSerializerOptions

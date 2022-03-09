@@ -78,33 +78,24 @@ namespace EmbySub.Api
         public async Task<object> Get(BrowsingGetArtists req)
         {
           HttpResponseMessage hrm = await Login(req);
-          var subReq = new EmbySub.Response();
-          String hrmraw, xmlString, s;
-
-          // if login is NOT successful return an error....
+          String contentType = String.Empty;
+          String str = String.Empty;
+          String hrmraw = String.Empty;
+          String s = String.Empty;
+          String url = String.Empty;
           if (!hrm.IsSuccessStatusCode)
           {
-            subReq.ItemElementName = EmbySub.ItemChoiceType.error;
-            EmbySub.Error e = new EmbySub.Error();
-            e.code = 0;
-            e.message = "Login failed";
-            subReq.Item = e;
-            subReq.version = SupportedSubsonicApiVersion;
-            xmlString = Serializer<EmbySub.Response>.Serialize(subReq);
-            return ResultFactory.GetResult(Request, xmlString, null);
+           str = GetErrorObject(req, out contentType);
           }
-          // otherwise it was successful so grab & store the auth token
           else
           {
             hrmraw = await hrm.Content.ReadAsStringAsync();
             JsonDocument doc = JsonDocument.Parse(hrmraw);
             c.DefaultRequestHeaders.Add("Accept", "application/json");
             c.DefaultRequestHeaders.Add("X-Emby-Token", doc.RootElement.GetProperty("AccessToken").ToString());
-          }
-
 
           // let's get a list of all ID3 songs
-          String url = String.Format("http://emby.localdomain:{0}/emby/Items?IncludeItemTypes=Audio&Recursive=true", Plugin.Instance.Configuration.LocalEmbyPort);
+          url = String.Format("http://emby.localdomain:{0}/emby/Items?IncludeItemTypes=Audio&Recursive=true", Plugin.Instance.Configuration.LocalEmbyPort);
           HttpResponseMessage mes = await c.GetAsync(url);
           hrmraw = await mes.Content.ReadAsStringAsync();
           JsonDocument k = JsonDocument.Parse(hrmraw);
@@ -169,6 +160,9 @@ namespace EmbySub.Api
 
           char[] alpha = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".ToCharArray();
 
+          if (string.IsNullOrEmpty(req.f))
+          {
+
           EmbySub.ArtistsID3 artistListID3 = new EmbySub.ArtistsID3();
           List<EmbySub.IndexID3> letterIndex = new List<EmbySub.IndexID3>();
           
@@ -216,23 +210,29 @@ namespace EmbySub.Api
             }
           }
 
-
-          artistListID3.index = letterIndex.ToArray();
-
-          subReq.Item = artistListID3;
-          subReq.ItemElementName = EmbySub.ItemChoiceType.artists;
-          subReq.version = SupportedSubsonicApiVersion;
-          xmlString = Serializer<EmbySub.Response>.Serialize(subReq);
+          EmbySub.XmlResponse r = new EmbySub.XmlResponse();
+          r.ItemElementName = EmbySub.ItemChoiceType.artists;
+          r.version = SupportedSubsonicApiVersion;
+          str = Serializer<EmbySub.Response>.Serialize(r);
+          }
+          
+          else if (req.f.Equals("json"))
+          {
+            EmbySub.ArtistsID3Json artistListId3 = new EmbySub.ArtistsID3Json();
+            List<EmbySub.IndexJson> letterIndex = new List<EmbySub.IndexJson>();
+            
+          }
 
           url = String.Format("http://localhost:{0}/emby/Sessions/Logout", Plugin.Instance.Configuration.LocalEmbyPort);
           await c.PostAsync(url, null);
           return ResultFactory.GetResult(Request, xmlString, null);
         }
+        }
 
         public async Task<object> Get(BrowsingGetMusicFolders req)
         {
           HttpResponseMessage hrm = await Login(req);
-          var subReq = new EmbySub.Response();
+          var subReq = new EmbySub.XmlResponse();
           String hrmraw, xmlString, s;
 
           // if login is NOT successful return an error....

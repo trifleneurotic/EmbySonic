@@ -35,8 +35,8 @@ namespace EmbySub {
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute("album", typeof(AlbumWithSongsID3))]
         [System.Xml.Serialization.XmlElementAttribute("albumInfo", typeof(AlbumInfo))]
-        [System.Xml.Serialization.XmlElementAttribute("albumList", typeof(AlbumList3))]
-        [System.Xml.Serialization.XmlElementAttribute("albumList2", typeof(AlbumList2))]
+        [System.Xml.Serialization.XmlElementAttribute("albumList", typeof(AlbumListXml))]
+        [System.Xml.Serialization.XmlElementAttribute("albumList2", typeof(AlbumListID3Xml))]
         [System.Xml.Serialization.XmlElementAttribute("artist", typeof(ArtistWithAlbumsID3))]
         [System.Xml.Serialization.XmlElementAttribute("artistInfo", typeof(ArtistInfo))]
         [System.Xml.Serialization.XmlElementAttribute("artistInfo2", typeof(ArtistInfo2))]
@@ -44,13 +44,13 @@ namespace EmbySub {
         [System.Xml.Serialization.XmlElementAttribute("bookmarks", typeof(Bookmarks))]
         [System.Xml.Serialization.XmlElementAttribute("chatMessages", typeof(ChatMessages))]
         [System.Xml.Serialization.XmlElementAttribute("directory", typeof(Directory))]
-        [System.Xml.Serialization.XmlElementAttribute("error", typeof(Error2))]
+        [System.Xml.Serialization.XmlElementAttribute("error", typeof(ErrorXml))]
         [System.Xml.Serialization.XmlElementAttribute("genres", typeof(Genres))]
         [System.Xml.Serialization.XmlElementAttribute("indexes", typeof(Indexes))]
         [System.Xml.Serialization.XmlElementAttribute("internetRadioStations", typeof(InternetRadioStations))]
         [System.Xml.Serialization.XmlElementAttribute("jukeboxPlaylist", typeof(JukeboxPlaylist))]
         [System.Xml.Serialization.XmlElementAttribute("jukeboxStatus", typeof(JukeboxStatus))]
-        [System.Xml.Serialization.XmlElementAttribute("license", typeof(License2))]
+        [System.Xml.Serialization.XmlElementAttribute("license", typeof(LicenseXml))]
         [System.Xml.Serialization.XmlElementAttribute("lyrics", typeof(Lyrics))]
         [System.Xml.Serialization.XmlElementAttribute("musicFolders", typeof(MusicFolders))]
         [System.Xml.Serialization.XmlElementAttribute("newestPodcasts", typeof(NewestPodcasts))]
@@ -789,7 +789,7 @@ namespace EmbySub {
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://subsonic.org/restapi")]
-    public partial class Error2 {
+    public partial class ErrorXml {
         
         private int codeField;
         
@@ -2526,7 +2526,7 @@ namespace EmbySub {
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://subsonic.org/restapi")]
-    public partial class AlbumList2 {
+    public partial class AlbumListID3Xml {
         
         private AlbumID3[] albumField;
         
@@ -2548,7 +2548,7 @@ namespace EmbySub {
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://subsonic.org/restapi")]
-    public partial class AlbumList3 {
+    public partial class AlbumListXml {
         
         private Child[] albumField;
         
@@ -2931,7 +2931,7 @@ namespace EmbySub {
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://subsonic.org/restapi")]
-    public partial class License2 {
+    public partial class LicenseXml {
         
         private bool validField;
         
@@ -4270,10 +4270,10 @@ namespace EmbySub {
         albumInfo,
         
         /// <remarks/>
-        albumList,
+        albumListId3Xml,
         
         /// <remarks/>
-        albumList2,
+        albumListXml,
         
         /// <remarks/>
         artist,
@@ -4297,7 +4297,7 @@ namespace EmbySub {
         directory,
         
         /// <remarks/>
-        error,
+        errorXml,
         
         /// <remarks/>
         genres,

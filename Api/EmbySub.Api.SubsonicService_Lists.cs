@@ -91,11 +91,11 @@ namespace EmbySub.Api
             if (String.IsNullOrEmpty(req.f))
             {
               EmbySub.XmlResponse r = new EmbySub.XmlResponse();
-              EmbySub.Error2 e = new EmbySub.Error2();
+              EmbySub.ErrorXml e = new EmbySub.ErrorXml();
               e.code = 0;
               e.message = "Music library does not exist";
               r.Item = e;
-              r.ItemElementName = EmbySub.ItemChoiceType.error;
+              r.ItemElementName = EmbySub.ItemChoiceType.errorXml;
               str = Serializer<EmbySub.XmlResponse>.Serialize(r);
               contentType = "text/xml";
               return ResultFactory.GetResult(Request, Encoding.UTF8.GetBytes(str), contentType, null);
@@ -103,7 +103,7 @@ namespace EmbySub.Api
             else if (req.f.Equals("json"))
             {
               EmbySub.JsonResponse r = new EmbySub.JsonResponse();
-              var e = new EmbySub.Error();
+              var e = new EmbySub.ErrorJson();
               e.Code = 0;
               e.Message = "Music library does not exist";
               var options = new JsonSerializerOptions
@@ -149,12 +149,12 @@ namespace EmbySub.Api
           if (string.IsNullOrEmpty(req.f))
           {
             EmbySub.XmlResponse r = new EmbySub.XmlResponse();
-            r.ItemElementName = EmbySub.ItemChoiceType.albumList;
-            List<EmbySub.Child> albums = new List<EmbySub.Child>();
+            r.ItemElementName = EmbySub.ItemChoiceType.albumListXml;
+            List<EmbySub.Child> albums;
             AddAlbumsToList(returnedAlbums, req, out albums);
             contentType = "text/xml";
 
-            EmbySub.AlbumList3 al = new EmbySub.AlbumList3();
+            EmbySub.AlbumListXml al = new EmbySub.AlbumListXml();
             al.album = albums.ToArray();
             r.Item = al;
             r.version = SupportedSubsonicApiVersion;

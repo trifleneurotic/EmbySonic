@@ -138,23 +138,23 @@ namespace EmbySub.Api
         {
           if (String.IsNullOrEmpty(req.f))
           {
-            var subReq = new EmbySub.XmlResponse();
-            var e = new EmbySub.ErrorXml();
+            var subReq = new EmbySub.Response();
+            var e = new EmbySub.Error();
             e.code = 0;
             e.message = "Login failed";
             subReq.status = EmbySub.ResponseStatus.failed;
             subReq.Item = e;
-            subReq.ItemElementName = EmbySub.ItemChoiceType.errorXml;
+            subReq.ItemElementName = EmbySub.ItemChoiceType.error;
             subReq.version = SupportedSubsonicApiVersion;
             type = "text/xml";
-            return Serializer<EmbySub.XmlResponse>.Serialize(subReq);
+            return Serializer<EmbySub.Response>.Serialize(subReq);
           }
           if (req.f.Equals("json"))
           {
             var subReq = new EmbySub.JsonResponse();
-            var e = new EmbySub.ErrorJson();
-            e.Code = 0;
-            e.Message = "Login failed";
+            var e = new EmbySub.Error();
+            e.code = 0;
+            e.message = "Login failed";
             subReq.root["error"] = e;
             subReq.root["_status"] = "failed";
             var options = new JsonSerializerOptions
@@ -183,8 +183,8 @@ namespace EmbySub.Api
           {
             if (String.IsNullOrEmpty(req.f))
             {
-              EmbySub.XmlResponse r = new EmbySub.XmlResponse();
-              str = Serializer<EmbySub.XmlResponse>.Serialize(r);
+              EmbySub.Response r = new EmbySub.Response();
+              str = Serializer<EmbySub.Response>.Serialize(r);
               contentType = "text/xml";
             }
             else if (req.f.Equals("json"))
@@ -217,21 +217,21 @@ namespace EmbySub.Api
           {
             if (String.IsNullOrEmpty(req.f))
             {
-              EmbySub.XmlResponse r = new EmbySub.XmlResponse();
-              EmbySub.LicenseXml l = new EmbySub.LicenseXml();
+              EmbySub.Response r = new EmbySub.Response();
+              EmbySub.License l = new EmbySub.License();
               l.valid = true;
               l.email = "billingsupport@emby.media";
               r.Item = l;
               r.ItemElementName = EmbySub.ItemChoiceType.license;
-              str = Serializer<EmbySub.XmlResponse>.Serialize(r);
+              str = Serializer<EmbySub.Response>.Serialize(r);
               contentType = "text/xml";
             }
             else if (req.f.Equals("json"))
             {
               EmbySub.JsonResponse r = new EmbySub.JsonResponse();
-              var lp = new EmbySub.LicenseJson();
-              lp.Valid = true;
-              lp.Email = "billingsupport@emby.media";
+              var lp = new EmbySub.License();
+              lp.valid = true;
+              lp.email = "billingsupport@emby.media";
               var options = new JsonSerializerOptions
               {
                   IgnoreNullValues = true,

@@ -64,6 +64,8 @@ namespace EmbySub.Api
       public String artistId { get; set; }
     }
 
+    
+
     public partial class SubsonicService : IService, IRequiresRequest
     {
         public async Task<object> Get(BrowsingGetMusicDirectory req)
@@ -158,56 +160,10 @@ namespace EmbySub.Api
             q.Enqueue(ap);
           }
 
-          char[] alpha = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".ToCharArray();
+          
 
           if (string.IsNullOrEmpty(req.f))
           {
-
-          EmbySub.ArtistsID3 artistListID3 = new EmbySub.ArtistsID3();
-          List<EmbySub.IndexID3> letterIndex = new List<EmbySub.IndexID3>();
-          
-          // for each letter of the alphabet....
-          foreach(char c in alpha)
-          {
-            ArtistPackage artpac;
-            if (q.TryPeek(out artpac))
-            {
-              List<EmbySub.ArtistID3> artistIndex = new List<EmbySub.ArtistID3>();
-
-              char ch = q.Peek().artistName[0];
-
-              // ....let's get all artists that begin with that letter
-              while (Char.ToUpper(ch).Equals(Char.ToUpper(c)))
-              {
-                ArtistPackage arp = q.Dequeue();
-                EmbySub.ArtistID3 toAdd = new EmbySub.ArtistID3();
-                toAdd.name = arp.artistName;
-                toAdd.albumCount = arp.albums.Count;
-                toAdd.id = arp.artistId;
-                artistIndex.Add(toAdd);
-                if (!q.TryPeek(out artpac))
-                {
-                  break;
-                }
-                else
-                {
-                  ch = q.Peek().artistName[0];
-                }
-              }
-
-              // if any artists for that letter existed, add the index to the master indexes list
-              if (artistIndex.Any())
-              {
-                EmbySub.IndexID3 idx = new EmbySub.IndexID3();
-                idx.name = Char.ToUpper(c).ToString();
-                idx.artist = artistIndex.ToArray();
-                letterIndex.Add(idx);
-              }
-            }
-            else
-            {
-              break;
-            }
           }
 
           EmbySub.XmlResponse r = new EmbySub.XmlResponse();
@@ -226,6 +182,57 @@ namespace EmbySub.Api
           url = String.Format("http://localhost:{0}/emby/Sessions/Logout", Plugin.Instance.Configuration.LocalEmbyPort);
           await c.PostAsync(url, null);
           return ResultFactory.GetResult(Request, xmlString, null);
+        }
+        }
+
+        private async String GetArtistsString<A,B,C>(Queue<ArtistPackage> q, ref A artists, ref B artist, ref C index) where A : new() where B : new() where C : new()
+        {
+          A artistListID3 = new A();
+          List<C> letterIndex = new List<C>();
+          char[] alpha = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".ToCharArray();
+          
+          // for each letter of the alphabet....
+          foreach(char c in alpha)
+          {
+            ArtistPackage artpac;
+            if (q.TryPeek(out artpac))
+            {
+              List<B> artistIndex = new List<B>();
+
+              char ch = q.Peek().artistName[0];
+
+              // ....let's get all artists that begin with that letter
+              while (Char.ToUpper(ch).Equals(Char.ToUpper(c)))
+              {
+                ArtistPackage arp = q.Dequeue();
+                B toAdd = new B();
+                toAdd.name = arp.artistName;
+                toAdd.albumCount = arp.albums.Count;
+                toAdd.id = arp.artistId;
+                artistIndex.Add(toAdd);
+                if (!q.TryPeek(out artpac))
+                {
+                  break;
+                }
+                else
+                {
+                  ch = q.Peek().artistName[0];
+                }
+              }
+
+              // if any artists for that letter existed, add the index to the master indexes list
+              if (artistIndex.Any())
+              {
+                C idx = new C();
+                idx.name = Char.ToUpper(c).ToString();
+                idx.artist = artistIndex.ToArray();
+                letterIndex.Add(idx);
+              }
+            }
+            else
+            {
+              break;
+            }
         }
         }
 

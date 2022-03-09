@@ -90,22 +90,22 @@ namespace EmbySub.Api
           {
             if (String.IsNullOrEmpty(req.f))
             {
-              EmbySub.XmlResponse r = new EmbySub.XmlResponse();
-              EmbySub.ErrorXml e = new EmbySub.ErrorXml();
+              EmbySub.Response r = new EmbySub.Response();
+              EmbySub.Error e = new EmbySub.Error();
               e.code = 0;
               e.message = "Music library does not exist";
               r.Item = e;
-              r.ItemElementName = EmbySub.ItemChoiceType.errorXml;
-              str = Serializer<EmbySub.XmlResponse>.Serialize(r);
+              r.ItemElementName = EmbySub.ItemChoiceType.error;
+              str = Serializer<EmbySub.Response>.Serialize(r);
               contentType = "text/xml";
               return ResultFactory.GetResult(Request, Encoding.UTF8.GetBytes(str), contentType, null);
             }
             else if (req.f.Equals("json"))
             {
               EmbySub.JsonResponse r = new EmbySub.JsonResponse();
-              var e = new EmbySub.ErrorJson();
-              e.Code = 0;
-              e.Message = "Music library does not exist";
+              var e = new EmbySub.Error();
+              e.code = 0;
+              e.message = "Music library does not exist";
               var options = new JsonSerializerOptions
               {
                   IgnoreNullValues = true,
@@ -145,37 +145,34 @@ namespace EmbySub.Api
           JsonDocument k = JsonDocument.Parse(hrmraw);
 
           JsonElement returnedAlbums = k.RootElement.GetProperty("Items");
+          List<EmbySub.Child> albums;
+          AddAlbumsToList(returnedAlbums, req, out albums);
+          EmbySub.AlbumList al = new EmbySub.AlbumList();
 
           if (string.IsNullOrEmpty(req.f))
           {
-            EmbySub.XmlResponse r = new EmbySub.XmlResponse();
-            r.ItemElementName = EmbySub.ItemChoiceType.albumListXml;
-            List<EmbySub.Child> albums;
-            AddAlbumsToList(returnedAlbums, req, out albums);
+            EmbySub.Response r = new EmbySub.Response();
             contentType = "text/xml";
-
-            EmbySub.AlbumListXml al = new EmbySub.AlbumListXml();
+            r.ItemElementName = EmbySub.ItemChoiceType.albumList;
             al.album = albums.ToArray();
             r.Item = al;
             r.version = SupportedSubsonicApiVersion;
-            str = Serializer<EmbySub.XmlResponse>.Serialize(r);
+            str = Serializer<EmbySub.Response>.Serialize(r);
           }
           else if (req.f.Equals("json"))
           {
-            List<EmbySub.Child2> albums;
-            AddAlbumsToList(returnedAlbums, req, out albums);
             EmbySub.JsonResponse r = new EmbySub.JsonResponse();
             contentType = "text/json";
-
              var options = new JsonSerializerOptions
             {
                 IgnoreNullValues = true,
                 WriteIndented = true
             };
             r.root["_status"] = "ok";
-            r.root["albumList"] = albums;
+            r.root["albumList"] = al;
             str = JsonSerializer.Serialize(r, options);
           }
+          
           }
           url = String.Format("http://localhost:{0}/emby/Sessions/Logout", Plugin.Instance.Configuration.LocalEmbyPort);
            await c.PostAsync(url, null);
@@ -188,20 +185,6 @@ namespace EmbySub.Api
           foreach (JsonElement album in ra.EnumerateArray())
             {
               EmbySub.Child ch = new EmbySub.Child();
-              ch.id = album.GetProperty("Id").ToString();
-              ch.parent = album.GetProperty("ParentId").ToString();
-              ch.title = album.GetProperty("Name").ToString();
-              ch.coverArt = album.GetProperty("ImageTags").GetProperty("Primary").ToString();
-              l.Add(ch);
-            }
-        }
-
-         private static void AddAlbumsToList(JsonElement ra, ListAlbum r, out List<EmbySub.Child2> l)
-        {
-          l = new List<EmbySub.Child2>();
-          foreach (JsonElement album in ra.EnumerateArray())
-            {
-              EmbySub.Child2 ch = new EmbySub.Child2();
               ch.id = album.GetProperty("Id").ToString();
               ch.parent = album.GetProperty("ParentId").ToString();
               ch.title = album.GetProperty("Name").ToString();

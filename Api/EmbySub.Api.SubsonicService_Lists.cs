@@ -168,6 +168,7 @@ namespace EmbySub.Api
                 IgnoreNullValues = true,
                 WriteIndented = true
             };
+            al.album = albums.ToArray();
             r.root["_status"] = "ok";
             r.root["albumList"] = al;
             str = JsonSerializer.Serialize(r, options);

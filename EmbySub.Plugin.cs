@@ -1,11 +1,8 @@
-using System;
-using System.Collections.Generic;
 using MediaBrowser.Common.Configuration;
 using MediaBrowser.Common.Plugins;
 using MediaBrowser.Model.Plugins;
 using MediaBrowser.Model.Serialization;
 using EmbySub.Configuration;
-using System.IO;
 using MediaBrowser.Model.Drawing;
 
 namespace EmbySub

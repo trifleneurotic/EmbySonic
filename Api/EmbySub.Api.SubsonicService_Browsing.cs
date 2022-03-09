@@ -1,25 +1,6 @@
-using MediaBrowser.Common.Configuration;
-using MediaBrowser.Controller.Entities;
-using MediaBrowser.Controller.Library;
-using MediaBrowser.Controller.MediaEncoding;
-using MediaBrowser.Controller.Net;
-using MediaBrowser.Model.Logging;
-using MediaBrowser.Model.Session;
 using MediaBrowser.Model.Services;
-using MediaBrowser.Model.Users;
-using MediaBrowser.Model.IO;
-using MediaBrowser.Model;
-using System.Threading.Tasks;
-using System.Security.Cryptography;
-using System.Net.Http;
 using System.Text;
 using System.Text.Json;
-using System.Reflection;
-using System.Runtime;
-using System.Linq;
-using System.Xml.Serialization;
-using EmbySub.Configuration;
-using System.Text.RegularExpressions;
 
 namespace EmbySub.Api
 {

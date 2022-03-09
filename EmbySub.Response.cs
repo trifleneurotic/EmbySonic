@@ -189,6 +189,7 @@ namespace EmbySub {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
+        [JsonIgnore]
         public string version {
             get {
                 return this.versionField;
@@ -375,6 +376,7 @@ namespace EmbySub {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
+        [JsonIgnore]
         public string album {
             get {
                 return this.albumField;
@@ -386,6 +388,7 @@ namespace EmbySub {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
+        [JsonIgnore]
         public string artist {
             get {
                 return this.artistField;
@@ -397,6 +400,7 @@ namespace EmbySub {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
+        [JsonIgnore]
         public int track {
             get {
                 return this.trackField;
@@ -408,6 +412,7 @@ namespace EmbySub {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlIgnoreAttribute()]
+        [JsonIgnore]
         public bool trackSpecified {
             get {
                 return this.trackFieldSpecified;
@@ -419,6 +424,7 @@ namespace EmbySub {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
+        [JsonIgnore]
         public int year {
             get {
                 return this.yearField;
@@ -430,6 +436,7 @@ namespace EmbySub {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlIgnoreAttribute()]
+        [JsonIgnore]
         public bool yearSpecified {
             get {
                 return this.yearFieldSpecified;
@@ -441,6 +448,7 @@ namespace EmbySub {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
+        [JsonIgnore]
         public string genre {
             get {
                 return this.genreField;
@@ -464,6 +472,7 @@ namespace EmbySub {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
+        [JsonIgnore]
         public long size {
             get {
                 return this.sizeField;
@@ -475,6 +484,7 @@ namespace EmbySub {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlIgnoreAttribute()]
+        [JsonIgnore]
         public bool sizeSpecified {
             get {
                 return this.sizeFieldSpecified;
@@ -486,6 +496,7 @@ namespace EmbySub {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
+        [JsonIgnore]
         public string contentType {
             get {
                 return this.contentTypeField;
@@ -497,6 +508,7 @@ namespace EmbySub {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
+        [JsonIgnore]
         public string suffix {
             get {
                 return this.suffixField;
@@ -508,6 +520,7 @@ namespace EmbySub {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
+        [JsonIgnore]
         public string transcodedContentType {
             get {
                 return this.transcodedContentTypeField;
@@ -519,6 +532,7 @@ namespace EmbySub {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
+        [JsonIgnore]
         public string transcodedSuffix {
             get {
                 return this.transcodedSuffixField;
@@ -530,6 +544,7 @@ namespace EmbySub {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
+        [JsonIgnore]
         public int duration {
             get {
                 return this.durationField;
@@ -541,6 +556,7 @@ namespace EmbySub {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlIgnoreAttribute()]
+        [JsonIgnore]
         public bool durationSpecified {
             get {
                 return this.durationFieldSpecified;
@@ -552,6 +568,7 @@ namespace EmbySub {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
+        [JsonIgnore]
         public int bitRate {
             get {
                 return this.bitRateField;
@@ -563,6 +580,7 @@ namespace EmbySub {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlIgnoreAttribute()]
+        [JsonIgnore]
         public bool bitRateSpecified {
             get {
                 return this.bitRateFieldSpecified;
@@ -574,6 +592,7 @@ namespace EmbySub {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
+        [JsonIgnore]
         public string path {
             get {
                 return this.pathField;
@@ -585,6 +604,7 @@ namespace EmbySub {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
+        [JsonIgnore]
         public bool isVideo {
             get {
                 return this.isVideoField;
@@ -596,6 +616,7 @@ namespace EmbySub {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlIgnoreAttribute()]
+        [JsonIgnore]
         public bool isVideoSpecified {
             get {
                 return this.isVideoFieldSpecified;
@@ -607,6 +628,7 @@ namespace EmbySub {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
+        [JsonIgnore]
         public int userRating {
             get {
                 return this.userRatingField;
@@ -618,6 +640,7 @@ namespace EmbySub {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlIgnoreAttribute()]
+        [JsonIgnore]
         public bool userRatingSpecified {
             get {
                 return this.userRatingFieldSpecified;
@@ -629,6 +652,7 @@ namespace EmbySub {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
+        [JsonIgnore]
         public double averageRating {
             get {
                 return this.averageRatingField;
@@ -640,6 +664,7 @@ namespace EmbySub {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlIgnoreAttribute()]
+        [JsonIgnore]
         public bool averageRatingSpecified {
             get {
                 return this.averageRatingFieldSpecified;
@@ -651,6 +676,7 @@ namespace EmbySub {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
+        [JsonIgnore]
         public long playCount {
             get {
                 return this.playCountField;
@@ -662,6 +688,7 @@ namespace EmbySub {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlIgnoreAttribute()]
+        [JsonIgnore]
         public bool playCountSpecified {
             get {
                 return this.playCountFieldSpecified;
@@ -673,6 +700,7 @@ namespace EmbySub {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
+        [JsonIgnore]
         public int discNumber {
             get {
                 return this.discNumberField;
@@ -684,6 +712,7 @@ namespace EmbySub {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlIgnoreAttribute()]
+        [JsonIgnore]
         public bool discNumberSpecified {
             get {
                 return this.discNumberFieldSpecified;
@@ -695,6 +724,7 @@ namespace EmbySub {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
+        [JsonIgnore]
         public System.DateTime created {
             get {
                 return this.createdField;
@@ -706,6 +736,7 @@ namespace EmbySub {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlIgnoreAttribute()]
+        [JsonIgnore]
         public bool createdSpecified {
             get {
                 return this.createdFieldSpecified;
@@ -717,6 +748,7 @@ namespace EmbySub {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
+        [JsonIgnore]
         public System.DateTime starred {
             get {
                 return this.starredField;
@@ -728,6 +760,7 @@ namespace EmbySub {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlIgnoreAttribute()]
+        [JsonIgnore]
         public bool starredSpecified {
             get {
                 return this.starredFieldSpecified;
@@ -739,6 +772,7 @@ namespace EmbySub {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
+        [JsonIgnore]
         public string albumId {
             get {
                 return this.albumIdField;
@@ -750,6 +784,7 @@ namespace EmbySub {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
+        [JsonIgnore]
         public string artistId {
             get {
                 return this.artistIdField;
@@ -761,6 +796,7 @@ namespace EmbySub {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
+        [JsonIgnore]
         public MediaType2 type {
             get {
                 return this.typeField;
@@ -772,6 +808,7 @@ namespace EmbySub {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlIgnoreAttribute()]
+        [JsonIgnore]
         public bool typeSpecified {
             get {
                 return this.typeFieldSpecified;
@@ -783,6 +820,7 @@ namespace EmbySub {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
+        [JsonIgnore]
         public long bookmarkPosition {
             get {
                 return this.bookmarkPositionField;
@@ -794,6 +832,7 @@ namespace EmbySub {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlIgnoreAttribute()]
+        [JsonIgnore]
         public bool bookmarkPositionSpecified {
             get {
                 return this.bookmarkPositionFieldSpecified;
@@ -805,6 +844,7 @@ namespace EmbySub {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
+        [JsonIgnore]
         public int originalWidth {
             get {
                 return this.originalWidthField;
@@ -816,6 +856,7 @@ namespace EmbySub {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlIgnoreAttribute()]
+        [JsonIgnore]
         public bool originalWidthSpecified {
             get {
                 return this.originalWidthFieldSpecified;
@@ -827,6 +868,7 @@ namespace EmbySub {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
+        [JsonIgnore]
         public int originalHeight {
             get {
                 return this.originalHeightField;
@@ -838,6 +880,7 @@ namespace EmbySub {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlIgnoreAttribute()]
+        [JsonIgnore]
         public bool originalHeightSpecified {
             get {
                 return this.originalHeightFieldSpecified;
@@ -920,6 +963,7 @@ namespace EmbySub {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
+        [JsonIgnore]
         public bool scanning {
             get {
                 return this.scanningField;
@@ -931,6 +975,7 @@ namespace EmbySub {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
+        [JsonIgnore]
         public long count {
             get {
                 return this.countField;
@@ -942,6 +987,7 @@ namespace EmbySub {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlIgnoreAttribute()]
+        [JsonIgnore]
         public bool countSpecified {
             get {
                 return this.countFieldSpecified;
@@ -1148,6 +1194,7 @@ namespace EmbySub {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
+        [JsonIgnore]
         public string id {
             get {
                 return this.idField;
@@ -1159,6 +1206,7 @@ namespace EmbySub {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
+        [JsonIgnore]
         public string name {
             get {
                 return this.nameField;
@@ -1170,6 +1218,7 @@ namespace EmbySub {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
+        [JsonIgnore]
         public string coverArt {
             get {
                 return this.coverArtField;
@@ -1181,6 +1230,7 @@ namespace EmbySub {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
+        [JsonIgnore]
         public string artistImageUrl {
             get {
                 return this.artistImageUrlField;
@@ -1192,6 +1242,7 @@ namespace EmbySub {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
+        [JsonIgnore]
         public int albumCount {
             get {
                 return this.albumCountField;
@@ -1203,6 +1254,7 @@ namespace EmbySub {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
+        [JsonIgnore]
         public System.DateTime starred {
             get {
                 return this.starredField;
@@ -1214,6 +1266,7 @@ namespace EmbySub {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlIgnoreAttribute()]
+        [JsonIgnore]
         public bool starredSpecified {
             get {
                 return this.starredFieldSpecified;
@@ -1287,6 +1340,7 @@ namespace EmbySub {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
+        [JsonIgnore]
         public string id {
             get {
                 return this.idField;
@@ -1298,6 +1352,7 @@ namespace EmbySub {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
+        [JsonIgnore]
         public string name {
             get {
                 return this.nameField;
@@ -1309,6 +1364,7 @@ namespace EmbySub {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
+        [JsonIgnore]
         public string artist {
             get {
                 return this.artistField;
@@ -1320,6 +1376,7 @@ namespace EmbySub {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
+        [JsonIgnore]
         public string artistId {
             get {
                 return this.artistIdField;
@@ -1331,6 +1388,7 @@ namespace EmbySub {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
+        [JsonIgnore]
         public string coverArt {
             get {
                 return this.coverArtField;
@@ -1342,6 +1400,7 @@ namespace EmbySub {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
+        [JsonIgnore]
         public int songCount {
             get {
                 return this.songCountField;
@@ -1353,6 +1412,7 @@ namespace EmbySub {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
+        [JsonIgnore]
         public int duration {
             get {
                 return this.durationField;
@@ -1364,6 +1424,7 @@ namespace EmbySub {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
+        [JsonIgnore]
         public long playCount {
             get {
                 return this.playCountField;
@@ -1375,6 +1436,7 @@ namespace EmbySub {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlIgnoreAttribute()]
+        [JsonIgnore]
         public bool playCountSpecified {
             get {
                 return this.playCountFieldSpecified;
@@ -1386,6 +1448,7 @@ namespace EmbySub {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
+        [JsonIgnore]
         public System.DateTime created {
             get {
                 return this.createdField;
@@ -1397,6 +1460,7 @@ namespace EmbySub {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
+        [JsonIgnore]
         public System.DateTime starred {
             get {
                 return this.starredField;
@@ -1408,6 +1472,7 @@ namespace EmbySub {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlIgnoreAttribute()]
+        [JsonIgnore]
         public bool starredSpecified {
             get {
                 return this.starredFieldSpecified;
@@ -1419,6 +1484,7 @@ namespace EmbySub {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
+        [JsonIgnore]
         public int year {
             get {
                 return this.yearField;
@@ -1430,6 +1496,7 @@ namespace EmbySub {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlIgnoreAttribute()]
+        [JsonIgnore]
         public bool yearSpecified {
             get {
                 return this.yearFieldSpecified;
@@ -1441,6 +1508,7 @@ namespace EmbySub {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
+        [JsonIgnore]
         public string genre {
             get {
                 return this.genreField;
@@ -1501,6 +1569,7 @@ namespace EmbySub {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
+        [JsonIgnore]
         public string id {
             get {
                 return this.idField;
@@ -1512,6 +1581,7 @@ namespace EmbySub {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
+        [JsonIgnore]
         public string name {
             get {
                 return this.nameField;
@@ -1523,6 +1593,7 @@ namespace EmbySub {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
+        [JsonIgnore]
         public string artistImageUrl {
             get {
                 return this.artistImageUrlField;
@@ -1534,6 +1605,7 @@ namespace EmbySub {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
+        [JsonIgnore]
         public System.DateTime starred {
             get {
                 return this.starredField;
@@ -1545,6 +1617,7 @@ namespace EmbySub {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlIgnoreAttribute()]
+        [JsonIgnore]
         public bool starredSpecified {
             get {
                 return this.starredFieldSpecified;
@@ -1556,6 +1629,7 @@ namespace EmbySub {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
+        [JsonIgnore]
         public int userRating {
             get {
                 return this.userRatingField;
@@ -1567,6 +1641,7 @@ namespace EmbySub {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlIgnoreAttribute()]
+        [JsonIgnore]
         public bool userRatingSpecified {
             get {
                 return this.userRatingFieldSpecified;
@@ -1578,6 +1653,7 @@ namespace EmbySub {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
+        [JsonIgnore]
         public double averageRating {
             get {
                 return this.averageRatingField;
@@ -1589,6 +1665,7 @@ namespace EmbySub {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlIgnoreAttribute()]
+        [JsonIgnore]
         public bool averageRatingSpecified {
             get {
                 return this.averageRatingFieldSpecified;
@@ -1841,6 +1918,7 @@ namespace EmbySub {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
+        [JsonIgnore]
         public string id {
             get {
                 return this.idField;
@@ -1852,6 +1930,7 @@ namespace EmbySub {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
+        [JsonIgnore]
         public string url {
             get {
                 return this.urlField;
@@ -1863,6 +1942,7 @@ namespace EmbySub {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
+        [JsonIgnore]
         public string description {
             get {
                 return this.descriptionField;
@@ -1874,6 +1954,7 @@ namespace EmbySub {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
+        [JsonIgnore]
         public string username {
             get {
                 return this.usernameField;
@@ -1885,6 +1966,7 @@ namespace EmbySub {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
+        [JsonIgnore]
         public System.DateTime created {
             get {
                 return this.createdField;
@@ -1896,6 +1978,7 @@ namespace EmbySub {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
+        [JsonIgnore]
         public System.DateTime expires {
             get {
                 return this.expiresField;
@@ -1907,6 +1990,7 @@ namespace EmbySub {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlIgnoreAttribute()]
+        [JsonIgnore]
         public bool expiresSpecified {
             get {
                 return this.expiresFieldSpecified;
@@ -1918,6 +2002,7 @@ namespace EmbySub {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
+        [JsonIgnore]
         public System.DateTime lastVisited {
             get {
                 return this.lastVisitedField;
@@ -1929,6 +2014,7 @@ namespace EmbySub {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlIgnoreAttribute()]
+        [JsonIgnore]
         public bool lastVisitedSpecified {
             get {
                 return this.lastVisitedFieldSpecified;
@@ -1940,6 +2026,7 @@ namespace EmbySub {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
+        [JsonIgnore]
         public int visitCount {
             get {
                 return this.visitCountField;
@@ -1987,6 +2074,7 @@ namespace EmbySub {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
+        [JsonIgnore]
         public int current {
             get {
                 return this.currentField;
@@ -1998,6 +2086,7 @@ namespace EmbySub {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlIgnoreAttribute()]
+        [JsonIgnore]
         public bool currentSpecified {
             get {
                 return this.currentFieldSpecified;
@@ -2009,6 +2098,7 @@ namespace EmbySub {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
+        [JsonIgnore]
         public long position {
             get {
                 return this.positionField;
@@ -2020,6 +2110,7 @@ namespace EmbySub {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlIgnoreAttribute()]
+        [JsonIgnore]
         public bool positionSpecified {
             get {
                 return this.positionFieldSpecified;
@@ -2031,6 +2122,7 @@ namespace EmbySub {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
+        [JsonIgnore]
         public string username {
             get {
                 return this.usernameField;
@@ -2042,6 +2134,7 @@ namespace EmbySub {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
+        [JsonIgnore]
         public System.DateTime changed {
             get {
                 return this.changedField;
@@ -2053,6 +2146,7 @@ namespace EmbySub {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
+        [JsonIgnore]
         public string changedBy {
             get {
                 return this.changedByField;
@@ -2117,6 +2211,7 @@ namespace EmbySub {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
+        [JsonIgnore]
         public long position {
             get {
                 return this.positionField;
@@ -2128,6 +2223,7 @@ namespace EmbySub {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
+        [JsonIgnore]
         public string username {
             get {
                 return this.usernameField;
@@ -2139,6 +2235,7 @@ namespace EmbySub {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
+        [JsonIgnore]
         public string comment {
             get {
                 return this.commentField;
@@ -2150,6 +2247,7 @@ namespace EmbySub {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
+        [JsonIgnore]
         public System.DateTime created {
             get {
                 return this.createdField;
@@ -2161,6 +2259,7 @@ namespace EmbySub {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
+        [JsonIgnore]
         public System.DateTime changed {
             get {
                 return this.changedField;
@@ -2211,6 +2310,7 @@ namespace EmbySub {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
+        [JsonIgnore]
         public string id {
             get {
                 return this.idField;
@@ -2222,6 +2322,7 @@ namespace EmbySub {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
+        [JsonIgnore]
         public string name {
             get {
                 return this.nameField;
@@ -2233,6 +2334,7 @@ namespace EmbySub {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
+        [JsonIgnore]
         public string streamUrl {
             get {
                 return this.streamUrlField;
@@ -2244,6 +2346,7 @@ namespace EmbySub {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
+        [JsonIgnore]
         public string homePageUrl {
             get {
                 return this.homePageUrlField;
@@ -2298,6 +2401,7 @@ namespace EmbySub {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
+        [JsonIgnore]
         public string streamId {
             get {
                 return this.streamIdField;
@@ -2309,6 +2413,7 @@ namespace EmbySub {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
+        [JsonIgnore]
         public string channelId {
             get {
                 return this.channelIdField;
@@ -2320,6 +2425,7 @@ namespace EmbySub {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
+        [JsonIgnore]
         public string description {
             get {
                 return this.descriptionField;
@@ -2331,6 +2437,7 @@ namespace EmbySub {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
+        [JsonIgnore]
         public PodcastStatus status {
             get {
                 return this.statusField;
@@ -2342,6 +2449,7 @@ namespace EmbySub {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
+        [JsonIgnore]
         public System.DateTime publishDate {
             get {
                 return this.publishDateField;
@@ -2353,6 +2461,7 @@ namespace EmbySub {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlIgnoreAttribute()]
+        [JsonIgnore]
         public bool publishDateSpecified {
             get {
                 return this.publishDateFieldSpecified;
@@ -2449,6 +2558,7 @@ namespace EmbySub {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
+        [JsonIgnore]
         public string id {
             get {
                 return this.idField;
@@ -2460,6 +2570,7 @@ namespace EmbySub {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
+        [JsonIgnore]
         public string url {
             get {
                 return this.urlField;
@@ -2471,6 +2582,7 @@ namespace EmbySub {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
+        [JsonIgnore]
         public string title {
             get {
                 return this.titleField;
@@ -2482,6 +2594,7 @@ namespace EmbySub {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
+        [JsonIgnore]
         public string description {
             get {
                 return this.descriptionField;
@@ -2493,6 +2606,7 @@ namespace EmbySub {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
+        [JsonIgnore]
         public string coverArt {
             get {
                 return this.coverArtField;
@@ -2504,6 +2618,7 @@ namespace EmbySub {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
+        [JsonIgnore]
         public string originalImageUrl {
             get {
                 return this.originalImageUrlField;
@@ -2515,6 +2630,7 @@ namespace EmbySub {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
+        [JsonIgnore]
         public PodcastStatus status {
             get {
                 return this.statusField;
@@ -2526,6 +2642,7 @@ namespace EmbySub {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
+        [JsonIgnore]
         public string errorMessage {
             get {
                 return this.errorMessageField;
@@ -2552,6 +2669,7 @@ namespace EmbySub {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
+        [JsonIgnore]
         public string artist {
             get {
                 return this.artistField;
@@ -2563,6 +2681,7 @@ namespace EmbySub {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
+        [JsonIgnore]
         public string title {
             get {
                 return this.titleField;
@@ -2688,6 +2807,7 @@ namespace EmbySub {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
+        [JsonIgnore]
         public string username {
             get {
                 return this.usernameField;
@@ -2699,6 +2819,7 @@ namespace EmbySub {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
+        [JsonIgnore]
         public long time {
             get {
                 return this.timeField;
@@ -2710,6 +2831,7 @@ namespace EmbySub {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
+        [JsonIgnore]
         public string message {
             get {
                 return this.messageField;
@@ -2803,6 +2925,7 @@ namespace EmbySub {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
+        [JsonIgnore]
         public string username {
             get {
                 return this.usernameField;
@@ -2814,6 +2937,7 @@ namespace EmbySub {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
+        [JsonIgnore]
         public string email {
             get {
                 return this.emailField;
@@ -2825,6 +2949,7 @@ namespace EmbySub {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
+        [JsonIgnore]
         public bool scrobblingEnabled {
             get {
                 return this.scrobblingEnabledField;
@@ -2836,6 +2961,7 @@ namespace EmbySub {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
+        [JsonIgnore]
         public int maxBitRate {
             get {
                 return this.maxBitRateField;
@@ -2847,6 +2973,7 @@ namespace EmbySub {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlIgnoreAttribute()]
+        [JsonIgnore]
         public bool maxBitRateSpecified {
             get {
                 return this.maxBitRateFieldSpecified;
@@ -2858,6 +2985,7 @@ namespace EmbySub {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
+        [JsonIgnore]
         public bool adminRole {
             get {
                 return this.adminRoleField;
@@ -2869,6 +2997,7 @@ namespace EmbySub {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
+        [JsonIgnore]
         public bool settingsRole {
             get {
                 return this.settingsRoleField;
@@ -2880,6 +3009,7 @@ namespace EmbySub {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
+        [JsonIgnore]
         public bool downloadRole {
             get {
                 return this.downloadRoleField;
@@ -2891,6 +3021,7 @@ namespace EmbySub {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
+        [JsonIgnore]
         public bool uploadRole {
             get {
                 return this.uploadRoleField;
@@ -2902,6 +3033,7 @@ namespace EmbySub {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
+        [JsonIgnore]
         public bool playlistRole {
             get {
                 return this.playlistRoleField;
@@ -2913,6 +3045,7 @@ namespace EmbySub {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
+        [JsonIgnore]
         public bool coverArtRole {
             get {
                 return this.coverArtRoleField;
@@ -2924,6 +3057,7 @@ namespace EmbySub {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
+        [JsonIgnore]
         public bool commentRole {
             get {
                 return this.commentRoleField;
@@ -2935,6 +3069,7 @@ namespace EmbySub {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
+        [JsonIgnore]
         public bool podcastRole {
             get {
                 return this.podcastRoleField;
@@ -2946,6 +3081,7 @@ namespace EmbySub {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
+        [JsonIgnore]
         public bool streamRole {
             get {
                 return this.streamRoleField;
@@ -2957,6 +3093,7 @@ namespace EmbySub {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
+        [JsonIgnore]
         public bool jukeboxRole {
             get {
                 return this.jukeboxRoleField;
@@ -2968,6 +3105,7 @@ namespace EmbySub {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
+        [JsonIgnore]
         public bool shareRole {
             get {
                 return this.shareRoleField;
@@ -2979,6 +3117,7 @@ namespace EmbySub {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
+        [JsonIgnore]
         public bool videoConversionRole {
             get {
                 return this.videoConversionRoleField;
@@ -2990,6 +3129,7 @@ namespace EmbySub {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
+        [JsonIgnore]
         public System.DateTime avatarLastChanged {
             get {
                 return this.avatarLastChangedField;
@@ -3001,6 +3141,7 @@ namespace EmbySub {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlIgnoreAttribute()]
+        [JsonIgnore]
         public bool avatarLastChangedSpecified {
             get {
                 return this.avatarLastChangedFieldSpecified;
@@ -3033,6 +3174,7 @@ namespace EmbySub {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
+        [JsonIgnore]
         [JsonPropertyName("valid")]
         public bool valid {
             get {
@@ -3045,6 +3187,7 @@ namespace EmbySub {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
+        [JsonIgnore]
         [JsonPropertyName("email")]
         public string email {
             get {
@@ -3057,6 +3200,7 @@ namespace EmbySub {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
+        [JsonIgnore]
         public System.DateTime licenseExpires {
             get {
                 return this.licenseExpiresField;
@@ -3068,6 +3212,7 @@ namespace EmbySub {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlIgnoreAttribute()]
+        [JsonIgnore]
         public bool licenseExpiresSpecified {
             get {
                 return this.licenseExpiresFieldSpecified;
@@ -3079,6 +3224,7 @@ namespace EmbySub {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
+        [JsonIgnore]
         public System.DateTime trialExpires {
             get {
                 return this.trialExpiresField;
@@ -3090,6 +3236,7 @@ namespace EmbySub {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlIgnoreAttribute()]
+        [JsonIgnore]
         public bool trialExpiresSpecified {
             get {
                 return this.trialExpiresFieldSpecified;
@@ -3121,6 +3268,7 @@ namespace EmbySub {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
+        [JsonIgnore]
         public int currentIndex {
             get {
                 return this.currentIndexField;
@@ -3132,6 +3280,7 @@ namespace EmbySub {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
+        [JsonIgnore]
         public bool playing {
             get {
                 return this.playingField;
@@ -3143,6 +3292,7 @@ namespace EmbySub {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
+        [JsonIgnore]
         public float gain {
             get {
                 return this.gainField;
@@ -3154,6 +3304,7 @@ namespace EmbySub {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
+        [JsonIgnore]
         public int position {
             get {
                 return this.positionField;
@@ -3165,6 +3316,7 @@ namespace EmbySub {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlIgnoreAttribute()]
+        [JsonIgnore]
         public bool positionSpecified {
             get {
                 return this.positionFieldSpecified;
@@ -3265,6 +3417,7 @@ namespace EmbySub {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
+        [JsonIgnore]
         public string id {
             get {
                 return this.idField;
@@ -3276,6 +3429,7 @@ namespace EmbySub {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
+        [JsonIgnore]
         public string name {
             get {
                 return this.nameField;
@@ -3287,6 +3441,7 @@ namespace EmbySub {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
+        [JsonIgnore]
         public string comment {
             get {
                 return this.commentField;
@@ -3298,6 +3453,7 @@ namespace EmbySub {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
+        [JsonIgnore]
         public string owner {
             get {
                 return this.ownerField;
@@ -3309,6 +3465,7 @@ namespace EmbySub {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
+        [JsonIgnore]
         public bool @public {
             get {
                 return this.publicField;
@@ -3320,6 +3477,7 @@ namespace EmbySub {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlIgnoreAttribute()]
+        [JsonIgnore]
         public bool publicSpecified {
             get {
                 return this.publicFieldSpecified;
@@ -3331,6 +3489,7 @@ namespace EmbySub {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
+        [JsonIgnore]
         public int songCount {
             get {
                 return this.songCountField;
@@ -3342,6 +3501,7 @@ namespace EmbySub {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
+        [JsonIgnore]
         public int duration {
             get {
                 return this.durationField;
@@ -3353,6 +3513,7 @@ namespace EmbySub {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
+        [JsonIgnore]
         public System.DateTime created {
             get {
                 return this.createdField;
@@ -3364,6 +3525,7 @@ namespace EmbySub {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
+        [JsonIgnore]
         public System.DateTime changed {
             get {
                 return this.changedField;
@@ -3375,6 +3537,7 @@ namespace EmbySub {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
+        [JsonIgnore]
         public string coverArt {
             get {
                 return this.coverArtField;
@@ -3530,6 +3693,7 @@ namespace EmbySub {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
+        [JsonIgnore]
         public int offset {
             get {
                 return this.offsetField;
@@ -3541,6 +3705,7 @@ namespace EmbySub {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
+        [JsonIgnore]
         public int totalHits {
             get {
                 return this.totalHitsField;
@@ -3591,6 +3756,7 @@ namespace EmbySub {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
+        [JsonIgnore]
         public string username {
             get {
                 return this.usernameField;
@@ -3602,6 +3768,7 @@ namespace EmbySub {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
+        [JsonIgnore]
         public int minutesAgo {
             get {
                 return this.minutesAgoField;
@@ -3613,6 +3780,7 @@ namespace EmbySub {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
+        [JsonIgnore]
         public int playerId {
             get {
                 return this.playerIdField;
@@ -3624,6 +3792,7 @@ namespace EmbySub {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
+        [JsonIgnore]
         public string playerName {
             get {
                 return this.playerNameField;
@@ -3654,6 +3823,7 @@ namespace EmbySub {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
+        [JsonIgnore]
         public string id {
             get {
                 return this.idField;
@@ -3665,6 +3835,7 @@ namespace EmbySub {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
+        [JsonIgnore]
         public int bitRate {
             get {
                 return this.bitRateField;
@@ -3676,6 +3847,7 @@ namespace EmbySub {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlIgnoreAttribute()]
+        [JsonIgnore]
         public bool bitRateSpecified {
             get {
                 return this.bitRateFieldSpecified;
@@ -3687,6 +3859,7 @@ namespace EmbySub {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
+        [JsonIgnore]
         public int audioTrackId {
             get {
                 return this.audioTrackIdField;
@@ -3698,6 +3871,7 @@ namespace EmbySub {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlIgnoreAttribute()]
+        [JsonIgnore]
         public bool audioTrackIdSpecified {
             get {
                 return this.audioTrackIdFieldSpecified;
@@ -3724,6 +3898,7 @@ namespace EmbySub {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
+        [JsonIgnore]
         public string id {
             get {
                 return this.idField;
@@ -3735,6 +3910,7 @@ namespace EmbySub {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
+        [JsonIgnore]
         public string name {
             get {
                 return this.nameField;
@@ -3746,6 +3922,7 @@ namespace EmbySub {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
+        [JsonIgnore]
         public string languageCode {
             get {
                 return this.languageCodeField;
@@ -3770,6 +3947,7 @@ namespace EmbySub {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
+        [JsonIgnore]
         public string id {
             get {
                 return this.idField;
@@ -3781,6 +3959,7 @@ namespace EmbySub {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
+        [JsonIgnore]
         public string name {
             get {
                 return this.nameField;
@@ -3842,6 +4021,7 @@ namespace EmbySub {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
+        [JsonIgnore]
         public string id {
             get {
                 return this.idField;
@@ -3899,6 +4079,7 @@ namespace EmbySub {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
+        [JsonIgnore]
         public string name {
             get {
                 return this.nameField;
@@ -3934,6 +4115,7 @@ namespace EmbySub {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
+        [JsonIgnore]
         public string ignoredArticles {
             get {
                 return this.ignoredArticlesField;
@@ -3982,6 +4164,7 @@ namespace EmbySub {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
+        [JsonIgnore]
         public int songCount {
             get {
                 return this.songCountField;
@@ -3993,6 +4176,7 @@ namespace EmbySub {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
+        [JsonIgnore]
         public int albumCount {
             get {
                 return this.albumCountField;
@@ -4059,6 +4243,7 @@ namespace EmbySub {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
+        [JsonIgnore]
         public string id {
             get {
                 return this.idField;
@@ -4070,6 +4255,7 @@ namespace EmbySub {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
+        [JsonIgnore]
         public string parent {
             get {
                 return this.parentField;
@@ -4081,6 +4267,7 @@ namespace EmbySub {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
+        [JsonIgnore]
         public string name {
             get {
                 return this.nameField;
@@ -4092,6 +4279,7 @@ namespace EmbySub {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
+        [JsonIgnore]
         public System.DateTime starred {
             get {
                 return this.starredField;
@@ -4103,6 +4291,7 @@ namespace EmbySub {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlIgnoreAttribute()]
+        [JsonIgnore]
         public bool starredSpecified {
             get {
                 return this.starredFieldSpecified;
@@ -4114,6 +4303,7 @@ namespace EmbySub {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
+        [JsonIgnore]
         public int userRating {
             get {
                 return this.userRatingField;
@@ -4125,6 +4315,7 @@ namespace EmbySub {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlIgnoreAttribute()]
+        [JsonIgnore]
         public bool userRatingSpecified {
             get {
                 return this.userRatingFieldSpecified;
@@ -4136,6 +4327,7 @@ namespace EmbySub {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
+        [JsonIgnore]
         public double averageRating {
             get {
                 return this.averageRatingField;
@@ -4147,6 +4339,7 @@ namespace EmbySub {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlIgnoreAttribute()]
+        [JsonIgnore]
         public bool averageRatingSpecified {
             get {
                 return this.averageRatingFieldSpecified;
@@ -4158,6 +4351,7 @@ namespace EmbySub {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
+        [JsonIgnore]
         public long playCount {
             get {
                 return this.playCountField;
@@ -4169,6 +4363,7 @@ namespace EmbySub {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlIgnoreAttribute()]
+        [JsonIgnore]
         public bool playCountSpecified {
             get {
                 return this.playCountFieldSpecified;
@@ -4204,6 +4399,7 @@ namespace EmbySub {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
+        [JsonIgnore]
         public string name {
             get {
                 return this.nameField;
@@ -4267,6 +4463,7 @@ namespace EmbySub {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
+        [JsonIgnore]
         public long lastModified {
             get {
                 return this.lastModifiedField;
@@ -4278,6 +4475,7 @@ namespace EmbySub {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
+        [JsonIgnore]
         public string ignoredArticles {
             get {
                 return this.ignoredArticlesField;
@@ -4324,6 +4522,7 @@ namespace EmbySub {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
+        [JsonIgnore]
         public int id {
             get {
                 return this.idField;
@@ -4335,6 +4534,7 @@ namespace EmbySub {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
+        [JsonIgnore]
         public string name {
             get {
                 return this.nameField;

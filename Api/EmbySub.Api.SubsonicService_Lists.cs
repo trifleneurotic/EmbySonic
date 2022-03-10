@@ -14,6 +14,16 @@ namespace EmbySub.Api
         public String type { get; set; }
     }
 
+    [Route("/rest/getAlbumList2.view", "GET", Description = "Gets all albums for all artists (ID3)")]
+    public class ListAlbum2 : SystemBase
+    {
+        [ApiMember(Name = "Size", Description = "Number of items to return", IsRequired = false, DataType = "int", ParameterType = "query", Verb = "GET")]
+        public int size { get; set; }
+
+        [ApiMember(Name = "Type", Description = "Type of list to return", IsRequired = true, DataType = "string", ParameterType = "query", Verb = "GET")]
+        public String type { get; set; }
+    }
+
     public partial class SubsonicService : IService, IRequiresRequest
     {
         private String GetEmbyListType(string SubsonicListType)
@@ -28,6 +38,26 @@ namespace EmbySub.Api
                 case "highest": return "CriticRating&SortOrder=Descending";
                 default: return "Random";
             }
+        }
+        public async Task<object> Get(ListAlbum2 req)
+        {
+            ListAlbum la = new ListAlbum();
+            la.u = req.u;
+            la.p = req.p;
+            la.c = req.c;
+            la.v = req.v;
+            la.type = req.type;
+
+            if (!String.IsNullOrEmpty(req.f))
+            {
+                la.f = req.f;
+            }
+            if (req.size != 0)
+            {
+                la.size = req.size;
+            }
+
+            return await this.Get(la);
         }
         public async Task<object> Get(ListAlbum req)
         {

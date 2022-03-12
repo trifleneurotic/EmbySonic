@@ -23,6 +23,12 @@ namespace EmbySub.Api
         [ApiMember(Name = "Type", Description = "Type of list to return", IsRequired = true, DataType = "string", ParameterType = "query", Verb = "GET")]
         public String type { get; set; }
     }
+    [Route("/rest/getRandomSongs.view", "GET", Description = "Gets random songs (ID3)")]
+    public class ListRandomSongs : SystemBase
+    {
+        [ApiMember(Name = "Size", Description = "Number of items to return", IsRequired = false, DataType = "int", ParameterType = "query", Verb = "GET")]
+        public int size { get; set; }
+    }
 
     public partial class SubsonicService : IService, IRequiresRequest
     {
@@ -58,6 +64,121 @@ namespace EmbySub.Api
             }
 
             return await this.Get(la);
+        }
+        public async Task<object> Get(ListRandomSongs req)
+        {
+            HttpResponseMessage hrm = await Login(req);
+            String contentType = String.Empty;
+            String str = String.Empty;
+            String hrmraw = String.Empty;
+            String s = String.Empty;
+            String url = String.Empty;
+
+            if (!hrm.IsSuccessStatusCode)
+            {
+                str = GetErrorObject(req, out contentType);
+            }
+            else
+            {
+                hrmraw = await hrm.Content.ReadAsStringAsync();
+                JsonDocument doc = JsonDocument.Parse(hrmraw);
+                c.DefaultRequestHeaders.Add("Accept", "application/json");
+                c.DefaultRequestHeaders.Add("X-Emby-Token", doc.RootElement.GetProperty("AccessToken").ToString());
+
+                // we need the unique ID for the desired music library set in the plugin configuration
+                url = String.Format("http://localhost:{0}/emby/Items?IncludeItemTypes=Album&ExcludeItemTypes=Audio", Plugin.Instance.Configuration.LocalEmbyPort);
+                HttpResponseMessage mes = await c.GetAsync(url);
+                hrmraw = await mes.Content.ReadAsStringAsync();
+                JsonDocument j = JsonDocument.Parse(hrmraw);
+                JsonElement allLibs = j.RootElement.GetProperty("Items");
+                String musicLibId = String.Empty;
+
+                foreach (JsonElement lib in allLibs.EnumerateArray())
+                {
+                    s = lib.GetProperty("Name").ToString();
+                    if (String.Equals(s, Plugin.Instance.Configuration.MusicLibraryName))
+                    {
+                        musicLibId = lib.GetProperty("Id").ToString();
+                        break;
+                    }
+                }
+
+
+                // music library does not exist under configured name
+                if (String.IsNullOrEmpty(musicLibId))
+                {
+                    if (String.IsNullOrEmpty(req.f))
+                    {
+                        EmbySub.Response r = new EmbySub.Response();
+                        EmbySub.Error e = new EmbySub.Error();
+                        e.code = 0;
+                        e.message = "Music library does not exist";
+                        r.Item = e;
+                        r.ItemElementName = EmbySub.ItemChoiceType.error;
+                        str = Serializer<EmbySub.Response>.Serialize(r);
+                        contentType = "text/xml";
+                        return ResultFactory.GetResult(Request, Encoding.UTF8.GetBytes(str), contentType, null);
+                    }
+                    else if (req.f.Equals("json"))
+                    {
+                        EmbySub.JsonResponse r = new EmbySub.JsonResponse();
+                        var e = new EmbySub.Error();
+                        e.code = 0;
+                        e.message = "Music library does not exist";
+                        var options = new JsonSerializerOptions
+                        {
+                            IgnoreNullValues = true,
+                            WriteIndented = true
+                        };
+                        r.root["error"] = e;
+                        r.root["_status"] = "ok";
+                        str = JsonSerializer.Serialize(r, options);
+                        contentType = "text/json";
+                        return ResultFactory.GetResult(Request, Encoding.UTF8.GetBytes(str), contentType, null);
+                    }
+                }
+
+                // library exists so let's get ID3 songs
+                String sz = Convert.ToString(req.size == 0 ? 10 : req.size);
+                url = String.Format("http://localhost:{0}/emby/Items?ParentId={1}&IncludeItemTypes=Audio&ExcludeItemTypes=Folder&Limit={2}&Recursive=true", Plugin.Instance.Configuration.LocalEmbyPort, musicLibId, sz);
+                mes = await c.GetAsync(url);
+                hrmraw = await mes.Content.ReadAsStringAsync();
+                j = JsonDocument.Parse(hrmraw);
+
+                JsonElement returnedSongs = j.RootElement.GetProperty("Items");
+                List<EmbySub.Child> songs;
+                AddSongsToList(returnedSongs, req, out songs);
+                EmbySub.Songs sl = new EmbySub.Songs();
+
+                if (string.IsNullOrEmpty(req.f))
+                {
+                    EmbySub.Response r = new EmbySub.Response();
+                    contentType = "text/xml";
+                    r.ItemElementName = EmbySub.ItemChoiceType.randomSongs;
+                    sl.song = songs.ToArray();
+                    r.Item = sl;
+                    r.version = SupportedSubsonicApiVersion;
+                    str = Serializer<EmbySub.Response>.Serialize(r);
+                }
+                else if (req.f.Equals("json"))
+                {
+                    EmbySub.JsonResponse r = new EmbySub.JsonResponse();
+                    contentType = "text/json";
+                    var options = new JsonSerializerOptions
+                    {
+                        IgnoreNullValues = true,
+                        WriteIndented = true
+                    };
+                    sl.song = songs.ToArray();
+                    r.root["_status"] = "ok";
+                    r.root["randomSongs"] = sl;
+                    str = JsonSerializer.Serialize(r, options);
+                }
+
+            }
+            url = String.Format("http://localhost:{0}/emby/Sessions/Logout", Plugin.Instance.Configuration.LocalEmbyPort);
+            await c.PostAsync(url, null);
+            return ResultFactory.GetResult(Request, Encoding.UTF8.GetBytes(str), contentType, null);
         }
         public async Task<object> Get(ListAlbum req)
         {
@@ -203,6 +324,25 @@ namespace EmbySub.Api
                 ch.parent = album.GetProperty("ParentId").ToString();
                 ch.title = album.GetProperty("Name").ToString();
                 ch.coverArt = album.GetProperty("ImageTags").GetProperty("Primary").ToString();
+                l.Add(ch);
+            }
+        }
+
+        private static void AddSongsToList(JsonElement rs, ListRandomSongs r, out List<EmbySub.Child> l)
+        {
+            l = new List<EmbySub.Child>();
+            foreach (JsonElement song in rs.EnumerateArray())
+            {
+                EmbySub.Child ch = new EmbySub.Child();
+                ch.id = song.GetProperty("Id").ToString();
+                ch.parent = song.GetProperty("AlbumId").ToString();
+                ch.title = song.GetProperty("Name").ToString();
+                ch.isDir = song.GetProperty("IsFolder").GetBoolean();
+                ch.album = song.GetProperty("Album").ToString();
+                ch.artist = song.GetProperty("Artists")[0].ToString();
+                ch.track = song.GetProperty("IndexNumber").GetInt32();
+                ch.coverArt = song.GetProperty("AlbumPrimaryImageTag").ToString();
+                ch.duration = (int)TimeSpan.FromTicks(song.GetProperty("RunTimeTicks").GetInt64()).TotalSeconds;
                 l.Add(ch);
             }
         }

@@ -140,7 +140,7 @@ namespace EmbySub.Api
 
                 // library exists so let's get ID3 songs
                 String sz = Convert.ToString(req.size == 0 ? 10 : req.size);
-                url = String.Format("http://localhost:{0}/emby/Items?ParentId={1}&IncludeItemTypes=Audio&ExcludeItemTypes=Folder&Limit={2}&Recursive=true", Plugin.Instance.Configuration.LocalEmbyPort, musicLibId, sz);
+                url = String.Format("http://localhost:{0}/emby/Items?ParentId={1}&IncludeItemTypes=Audio&ExcludeItemTypes=Folder&Limit={2}&Recursive=true&SortBy=Random", Plugin.Instance.Configuration.LocalEmbyPort, musicLibId, sz);
                 mes = await c.GetAsync(url);
                 hrmraw = await mes.Content.ReadAsStringAsync();
                 j = JsonDocument.Parse(hrmraw);

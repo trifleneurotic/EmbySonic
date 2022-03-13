@@ -18,6 +18,13 @@ namespace EmbySub.Api
         public string? musicFolderId { get; set; }
     }
 
+    [Route("/rest/getArtist.view", "GET", Description = "Returns an artist with their albums")]
+    public class BrowsingGetArtist : SystemBase
+    {
+        [ApiMember(Name = "Artist ID", Description = "Emby ID of artist", IsRequired = false, DataType = "string", ParameterType = "query", Verb = "GET")]
+        public string? id { get; set; }
+    }
+
     [Route("/rest/getIndexes.view", "GET", Description = "Returns an indexed list of all artists")]
     public class BrowsingGetIndexes : SystemBase
     {
@@ -65,6 +72,104 @@ namespace EmbySub.Api
             return await this.Get(bgi);
         }
 
+        public async Task<object> Get(BrowsingGetArtist req)
+        {
+            HttpResponseMessage hrm = await Login(req);
+            String contentType = String.Empty;
+            String str = String.Empty;
+            String hrmraw = String.Empty;
+            String s = String.Empty;
+            String url = String.Empty;
+            if (!hrm.IsSuccessStatusCode)
+            {
+                str = GetErrorObject(req, out contentType);
+            }
+            else
+            {
+                hrmraw = await hrm.Content.ReadAsStringAsync();
+                JsonDocument doc = JsonDocument.Parse(hrmraw);
+                c.DefaultRequestHeaders.Add("Accept", "application/json");
+                c.DefaultRequestHeaders.Add("X-Emby-Token", doc.RootElement.GetProperty("AccessToken").ToString());
+
+                // let's get a list of all ID3 albums
+                url = String.Format("http://localhost:{0}/emby/Items?IncludeItemTypes=MusicAlbum&Recursive=true", Plugin.Instance.Configuration.LocalEmbyPort);
+                HttpResponseMessage mes = await c.GetAsync(url);
+                hrmraw = await mes.Content.ReadAsStringAsync();
+                JsonDocument k = JsonDocument.Parse(hrmraw);
+                JsonElement allID3Albums = k.RootElement.GetProperty("Items");
+
+                Dictionary<String, List<EmbySub.AlbumID3>> d = new Dictionary<String, List<EmbySub.AlbumID3>>();
+
+                String artistName = string.Empty;
+                String artistId = string.Empty;
+
+                foreach (JsonElement album in allID3Albums.EnumerateArray())
+                {
+                    JsonElement aa = album.GetProperty("AlbumArtists")[0];
+
+                    if (aa.GetProperty("Id").ToString().Equals(req.id))
+                    {
+                        if (!d.ContainsKey(req.id))
+                        {
+                            d.Add(req.id, new List<EmbySub.AlbumID3>());
+                            artistName = aa.GetProperty("Name").ToString();
+                            artistId = aa.GetProperty("Id").ToString();
+                        }
+
+                        AlbumID3 aid3 = new AlbumID3();
+                        aid3.artist = artistName;
+                        aid3.artistId = artistId;
+
+                        aid3.duration = (int)TimeSpan.FromTicks(album.GetProperty("RunTimeTicks").GetInt64()).TotalSeconds;
+                        aid3.id = album.GetProperty("Id").ToString();
+                        aid3.name = album.GetProperty("Name").ToString();
+
+                        // get album track count
+                        url = String.Format("http://localhost:{0}/emby/Items?ParentId={1}", Plugin.Instance.Configuration.LocalEmbyPort, aid3.id);
+                        mes = await c.GetAsync(url);
+                        hrmraw = await mes.Content.ReadAsStringAsync();
+                        JsonDocument r = JsonDocument.Parse(hrmraw);
+                        aid3.songCount = Int32.Parse(r.RootElement.GetProperty("TotalRecordCount").ToString());
+
+                        d[req.id].Add(aid3);
+
+                    }
+                }
+
+                EmbySub.ArtistWithAlbumsID3 awa = new ArtistWithAlbumsID3();
+                awa.name = artistName;
+                awa.id = artistId;
+                awa.albumCount = d[artistId].Count;
+                awa.album = d[artistId].ToArray();
+
+                if (string.IsNullOrEmpty(req.f))
+                {
+
+                    EmbySub.Response r = new EmbySub.Response();
+                    r.Item = awa;
+                    r.ItemElementName = EmbySub.ItemChoiceType.artist;
+                    str = Serializer<EmbySub.Response>.Serialize(r);
+                    contentType = "text/xml";
+                }
+                else if (req.f.Equals("json"))
+                {
+                    EmbySub.JsonResponse r = new EmbySub.JsonResponse();
+                    contentType = "text/json";
+                    var options = new JsonSerializerOptions
+                    {
+                        IgnoreNullValues = true,
+                        WriteIndented = true
+                    };
+                    r.root["_status"] = "ok";
+                    r.root["artist"] = awa;
+                    str = JsonSerializer.Serialize(r, options);
+                }
+            }
+            url = String.Format("http://localhost:{0}/emby/Sessions/Logout", Plugin.Instance.Configuration.LocalEmbyPort);
+            await c.PostAsync(url, null);
+            return ResultFactory.GetResult(Request, Encoding.UTF8.GetBytes(str), contentType, null);
+        }
+
         public async Task<object> Get(BrowsingGetArtists req)
         {
             HttpResponseMessage hrm = await Login(req);
@@ -85,7 +190,7 @@ namespace EmbySub.Api
                 c.DefaultRequestHeaders.Add("X-Emby-Token", doc.RootElement.GetProperty("AccessToken").ToString());
 
                 // let's get a list of all ID3 songs
-                url = String.Format("http://emby.localdomain:{0}/emby/Items?IncludeItemTypes=Audio&Recursive=true", Plugin.Instance.Configuration.LocalEmbyPort);
+                url = String.Format("http://localhost:{0}/emby/Items?IncludeItemTypes=Audio&Recursive=true", Plugin.Instance.Configuration.LocalEmbyPort);
                 HttpResponseMessage mes = await c.GetAsync(url);
                 hrmraw = await mes.Content.ReadAsStringAsync();
                 JsonDocument k = JsonDocument.Parse(hrmraw);

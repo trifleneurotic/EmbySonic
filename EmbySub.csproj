@@ -4,7 +4,7 @@
     <GenerateBindingRedirectsOutputType>true</GenerateBindingRedirectsOutputType>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <ImplicitUsings>enable</ImplicitUsings>
-    <AssemblyVersion>0.2.3.6</AssemblyVersion>
+    <AssemblyVersion>0.2.4.3</AssemblyVersion>
     <Nullable>enable</Nullable>
     <LangVersion>10.0</LangVersion>
   </PropertyGroup>

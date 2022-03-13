@@ -47,23 +47,66 @@ namespace EmbySub.Api
         }
         public async Task<object> Get(ListAlbum2 req)
         {
-            ListAlbum la = new ListAlbum();
-            la.u = req.u;
-            la.p = req.p;
-            la.c = req.c;
-            la.v = req.v;
-            la.type = req.type;
+            HttpResponseMessage hrm = await Login(req);
+            String contentType = String.Empty;
+            String str = String.Empty;
+            String hrmraw = String.Empty;
+            String s = String.Empty;
+            String url = String.Empty;
 
-            if (!String.IsNullOrEmpty(req.f))
+            if (!hrm.IsSuccessStatusCode)
             {
-                la.f = req.f;
+                str = GetErrorObject(req, out contentType);
             }
-            if (req.size != 0)
+            else
             {
-                la.size = req.size;
-            }
+                hrmraw = await hrm.Content.ReadAsStringAsync();
+                JsonDocument doc = JsonDocument.Parse(hrmraw);
+                c.DefaultRequestHeaders.Add("Accept", "application/json");
+                c.DefaultRequestHeaders.Add("X-Emby-Token", doc.RootElement.GetProperty("AccessToken").ToString());
 
-            return await this.Get(la);
+                // let's get ID3 albums
+                String sz = Convert.ToString(req.size == 0 ? 10 : req.size);
+                String ty = GetEmbyListType(req.type);
+                url = String.Format("http://localhost:{0}/emby/Items?IncludeItemTypes=MusicAlbum&ExcludeItemTypes=Folder&Recursive=true&Limit={1}&SortBy={2}", Plugin.Instance.Configuration.LocalEmbyPort, sz, ty);
+                HttpResponseMessage mes = await c.GetAsync(url);
+                hrmraw = await mes.Content.ReadAsStringAsync();
+                JsonDocument j = JsonDocument.Parse(hrmraw);
+
+                JsonElement returnedAlbums = j.RootElement.GetProperty("Items");
+                List<EmbySub.AlbumID3> albums;
+                AddAlbumsToList(returnedAlbums, req, out albums);
+                EmbySub.AlbumListID3 al = new EmbySub.AlbumListID3();
+
+                if (string.IsNullOrEmpty(req.f))
+                {
+                    EmbySub.Response r = new EmbySub.Response();
+                    contentType = "text/xml";
+                    r.ItemElementName = EmbySub.ItemChoiceType.albumList2;
+                    al.album = albums.ToArray();
+                    r.Item = al;
+                    r.version = SupportedSubsonicApiVersion;
+                    str = Serializer<EmbySub.Response>.Serialize(r);
+                }
+                else if (req.f.Equals("json"))
+                {
+                    EmbySub.JsonResponse r = new EmbySub.JsonResponse();
+                    contentType = "text/json";
+                    var options = new JsonSerializerOptions
+                    {
+                        IgnoreNullValues = true,
+                        WriteIndented = true
+                    };
+                    al.album = albums.ToArray();
+                    r.root["_status"] = "ok";
+                    r.root["albumList2"] = al;
+                    str = JsonSerializer.Serialize(r, options);
+                }
+
+            }
+            url = String.Format("http://localhost:{0}/emby/Sessions/Logout", Plugin.Instance.Configuration.LocalEmbyPort);
+            await c.PostAsync(url, null);
+            return ResultFactory.GetResult(Request, Encoding.UTF8.GetBytes(str), contentType, null);
         }
         public async Task<object> Get(ListRandomSongs req)
         {
@@ -325,6 +368,33 @@ namespace EmbySub.Api
                 ch.title = album.GetProperty("Name").ToString();
                 ch.coverArt = album.GetProperty("ImageTags").GetProperty("Primary").ToString();
                 l.Add(ch);
+            }
+        }
+
+        private static void AddAlbumsToList(JsonElement ra, ListAlbum2 r, out List<EmbySub.AlbumID3> l)
+        {
+            l = new List<EmbySub.AlbumID3>();
+            foreach (JsonElement album in ra.EnumerateArray())
+            {
+                EmbySub.AlbumID3 aid3 = new EmbySub.AlbumID3();
+                aid3.id = album.GetProperty("Id").ToString();
+                aid3.artistId = album.GetProperty("AlbumArtists")[0].GetProperty("Id").ToString();
+                aid3.artist = album.GetProperty("AlbumArtists")[0].GetProperty("Name").ToString();
+                aid3.name = album.GetProperty("Name").ToString();
+
+                JsonElement imgtags;
+                JsonElement primaryimg;
+
+                if (album.TryGetProperty("ImageTags", out imgtags))
+                {
+                    if (album.TryGetProperty("Primary", out primaryimg))
+                    {
+                        aid3.coverArt = primaryimg.ToString();
+                    }
+                }
+
+                aid3.duration = (int)TimeSpan.FromTicks(album.GetProperty("RunTimeTicks").GetInt64()).TotalSeconds;
+                l.Add(aid3);
             }
         }
 

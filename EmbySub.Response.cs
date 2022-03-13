@@ -5435,10 +5435,6 @@ namespace EmbySub
 
         /// <remarks/>
         albumInfo,
-
-        /// <remarks/>
-        albumListId3,
-
         /// <remarks/>
         albumList,
         /// <remarks/>

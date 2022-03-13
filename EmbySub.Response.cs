@@ -407,7 +407,7 @@ namespace EmbySub
 
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
-        [JsonIgnore]
+        [JsonPropertyName("album")]
         public string album
         {
             get
@@ -422,7 +422,7 @@ namespace EmbySub
 
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
-        [JsonIgnore]
+        [JsonPropertyName("artist")]
         public string artist
         {
             get

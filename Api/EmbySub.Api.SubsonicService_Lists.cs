@@ -45,6 +45,7 @@ namespace EmbySub.Api
                 default: return "Random";
             }
         }
+
         public async Task<object> Get(ListAlbum2 req)
         {
             HttpResponseMessage hrm = await Login(req);
@@ -128,96 +129,47 @@ namespace EmbySub.Api
                 c.DefaultRequestHeaders.Add("Accept", "application/json");
                 c.DefaultRequestHeaders.Add("X-Emby-Token", doc.RootElement.GetProperty("AccessToken").ToString());
 
-                // we need the unique ID for the desired music library set in the plugin configuration
-                url = String.Format("http://localhost:{0}/emby/Items?IncludeItemTypes=Album&ExcludeItemTypes=Audio", Plugin.Instance.Configuration.LocalEmbyPort);
-                HttpResponseMessage mes = await c.GetAsync(url);
-                hrmraw = await mes.Content.ReadAsStringAsync();
-                JsonDocument j = JsonDocument.Parse(hrmraw);
-                JsonElement allLibs = j.RootElement.GetProperty("Items");
-                String musicLibId = String.Empty;
+                await GetMusicLibId(req);
 
-                foreach (JsonElement lib in allLibs.EnumerateArray())
+                if (!String.IsNullOrEmpty(this.musicLibId))
                 {
-                    s = lib.GetProperty("Name").ToString();
-                    if (String.Equals(s, Plugin.Instance.Configuration.MusicLibraryName))
-                    {
-                        musicLibId = lib.GetProperty("Id").ToString();
-                        break;
-                    }
-                }
+                    // library exists so let's get ID3 songs
+                    String sz = Convert.ToString(req.size == 0 ? 10 : req.size);
+                    url = String.Format("http://localhost:{0}/emby/Items?ParentId={1}&IncludeItemTypes=Audio&ExcludeItemTypes=Folder&Limit={2}&Recursive=true&SortBy=Random", Plugin.Instance.Configuration.LocalEmbyPort, musicLibId, sz);
+                    HttpResponseMessage mes = await c.GetAsync(url);
+                    hrmraw = await mes.Content.ReadAsStringAsync();
+                    JsonDocument j = JsonDocument.Parse(hrmraw);
 
+                    JsonElement returnedSongs = j.RootElement.GetProperty("Items");
+                    List<EmbySub.Child> songs;
+                    AddSongsToList(returnedSongs, req, out songs);
+                    EmbySub.Songs sl = new EmbySub.Songs();
 
-                // music library does not exist under configured name
-                if (String.IsNullOrEmpty(musicLibId))
-                {
-                    if (String.IsNullOrEmpty(req.f))
+                    if (string.IsNullOrEmpty(req.f))
                     {
                         EmbySub.Response r = new EmbySub.Response();
-                        EmbySub.Error e = new EmbySub.Error();
-                        e.code = 0;
-                        e.message = "Music library does not exist";
-                        r.Item = e;
-                        r.ItemElementName = EmbySub.ItemChoiceType.error;
-                        str = Serializer<EmbySub.Response>.Serialize(r);
                         contentType = "text/xml";
-                        return ResultFactory.GetResult(Request, Encoding.UTF8.GetBytes(str), contentType, null);
+                        r.ItemElementName = EmbySub.ItemChoiceType.randomSongs;
+                        sl.song = songs.ToArray();
+                        r.Item = sl;
+                        r.version = SupportedSubsonicApiVersion;
+                        str = Serializer<EmbySub.Response>.Serialize(r);
                     }
                     else if (req.f.Equals("json"))
                     {
                         EmbySub.JsonResponse r = new EmbySub.JsonResponse();
-                        var e = new EmbySub.Error();
-                        e.code = 0;
-                        e.message = "Music library does not exist";
+                        contentType = "text/json";
                         var options = new JsonSerializerOptions
                         {
                             IgnoreNullValues = true,
                             WriteIndented = true
                         };
-                        r.root["error"] = e;
+                        sl.song = songs.ToArray();
                         r.root["_status"] = "ok";
+                        r.root["randomSongs"] = sl;
                         str = JsonSerializer.Serialize(r, options);
-                        contentType = "text/json";
-                        return ResultFactory.GetResult(Request, Encoding.UTF8.GetBytes(str), contentType, null);
                     }
                 }
-
-                // library exists so let's get ID3 songs
-                String sz = Convert.ToString(req.size == 0 ? 10 : req.size);
-                url = String.Format("http://localhost:{0}/emby/Items?ParentId={1}&IncludeItemTypes=Audio&ExcludeItemTypes=Folder&Limit={2}&Recursive=true&SortBy=Random", Plugin.Instance.Configuration.LocalEmbyPort, musicLibId, sz);
-                mes = await c.GetAsync(url);
-                hrmraw = await mes.Content.ReadAsStringAsync();
-                j = JsonDocument.Parse(hrmraw);
-
-                JsonElement returnedSongs = j.RootElement.GetProperty("Items");
-                List<EmbySub.Child> songs;
-                AddSongsToList(returnedSongs, req, out songs);
-                EmbySub.Songs sl = new EmbySub.Songs();
-
-                if (string.IsNullOrEmpty(req.f))
-                {
-                    EmbySub.Response r = new EmbySub.Response();
-                    contentType = "text/xml";
-                    r.ItemElementName = EmbySub.ItemChoiceType.randomSongs;
-                    sl.song = songs.ToArray();
-                    r.Item = sl;
-                    r.version = SupportedSubsonicApiVersion;
-                    str = Serializer<EmbySub.Response>.Serialize(r);
-                }
-                else if (req.f.Equals("json"))
-                {
-                    EmbySub.JsonResponse r = new EmbySub.JsonResponse();
-                    contentType = "text/json";
-                    var options = new JsonSerializerOptions
-                    {
-                        IgnoreNullValues = true,
-                        WriteIndented = true
-                    };
-                    sl.song = songs.ToArray();
-                    r.root["_status"] = "ok";
-                    r.root["randomSongs"] = sl;
-                    str = JsonSerializer.Serialize(r, options);
-                }
-
             }
             url = String.Format("http://localhost:{0}/emby/Sessions/Logout", Plugin.Instance.Configuration.LocalEmbyPort);
             await c.PostAsync(url, null);
@@ -232,6 +184,7 @@ namespace EmbySub.Api
             String s = String.Empty;
             String url = String.Empty;
 
+
             if (!hrm.IsSuccessStatusCode)
             {
                 str = GetErrorObject(req, out contentType);
@@ -243,114 +196,65 @@ namespace EmbySub.Api
                 c.DefaultRequestHeaders.Add("Accept", "application/json");
                 c.DefaultRequestHeaders.Add("X-Emby-Token", doc.RootElement.GetProperty("AccessToken").ToString());
 
-                // we need the unique ID for the desired music library set in the plugin configuration
-                url = String.Format("http://localhost:{0}/emby/Items?IncludeItemTypes=Album&ExcludeItemTypes=Audio", Plugin.Instance.Configuration.LocalEmbyPort);
-                HttpResponseMessage mes = await c.GetAsync(url);
-                hrmraw = await mes.Content.ReadAsStringAsync();
-                JsonDocument j = JsonDocument.Parse(hrmraw);
-                JsonElement allLibs = j.RootElement.GetProperty("Items");
-                String musicLibId = String.Empty;
+                await GetMusicLibId(req);
 
-                foreach (JsonElement lib in allLibs.EnumerateArray())
+                if (!String.IsNullOrEmpty(this.musicLibId))
                 {
-                    s = lib.GetProperty("Name").ToString();
-                    if (String.Equals(s, Plugin.Instance.Configuration.MusicLibraryName))
+                    // library exists so let's get all the artists that have albums first
+                    url = String.Format("http://localhost:{0}/emby/Items?ParentId={1}&IncludeItemTypes=Album&ExcludeItemTypes=Audio", Plugin.Instance.Configuration.LocalEmbyPort, musicLibId);
+                    HttpResponseMessage mes = await c.GetAsync(url);
+                    hrmraw = await mes.Content.ReadAsStringAsync();
+                    JsonDocument j = JsonDocument.Parse(hrmraw);
+
+                    JsonElement allArtists = j.RootElement.GetProperty("Items");
+
+                    StringBuilder sb = new StringBuilder();
+
+                    // now let's get each artist ID into an exclusion list because....
+                    foreach (JsonElement artist in allArtists.EnumerateArray())
                     {
-                        musicLibId = lib.GetProperty("Id").ToString();
-                        break;
+                        sb.AppendFormat("{0},", artist.GetProperty("Id").ToString());
                     }
-                }
 
+                    String sz = Convert.ToString(req.size == 0 ? 10 : req.size);
+                    String ty = GetEmbyListType(req.type);
 
-                // music library does not exist under configured name
-                if (String.IsNullOrEmpty(musicLibId))
-                {
-                    if (String.IsNullOrEmpty(req.f))
+                    // ....we want to exclude artist-only records in our hierarchical library....
+                    url = String.Format("http://localhost:{0}/emby/Items?Recursive=true&ParentId={1}&IncludeItemTypes=Folder&ExcludeItemTypes=Audio&ExcludeItemIds={2}&SortBy={3}&Limit={4}&Fields=ParentId", Plugin.Instance.Configuration.LocalEmbyPort, musicLibId, sb.ToString(), ty, sz);
+                    hrm = await c.GetAsync(url);
+                    hrmraw = await hrm.Content.ReadAsStringAsync();
+                    JsonDocument k = JsonDocument.Parse(hrmraw);
+
+                    JsonElement returnedAlbums = k.RootElement.GetProperty("Items");
+                    List<EmbySub.Child> albums;
+                    AddAlbumsToList(returnedAlbums, req, out albums);
+                    EmbySub.AlbumList al = new EmbySub.AlbumList();
+
+                    if (string.IsNullOrEmpty(req.f))
                     {
                         EmbySub.Response r = new EmbySub.Response();
-                        EmbySub.Error e = new EmbySub.Error();
-                        e.code = 0;
-                        e.message = "Music library does not exist";
-                        r.Item = e;
-                        r.ItemElementName = EmbySub.ItemChoiceType.error;
-                        str = Serializer<EmbySub.Response>.Serialize(r);
                         contentType = "text/xml";
-                        return ResultFactory.GetResult(Request, Encoding.UTF8.GetBytes(str), contentType, null);
+                        r.ItemElementName = EmbySub.ItemChoiceType.albumList;
+                        al.album = albums.ToArray();
+                        r.Item = al;
+                        r.version = SupportedSubsonicApiVersion;
+                        str = Serializer<EmbySub.Response>.Serialize(r);
                     }
                     else if (req.f.Equals("json"))
                     {
                         EmbySub.JsonResponse r = new EmbySub.JsonResponse();
-                        var e = new EmbySub.Error();
-                        e.code = 0;
-                        e.message = "Music library does not exist";
+                        contentType = "text/json";
                         var options = new JsonSerializerOptions
                         {
                             IgnoreNullValues = true,
                             WriteIndented = true
                         };
-                        r.root["error"] = e;
+                        al.album = albums.ToArray();
                         r.root["_status"] = "ok";
+                        r.root["albumList"] = al;
                         str = JsonSerializer.Serialize(r, options);
-                        contentType = "text/json";
-                        return ResultFactory.GetResult(Request, Encoding.UTF8.GetBytes(str), contentType, null);
                     }
                 }
-
-                // library exists so let's get all the artists that have albums first
-                url = String.Format("http://localhost:{0}/emby/Items?ParentId={1}&IncludeItemTypes=Album&ExcludeItemTypes=Audio", Plugin.Instance.Configuration.LocalEmbyPort, musicLibId);
-                mes = await c.GetAsync(url);
-                hrmraw = await mes.Content.ReadAsStringAsync();
-                j = JsonDocument.Parse(hrmraw);
-
-                JsonElement allArtists = j.RootElement.GetProperty("Items");
-
-                StringBuilder sb = new StringBuilder();
-
-                // now let's get each artist ID into an exclusion list because....
-                foreach (JsonElement artist in allArtists.EnumerateArray())
-                {
-                    sb.AppendFormat("{0},", artist.GetProperty("Id").ToString());
-                }
-
-                String sz = Convert.ToString(req.size == 0 ? 10 : req.size);
-                String ty = GetEmbyListType(req.type);
-
-                // ....we want to exclude artist-only records in our hierarchical library....
-                url = String.Format("http://localhost:{0}/emby/Items?Recursive=true&ParentId={1}&IncludeItemTypes=Folder&ExcludeItemTypes=Audio&ExcludeItemIds={2}&SortBy={3}&Limit={4}&Fields=ParentId", Plugin.Instance.Configuration.LocalEmbyPort, musicLibId, sb.ToString(), ty, sz);
-                hrm = await c.GetAsync(url);
-                hrmraw = await hrm.Content.ReadAsStringAsync();
-                JsonDocument k = JsonDocument.Parse(hrmraw);
-
-                JsonElement returnedAlbums = k.RootElement.GetProperty("Items");
-                List<EmbySub.Child> albums;
-                AddAlbumsToList(returnedAlbums, req, out albums);
-                EmbySub.AlbumList al = new EmbySub.AlbumList();
-
-                if (string.IsNullOrEmpty(req.f))
-                {
-                    EmbySub.Response r = new EmbySub.Response();
-                    contentType = "text/xml";
-                    r.ItemElementName = EmbySub.ItemChoiceType.albumList;
-                    al.album = albums.ToArray();
-                    r.Item = al;
-                    r.version = SupportedSubsonicApiVersion;
-                    str = Serializer<EmbySub.Response>.Serialize(r);
-                }
-                else if (req.f.Equals("json"))
-                {
-                    EmbySub.JsonResponse r = new EmbySub.JsonResponse();
-                    contentType = "text/json";
-                    var options = new JsonSerializerOptions
-                    {
-                        IgnoreNullValues = true,
-                        WriteIndented = true
-                    };
-                    al.album = albums.ToArray();
-                    r.root["_status"] = "ok";
-                    r.root["albumList"] = al;
-                    str = JsonSerializer.Serialize(r, options);
-                }
-
             }
             url = String.Format("http://localhost:{0}/emby/Sessions/Logout", Plugin.Instance.Configuration.LocalEmbyPort);
             await c.PostAsync(url, null);

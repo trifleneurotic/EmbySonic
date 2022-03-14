@@ -54,6 +54,8 @@ namespace EmbySub.Api
 
         public IRequest? Request { get; set; }
 
+        string musicLibId = String.Empty;
+
         public SubsonicService(ILibraryManager libraryManager, IMediaEncoder mediaEncoder, IFileSystem fileSystem, ILogger logger, IApplicationPaths appPaths, ILibraryMonitor libraryMonitor, IHttpResultFactory resultFactory)
         {
             _libraryManager = libraryManager;
@@ -68,20 +70,76 @@ namespace EmbySub.Api
             c = new HttpClient(clientHandler);
         }
 
+        private async Task<object> GetMusicLibId(SystemBase req)
+        {
+            // we need the unique ID for the desired music library set in the plugin configuration
+            String url = String.Format("http://localhost:{0}/emby/Items?IncludeItemTypes=Album&ExcludeItemTypes=Audio", Plugin.Instance.Configuration.LocalEmbyPort);
+            HttpResponseMessage mes = await c.GetAsync(url);
+            String hrmraw = await mes.Content.ReadAsStringAsync();
+            JsonDocument j = JsonDocument.Parse(hrmraw);
+            JsonElement allLibs = j.RootElement.GetProperty("Items");
+            String s = String.Empty;
+
+            foreach (JsonElement lib in allLibs.EnumerateArray())
+            {
+                s = lib.GetProperty("Name").ToString();
+                if (String.Equals(s, Plugin.Instance.Configuration.MusicLibraryName))
+                {
+                    musicLibId = lib.GetProperty("Id").ToString();
+                    break;
+                }
+            }
+
+
+            // music library does not exist under configured name
+            if (String.IsNullOrEmpty(musicLibId))
+            {
+                if (String.IsNullOrEmpty(req.f))
+                {
+                    EmbySub.Response r = new EmbySub.Response();
+                    EmbySub.Error e = new EmbySub.Error();
+                    e.code = 0;
+                    e.message = "Music library does not exist";
+                    r.Item = e;
+                    r.ItemElementName = EmbySub.ItemChoiceType.error;
+                    s = Serializer<EmbySub.Response>.Serialize(r);
+                    return ResultFactory.GetResult(Request, Encoding.UTF8.GetBytes(s), "text/xml", null);
+                }
+                else if (req.f.Equals("json"))
+                {
+                    EmbySub.JsonResponse r = new EmbySub.JsonResponse();
+                    var e = new EmbySub.Error();
+                    e.code = 0;
+                    e.message = "Music library does not exist";
+                    var options = new JsonSerializerOptions
+                    {
+                        IgnoreNullValues = true,
+                        WriteIndented = true
+                    };
+                    r.root["error"] = e;
+                    r.root["_status"] = "ok";
+                    s = JsonSerializer.Serialize(r, options);
+                    return ResultFactory.GetResult(Request, Encoding.UTF8.GetBytes(s), "text/json", null);
+                }
+            }
+
+            return new Object();
+        }
+
         private EmbySub.Child[] ShuffleChildren(EmbySub.Child[] arr, int numElements)
         {
-          Random rand = new Random();
+            Random rand = new Random();
 
-          EmbySub.Child[] RandomizedChildren = arr.OrderBy(x => rand.Next()).ToArray();
+            EmbySub.Child[] RandomizedChildren = arr.OrderBy(x => rand.Next()).ToArray();
 
-          return RandomizedChildren.Take(numElements).ToArray();
+            return RandomizedChildren.Take(numElements).ToArray();
         }
 
         public static byte[] HexStringToBytes(string hexString)
         {
-            if(hexString == null)
+            if (hexString == null)
                 throw new ArgumentNullException("hexString");
-            if(hexString.Length % 2 != 0)
+            if (hexString.Length % 2 != 0)
                 throw new ArgumentException("hexString must have an even length", "hexString");
             var bytes = new byte[hexString.Length / 2];
             for (int i = 0; i < bytes.Length; i++)
@@ -96,146 +154,146 @@ namespace EmbySub.Api
 
         private async Task<HttpResponseMessage> Login(SystemBase req)
         {
-          HttpClientHandler clientHandler = new HttpClientHandler();
-          clientHandler.ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => { return true; };
-          HttpClient client = new HttpClient(clientHandler);
-          String pw;
+            HttpClientHandler clientHandler = new HttpClientHandler();
+            clientHandler.ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => { return true; };
+            HttpClient client = new HttpClient(clientHandler);
+            String pw;
 
-          if (req.p.StartsWith("enc"))
-          {
-            String pwHex = req.p.Substring(req.p.LastIndexOf(':') + 1);
-            byte[] bytes = EmbySub.Api.SubsonicService.HexStringToBytes(pwHex);
-            pw = Encoding.GetEncoding("UTF-8").GetString(bytes);
-          }
-          else
-          {
-            pw = req.p;
-          }
+            if (req.p.StartsWith("enc"))
+            {
+                String pwHex = req.p.Substring(req.p.LastIndexOf(':') + 1);
+                byte[] bytes = EmbySub.Api.SubsonicService.HexStringToBytes(pwHex);
+                pw = Encoding.GetEncoding("UTF-8").GetString(bytes);
+            }
+            else
+            {
+                pw = req.p;
+            }
 
-          String payload = String.Format("{{\"Username\":\"{0}\",\"Pw\":\"{1}\"}}", req.u, pw);
-          StringContent body = new StringContent(payload, Encoding.UTF8, "application/json");
+            String payload = String.Format("{{\"Username\":\"{0}\",\"Pw\":\"{1}\"}}", req.u, pw);
+            StringContent body = new StringContent(payload, Encoding.UTF8, "application/json");
 
-          client.DefaultRequestHeaders.Accept.Clear();
-          client.DefaultRequestHeaders.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
-          client.DefaultRequestHeaders.Add("X-Emby-Authorization", String.Format("Emby Client=\"{0}\", Device=\"SubsonicDevice\", DeviceId=\"0192742\", Version=\"{1}\"", req.c, req.v));
+            client.DefaultRequestHeaders.Accept.Clear();
+            client.DefaultRequestHeaders.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
+            client.DefaultRequestHeaders.Add("X-Emby-Authorization", String.Format("Emby Client=\"{0}\", Device=\"SubsonicDevice\", DeviceId=\"0192742\", Version=\"{1}\"", req.c, req.v));
 
-          String url = String.Format("http://localhost:{0}/emby/Users/AuthenticateByName", Plugin.Instance.Configuration.LocalEmbyPort);
+            String url = String.Format("http://localhost:{0}/emby/Users/AuthenticateByName", Plugin.Instance.Configuration.LocalEmbyPort);
 
-          return await client.PostAsync(url, body);
+            return await client.PostAsync(url, body);
         }
 
         private static string GetErrorObject(SystemBase req, out string type)
         {
-          if (String.IsNullOrEmpty(req.f))
-          {
-            var subReq = new EmbySub.Response();
-            var e = new EmbySub.Error();
-            e.code = 0;
-            e.message = "Login failed";
-            subReq.status = EmbySub.ResponseStatus.failed;
-            subReq.Item = e;
-            subReq.ItemElementName = EmbySub.ItemChoiceType.error;
-            subReq.version = SupportedSubsonicApiVersion;
-            type = "text/xml";
-            return Serializer<EmbySub.Response>.Serialize(subReq);
-          }
-          if (req.f.Equals("json"))
-          {
-            var subReq = new EmbySub.JsonResponse();
-            var e = new EmbySub.Error();
-            e.code = 0;
-            e.message = "Login failed";
-            subReq.root["error"] = e;
-            subReq.root["_status"] = "failed";
-            var options = new JsonSerializerOptions
-              {
-                  IgnoreNullValues = true,
-                  WriteIndented = true
-              };
-            type = "text/json";
-            return JsonSerializer.Serialize(subReq, options);
-          }
-          type = String.Empty;
-          return null;
+            if (String.IsNullOrEmpty(req.f))
+            {
+                var subReq = new EmbySub.Response();
+                var e = new EmbySub.Error();
+                e.code = 0;
+                e.message = "Login failed";
+                subReq.status = EmbySub.ResponseStatus.failed;
+                subReq.Item = e;
+                subReq.ItemElementName = EmbySub.ItemChoiceType.error;
+                subReq.version = SupportedSubsonicApiVersion;
+                type = "text/xml";
+                return Serializer<EmbySub.Response>.Serialize(subReq);
+            }
+            if (req.f.Equals("json"))
+            {
+                var subReq = new EmbySub.JsonResponse();
+                var e = new EmbySub.Error();
+                e.code = 0;
+                e.message = "Login failed";
+                subReq.root["error"] = e;
+                subReq.root["_status"] = "failed";
+                var options = new JsonSerializerOptions
+                {
+                    IgnoreNullValues = true,
+                    WriteIndented = true
+                };
+                type = "text/json";
+                return JsonSerializer.Serialize(subReq, options);
+            }
+            type = String.Empty;
+            return null;
         }
 
         public async Task<object> Get(SystemPing req)
         {
-          HttpResponseMessage hrm = await Login(req);
-          String contentType = String.Empty;
-          String str = String.Empty;
+            HttpResponseMessage hrm = await Login(req);
+            String contentType = String.Empty;
+            String str = String.Empty;
 
-          if (!hrm.IsSuccessStatusCode)
-          {
-           str = GetErrorObject(req, out contentType);
-          }
-          else
-          {
-            if (String.IsNullOrEmpty(req.f))
+            if (!hrm.IsSuccessStatusCode)
             {
-              EmbySub.Response r = new EmbySub.Response();
-              str = Serializer<EmbySub.Response>.Serialize(r);
-              contentType = "text/xml";
+                str = GetErrorObject(req, out contentType);
             }
-            else if (req.f.Equals("json"))
+            else
             {
-              EmbySub.JsonResponse r = new EmbySub.JsonResponse();
-              var options = new JsonSerializerOptions
-              {
-                  IgnoreNullValues = true,
-                  WriteIndented = true
-              };
-              r.root["_status"] = "ok";
-              str = JsonSerializer.Serialize(r, options);
-              contentType = "text/json";
+                if (String.IsNullOrEmpty(req.f))
+                {
+                    EmbySub.Response r = new EmbySub.Response();
+                    str = Serializer<EmbySub.Response>.Serialize(r);
+                    contentType = "text/xml";
+                }
+                else if (req.f.Equals("json"))
+                {
+                    EmbySub.JsonResponse r = new EmbySub.JsonResponse();
+                    var options = new JsonSerializerOptions
+                    {
+                        IgnoreNullValues = true,
+                        WriteIndented = true
+                    };
+                    r.root["_status"] = "ok";
+                    str = JsonSerializer.Serialize(r, options);
+                    contentType = "text/json";
+                }
             }
-          }
 
-          return ResultFactory.GetResult(Request, Encoding.UTF8.GetBytes(str), contentType, null);
+            return ResultFactory.GetResult(Request, Encoding.UTF8.GetBytes(str), contentType, null);
         }
 
         public async Task<object> Get(SystemGetLicense req)
         {
-          HttpResponseMessage hrm = await Login(req);
-          String contentType = String.Empty;
-          String str = String.Empty;
+            HttpResponseMessage hrm = await Login(req);
+            String contentType = String.Empty;
+            String str = String.Empty;
 
-          if (!hrm.IsSuccessStatusCode)
-          {
-           str = GetErrorObject(req, out contentType);
-          }
-          else
-          {
-            if (String.IsNullOrEmpty(req.f))
+            if (!hrm.IsSuccessStatusCode)
             {
-              EmbySub.Response r = new EmbySub.Response();
-              EmbySub.License l = new EmbySub.License();
-              l.valid = true;
-              l.email = "billingsupport@emby.media";
-              r.Item = l;
-              r.ItemElementName = EmbySub.ItemChoiceType.license;
-              str = Serializer<EmbySub.Response>.Serialize(r);
-              contentType = "text/xml";
+                str = GetErrorObject(req, out contentType);
             }
-            else if (req.f.Equals("json"))
+            else
             {
-              EmbySub.JsonResponse r = new EmbySub.JsonResponse();
-              var lp = new EmbySub.License();
-              lp.valid = true;
-              lp.email = "billingsupport@emby.media";
-              var options = new JsonSerializerOptions
-              {
-                  IgnoreNullValues = true,
-                  WriteIndented = true
-              };
-              r.root["license"] = lp;
-              r.root["_status"] = "ok";
-              str = JsonSerializer.Serialize(r, options);
-              contentType = "text/json";
+                if (String.IsNullOrEmpty(req.f))
+                {
+                    EmbySub.Response r = new EmbySub.Response();
+                    EmbySub.License l = new EmbySub.License();
+                    l.valid = true;
+                    l.email = "billingsupport@emby.media";
+                    r.Item = l;
+                    r.ItemElementName = EmbySub.ItemChoiceType.license;
+                    str = Serializer<EmbySub.Response>.Serialize(r);
+                    contentType = "text/xml";
+                }
+                else if (req.f.Equals("json"))
+                {
+                    EmbySub.JsonResponse r = new EmbySub.JsonResponse();
+                    var lp = new EmbySub.License();
+                    lp.valid = true;
+                    lp.email = "billingsupport@emby.media";
+                    var options = new JsonSerializerOptions
+                    {
+                        IgnoreNullValues = true,
+                        WriteIndented = true
+                    };
+                    r.root["license"] = lp;
+                    r.root["_status"] = "ok";
+                    str = JsonSerializer.Serialize(r, options);
+                    contentType = "text/json";
+                }
             }
-          }
 
-          return ResultFactory.GetResult(Request, Encoding.UTF8.GetBytes(str), contentType, null);
-         }
+            return ResultFactory.GetResult(Request, Encoding.UTF8.GetBytes(str), contentType, null);
         }
     }
+}

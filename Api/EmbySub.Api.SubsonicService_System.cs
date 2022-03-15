@@ -79,6 +79,7 @@ namespace EmbySub.Api
             JsonDocument j = JsonDocument.Parse(hrmraw);
             JsonElement allLibs = j.RootElement.GetProperty("Items");
             String s = String.Empty;
+            String contentType = "text/xml";
 
             foreach (JsonElement lib in allLibs.EnumerateArray())
             {
@@ -103,7 +104,6 @@ namespace EmbySub.Api
                     r.Item = e;
                     r.ItemElementName = EmbySub.ItemChoiceType.error;
                     s = Serializer<EmbySub.Response>.Serialize(r);
-                    return ResultFactory.GetResult(Request, Encoding.UTF8.GetBytes(s), "text/xml", null);
                 }
                 else if (req.f.Equals("json"))
                 {
@@ -119,11 +119,11 @@ namespace EmbySub.Api
                     r.root["error"] = e;
                     r.root["_status"] = "ok";
                     s = JsonSerializer.Serialize(r, options);
-                    return ResultFactory.GetResult(Request, Encoding.UTF8.GetBytes(s), "text/json", null);
+                    contentType = "text/json";
                 }
             }
 
-            return new Object();
+            return ResultFactory.GetResult(Request, Encoding.UTF8.GetBytes(s), contentType, null);
         }
 
         private EmbySub.Child[] ShuffleChildren(EmbySub.Child[] arr, int numElements)

@@ -4,40 +4,40 @@ using System.Text.Json;
 
 namespace EmbySub.Api
 {
-    [Route("/rest/getAlbum.view", "GET", Description = "Returns an individual album")]
+    [Route("/rest/getAlbum.view", "GET", Summary = "Returns an individual album", Description = "Returns an individual album")]
     public class BrowsingGetAlbum : SystemBase
     {
         [ApiMember(Name = "Album ID", Description = "Emby ID of album", IsRequired = true, DataType = "string", ParameterType = "query", Verb = "GET")]
         public string? id { get; set; }
     }
 
-    [Route("/rest/getArtists.view", "GET", Description = "Returns an ID3 (non-folder) list of all artists")]
+    [Route("/rest/getArtists.view", "GET", Summary = "Returns an ID3 (non-folder) list of all artists", Description = "Returns an ID3 (non-folder) list of all artists")]
     public class BrowsingGetArtists : SystemBase
     {
         [ApiMember(Name = "Music Folder ID", Description = "Emby ID of music folder", IsRequired = false, DataType = "string", ParameterType = "query", Verb = "GET")]
         public string? musicFolderId { get; set; }
     }
 
-    [Route("/rest/getArtist.view", "GET", Description = "Returns an artist with their albums")]
+    [Route("/rest/getArtist.view", "GET", Summary = "Returns an artist with their albums", Description = "Returns an artist with their albums")]
     public class BrowsingGetArtist : SystemBase
     {
         [ApiMember(Name = "Artist ID", Description = "Emby ID of artist", IsRequired = false, DataType = "string", ParameterType = "query", Verb = "GET")]
         public string? id { get; set; }
     }
 
-    [Route("/rest/getIndexes.view", "GET", Description = "Returns an indexed list of all artists")]
+    [Route("/rest/getIndexes.view", "GET", Summary = "Returns an indexed list of all artists", Description = "Returns an indexed list of all artists")]
     public class BrowsingGetIndexes : SystemBase
     {
         [ApiMember(Name = "Music Folder ID", Description = "Emby ID of music folder", IsRequired = false, DataType = "string", ParameterType = "query", Verb = "GET")]
         public string? musicFolderId { get; set; }
     }
 
-    [Route("/rest/getMusicFolders.view", "GET", Description = "Returns top level music folder configured for plugin")]
+    [Route("/rest/getMusicFolders.view", "GET", Summary = "Returns top level music folder configured for plugin", Description = "Returns top level music folder configured for plugin")]
     public class BrowsingGetMusicFolders : SystemBase
     {
     }
 
-    [Route("/rest/getMusicDirectory.view", "GET", Description = "Returns specific music directory")]
+    [Route("/rest/getMusicDirectory.view", "GET", Summary = "Returns specific music directory", Description = "Returns specific music directory")]
     public class BrowsingGetMusicDirectory : SystemBase
     {
         [ApiMember(Name = "Music Folder ID", Description = "Emby ID of music folder", IsRequired = true, DataType = "string", ParameterType = "query", Verb = "GET")]

@@ -30,12 +30,12 @@ namespace EmbySub.Api
         public string? f { get; set; }
     }
 
-    [Route("/rest/ping.view", "GET", Description = "Ping Emby Server")]
+    [Route("/rest/ping.view", "GET", Summary = "Ping Emby Server", Description = "Ping Emby Server")]
     public class SystemPing : SystemBase
     {
     }
 
-    [Route("/rest/getLicense.view", "GET", Description = "Returns Emby license information (Premiere)")]
+    [Route("/rest/getLicense.view", "GET", Summary = "Returns Emby license information (Premiere)", Description = "Returns Emby license information (Premiere)")]
     public class SystemGetLicense : SystemBase
     {
     }

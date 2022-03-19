@@ -4,7 +4,7 @@ using System.Text.Json;
 
 namespace EmbySub.Api
 {
-    [Route("/rest/getAlbumList.view", "GET", Description = "Gets all albums for all artists")]
+    [Route("/rest/getAlbumList.view", "GET", Summary = "Gets all albums for all artists", Description = "Gets all albums for all artists")]
     public class ListAlbum : SystemBase
     {
         [ApiMember(Name = "Size", Description = "Number of items to return", IsRequired = false, DataType = "int", ParameterType = "query", Verb = "GET")]
@@ -14,7 +14,7 @@ namespace EmbySub.Api
         public String type { get; set; }
     }
 
-    [Route("/rest/getAlbumList2.view", "GET", Description = "Gets all albums for all artists (ID3)")]
+    [Route("/rest/getAlbumList2.view", "GET", Summary = "Gets all albums for all artists (ID3)", Description = "Gets all albums for all artists (ID3)")]
     public class ListAlbum2 : SystemBase
     {
         [ApiMember(Name = "Size", Description = "Number of items to return", IsRequired = false, DataType = "int", ParameterType = "query", Verb = "GET")]
@@ -23,7 +23,7 @@ namespace EmbySub.Api
         [ApiMember(Name = "Type", Description = "Type of list to return", IsRequired = true, DataType = "string", ParameterType = "query", Verb = "GET")]
         public String type { get; set; }
     }
-    [Route("/rest/getRandomSongs.view", "GET", Description = "Gets random songs (ID3)")]
+    [Route("/rest/getRandomSongs.view", "GET", Summary = "Gets random songs (ID3)", Description = "Gets random songs (ID3)")]
     public class ListRandomSongs : SystemBase
     {
         [ApiMember(Name = "Size", Description = "Number of items to return", IsRequired = false, DataType = "int", ParameterType = "query", Verb = "GET")]

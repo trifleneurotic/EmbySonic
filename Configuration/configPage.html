@@ -4,10 +4,10 @@
     <title>Subsonic for Emby</title>
 </head>
 <body>
-    <div data-role="page" class="page type-interior pluginConfigurationPage embySubConfigurationPage" data-require="emby-button,emby-select,emby-input,emby-linkbutton">
+    <div data-role="page" class="page type-interior pluginConfigurationPage embySonicConfigurationPage" data-require="emby-button,emby-select,emby-input,emby-linkbutton">
         <div data-role="content">
             <div class="content-primary">
-                <form class="embySubConfigurationForm">
+                <form class="embySonicConfigurationForm">
                     <div class="inputContainer inputContainer-withDescription">
                         <label>
                             <input is="emby-input" type="text" id="inputLocalEmbyPort" />
@@ -36,7 +36,7 @@
 
                 var pluginId = "1067e341-9cea-4587-adc7-8947dccb279e";
 
-                $('.embySubConfigurationPage').on('pageshow', function (event) {
+                $('.embySonicConfigurationPage').on('pageshow', function (event) {
 
                     var page = this;
 
@@ -51,7 +51,7 @@
                     });
                 });
 
-                $('.embySubConfigurationForm').off('submit.plugin').on('submit.plugin', function (e) {
+                $('.embySonicConfigurationForm').off('submit.plugin').on('submit.plugin', function (e) {
 
                     Dashboard.showLoadingMsg();
 

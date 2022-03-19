@@ -2,7 +2,7 @@ using System.Xml;
 using System.Xml.Serialization;
 using System.Text;
 
-namespace EmbySub
+namespace EmbySonic
 {
     public class SubsonicXmlTextWriter : XmlTextWriter
     {

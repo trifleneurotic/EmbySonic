@@ -10,9 +10,9 @@ using System.Text;
 using System.Text.Json;
 
 
-namespace EmbySub.Api
+namespace EmbySonic.Api
 {
-    public class SystemBase : IReturn<EmbySub.Response>
+    public class SystemBase : IReturn<EmbySonic.Response>
     {
         [ApiMember(Name = "Username", Description = "Username of Emby user", IsRequired = true, DataType = "string", ParameterType = "query", Verb = "GET")]
         public string? u { get; set; }
@@ -97,18 +97,18 @@ namespace EmbySub.Api
             {
                 if (String.IsNullOrEmpty(req.f))
                 {
-                    EmbySub.Response r = new EmbySub.Response();
-                    EmbySub.Error e = new EmbySub.Error();
+                    EmbySonic.Response r = new EmbySonic.Response();
+                    EmbySonic.Error e = new EmbySonic.Error();
                     e.code = 0;
                     e.message = "Music library does not exist";
                     r.Item = e;
-                    r.ItemElementName = EmbySub.ItemChoiceType.error;
-                    s = Serializer<EmbySub.Response>.Serialize(r);
+                    r.ItemElementName = EmbySonic.ItemChoiceType.error;
+                    s = Serializer<EmbySonic.Response>.Serialize(r);
                 }
                 else if (req.f.Equals("json"))
                 {
-                    EmbySub.JsonResponse r = new EmbySub.JsonResponse();
-                    var e = new EmbySub.Error();
+                    EmbySonic.JsonResponse r = new EmbySonic.JsonResponse();
+                    var e = new EmbySonic.Error();
                     e.code = 0;
                     e.message = "Music library does not exist";
                     var options = new JsonSerializerOptions
@@ -126,11 +126,11 @@ namespace EmbySub.Api
             return ResultFactory.GetResult(Request, Encoding.UTF8.GetBytes(s), contentType, null);
         }
 
-        private EmbySub.Child[] ShuffleChildren(EmbySub.Child[] arr, int numElements)
+        private EmbySonic.Child[] ShuffleChildren(EmbySonic.Child[] arr, int numElements)
         {
             Random rand = new Random();
 
-            EmbySub.Child[] RandomizedChildren = arr.OrderBy(x => rand.Next()).ToArray();
+            EmbySonic.Child[] RandomizedChildren = arr.OrderBy(x => rand.Next()).ToArray();
 
             return RandomizedChildren.Take(numElements).ToArray();
         }
@@ -162,7 +162,7 @@ namespace EmbySub.Api
             if (req.p.StartsWith("enc"))
             {
                 String pwHex = req.p.Substring(req.p.LastIndexOf(':') + 1);
-                byte[] bytes = EmbySub.Api.SubsonicService.HexStringToBytes(pwHex);
+                byte[] bytes = EmbySonic.Api.SubsonicService.HexStringToBytes(pwHex);
                 pw = Encoding.GetEncoding("UTF-8").GetString(bytes);
             }
             else
@@ -186,21 +186,21 @@ namespace EmbySub.Api
         {
             if (String.IsNullOrEmpty(req.f))
             {
-                var subReq = new EmbySub.Response();
-                var e = new EmbySub.Error();
+                var subReq = new EmbySonic.Response();
+                var e = new EmbySonic.Error();
                 e.code = 0;
                 e.message = "Login failed";
-                subReq.status = EmbySub.ResponseStatus.failed;
+                subReq.status = EmbySonic.ResponseStatus.failed;
                 subReq.Item = e;
-                subReq.ItemElementName = EmbySub.ItemChoiceType.error;
+                subReq.ItemElementName = EmbySonic.ItemChoiceType.error;
                 subReq.version = SupportedSubsonicApiVersion;
                 type = "text/xml";
-                return Serializer<EmbySub.Response>.Serialize(subReq);
+                return Serializer<EmbySonic.Response>.Serialize(subReq);
             }
             if (req.f.Equals("json"))
             {
-                var subReq = new EmbySub.JsonResponse();
-                var e = new EmbySub.Error();
+                var subReq = new EmbySonic.JsonResponse();
+                var e = new EmbySonic.Error();
                 e.code = 0;
                 e.message = "Login failed";
                 subReq.root["error"] = e;
@@ -231,13 +231,13 @@ namespace EmbySub.Api
             {
                 if (String.IsNullOrEmpty(req.f))
                 {
-                    EmbySub.Response r = new EmbySub.Response();
-                    str = Serializer<EmbySub.Response>.Serialize(r);
+                    EmbySonic.Response r = new EmbySonic.Response();
+                    str = Serializer<EmbySonic.Response>.Serialize(r);
                     contentType = "text/xml";
                 }
                 else if (req.f.Equals("json"))
                 {
-                    EmbySub.JsonResponse r = new EmbySub.JsonResponse();
+                    EmbySonic.JsonResponse r = new EmbySonic.JsonResponse();
                     var options = new JsonSerializerOptions
                     {
                         IgnoreNullValues = true,
@@ -266,19 +266,19 @@ namespace EmbySub.Api
             {
                 if (String.IsNullOrEmpty(req.f))
                 {
-                    EmbySub.Response r = new EmbySub.Response();
-                    EmbySub.License l = new EmbySub.License();
+                    EmbySonic.Response r = new EmbySonic.Response();
+                    EmbySonic.License l = new EmbySonic.License();
                     l.valid = true;
                     l.email = "billingsupport@emby.media";
                     r.Item = l;
-                    r.ItemElementName = EmbySub.ItemChoiceType.license;
-                    str = Serializer<EmbySub.Response>.Serialize(r);
+                    r.ItemElementName = EmbySonic.ItemChoiceType.license;
+                    str = Serializer<EmbySonic.Response>.Serialize(r);
                     contentType = "text/xml";
                 }
                 else if (req.f.Equals("json"))
                 {
-                    EmbySub.JsonResponse r = new EmbySub.JsonResponse();
-                    var lp = new EmbySub.License();
+                    EmbySonic.JsonResponse r = new EmbySonic.JsonResponse();
+                    var lp = new EmbySonic.License();
                     lp.valid = true;
                     lp.email = "billingsupport@emby.media";
                     var options = new JsonSerializerOptions

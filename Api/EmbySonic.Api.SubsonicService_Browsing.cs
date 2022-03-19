@@ -2,7 +2,7 @@ using MediaBrowser.Model.Services;
 using System.Text;
 using System.Text.Json;
 
-namespace EmbySub.Api
+namespace EmbySonic.Api
 {
     [Route("/rest/getAlbum.view", "GET", Summary = "Returns an individual album", Description = "Returns an individual album")]
     public class BrowsingGetAlbum : SystemBase
@@ -97,7 +97,7 @@ namespace EmbySub.Api
                 JsonDocument k = JsonDocument.Parse(hrmraw);
                 JsonElement allID3Albums = k.RootElement.GetProperty("Items");
 
-                Dictionary<String, List<EmbySub.AlbumID3>> d = new Dictionary<String, List<EmbySub.AlbumID3>>();
+                Dictionary<String, List<EmbySonic.AlbumID3>> d = new Dictionary<String, List<EmbySonic.AlbumID3>>();
 
                 String artistName = string.Empty;
                 String artistId = string.Empty;
@@ -110,7 +110,7 @@ namespace EmbySub.Api
                     {
                         if (!d.ContainsKey(req.id))
                         {
-                            d.Add(req.id, new List<EmbySub.AlbumID3>());
+                            d.Add(req.id, new List<EmbySonic.AlbumID3>());
                             artistName = aa.GetProperty("Name").ToString();
                             artistId = aa.GetProperty("Id").ToString();
                         }
@@ -135,7 +135,7 @@ namespace EmbySub.Api
                     }
                 }
 
-                EmbySub.ArtistWithAlbumsID3 awa = new ArtistWithAlbumsID3();
+                EmbySonic.ArtistWithAlbumsID3 awa = new ArtistWithAlbumsID3();
                 awa.name = artistName;
                 awa.id = artistId;
                 awa.albumCount = d[artistId].Count;
@@ -144,15 +144,15 @@ namespace EmbySub.Api
                 if (string.IsNullOrEmpty(req.f))
                 {
 
-                    EmbySub.Response r = new EmbySub.Response();
+                    EmbySonic.Response r = new EmbySonic.Response();
                     r.Item = awa;
-                    r.ItemElementName = EmbySub.ItemChoiceType.artist;
-                    str = Serializer<EmbySub.Response>.Serialize(r);
+                    r.ItemElementName = EmbySonic.ItemChoiceType.artist;
+                    str = Serializer<EmbySonic.Response>.Serialize(r);
                     contentType = "text/xml";
                 }
                 else if (req.f.Equals("json"))
                 {
-                    EmbySub.JsonResponse r = new EmbySub.JsonResponse();
+                    EmbySonic.JsonResponse r = new EmbySonic.JsonResponse();
                     contentType = "text/json";
                     var options = new JsonSerializerOptions
                     {
@@ -253,23 +253,23 @@ namespace EmbySub.Api
                     q.Enqueue(ap);
                 }
 
-                List<EmbySub.IndexID3> li = this.GetLetterIndex(q);
-                EmbySub.ArtistsID3 a = new EmbySub.ArtistsID3();
+                List<EmbySonic.IndexID3> li = this.GetLetterIndex(q);
+                EmbySonic.ArtistsID3 a = new EmbySonic.ArtistsID3();
                 a.ignoredArticles = "The El La Los Las Le Les";
                 a.index = li.ToArray();
 
                 if (string.IsNullOrEmpty(req.f))
                 {
 
-                    EmbySub.Response r = new EmbySub.Response();
+                    EmbySonic.Response r = new EmbySonic.Response();
                     r.Item = a;
-                    r.ItemElementName = EmbySub.ItemChoiceType.artists;
-                    str = Serializer<EmbySub.Response>.Serialize(r);
+                    r.ItemElementName = EmbySonic.ItemChoiceType.artists;
+                    str = Serializer<EmbySonic.Response>.Serialize(r);
                     contentType = "text/xml";
                 }
                 else if (req.f.Equals("json"))
                 {
-                    EmbySub.JsonResponse r = new EmbySub.JsonResponse();
+                    EmbySonic.JsonResponse r = new EmbySonic.JsonResponse();
                     contentType = "text/json";
                     var options = new JsonSerializerOptions
                     {
@@ -288,10 +288,10 @@ namespace EmbySub.Api
             return ResultFactory.GetResult(Request, Encoding.UTF8.GetBytes(str), contentType, null);
         }
 
-        private List<EmbySub.IndexID3> GetLetterIndex(Queue<ArtistPackage> q)
+        private List<EmbySonic.IndexID3> GetLetterIndex(Queue<ArtistPackage> q)
         {
-            EmbySub.ArtistsID3 artistListID3 = new EmbySub.ArtistsID3();
-            List<EmbySub.IndexID3> letterIndex = new List<IndexID3>();
+            EmbySonic.ArtistsID3 artistListID3 = new EmbySonic.ArtistsID3();
+            List<EmbySonic.IndexID3> letterIndex = new List<IndexID3>();
 
             char[] alpha = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".ToCharArray();
 
@@ -327,7 +327,7 @@ namespace EmbySub.Api
                     // if any artists for that letter existed, add the index to the master indexes list
                     if (artistIndex.Any())
                     {
-                        EmbySub.IndexID3 idx = new IndexID3();
+                        EmbySonic.IndexID3 idx = new IndexID3();
                         idx.name = Char.ToUpper(c).ToString();
                         idx.artist = artistIndex.ToArray();
                         letterIndex.Add(idx);
@@ -369,15 +369,15 @@ namespace EmbySub.Api
                 JsonElement allLibs = j.RootElement.GetProperty("Items");
                 String GetLetterIndex = String.Empty;
 
-                List<EmbySub.MusicFolder> mfl = new List<EmbySub.MusicFolder>();
-                EmbySub.MusicFolders m = new EmbySub.MusicFolders();
+                List<EmbySonic.MusicFolder> mfl = new List<EmbySonic.MusicFolder>();
+                EmbySonic.MusicFolders m = new EmbySonic.MusicFolders();
 
                 foreach (JsonElement lib in allLibs.EnumerateArray())
                 {
                     s = lib.GetProperty("Name").ToString();
                     if (String.Equals(s, Plugin.Instance.Configuration.MusicLibraryName))
                     {
-                        EmbySub.MusicFolder mf = new EmbySub.MusicFolder();
+                        EmbySonic.MusicFolder mf = new EmbySonic.MusicFolder();
                         mf.name = s;
                         mf.id = Int32.Parse(lib.GetProperty("Id").ToString());
                         mfl.Add(mf);
@@ -389,15 +389,15 @@ namespace EmbySub.Api
                 if (string.IsNullOrEmpty(req.f))
                 {
 
-                    EmbySub.Response r = new EmbySub.Response();
+                    EmbySonic.Response r = new EmbySonic.Response();
                     r.Item = m;
-                    r.ItemElementName = EmbySub.ItemChoiceType.musicFolders;
-                    str = Serializer<EmbySub.Response>.Serialize(r);
+                    r.ItemElementName = EmbySonic.ItemChoiceType.musicFolders;
+                    str = Serializer<EmbySonic.Response>.Serialize(r);
                     contentType = "text/xml";
                 }
                 else if (req.f.Equals("json"))
                 {
-                    EmbySub.JsonResponse r = new EmbySub.JsonResponse();
+                    EmbySonic.JsonResponse r = new EmbySonic.JsonResponse();
                     contentType = "text/json";
                     var options = new JsonSerializerOptions
                     {
@@ -449,8 +449,8 @@ namespace EmbySub.Api
                         hrmraw = await hrm.Content.ReadAsStringAsync();
                         j = JsonDocument.Parse(hrmraw);
                         JsonElement allFolders = j.RootElement.GetProperty("Items");
-                        EmbySub.Directory d = new EmbySub.Directory();
-                        List<EmbySub.Child> l = new List<EmbySub.Child>();
+                        EmbySonic.Directory d = new EmbySonic.Directory();
+                        List<EmbySonic.Child> l = new List<EmbySonic.Child>();
 
                         // for each folder let's find out if it is a parent or child music directory and add to the appropriate collection
                         foreach (JsonElement folder in allFolders.EnumerateArray())
@@ -463,7 +463,7 @@ namespace EmbySub.Api
                             }
                             else if (folder.GetProperty("ParentId").ToString().Equals(req.musicFolderId))
                             {
-                                EmbySub.Child c = new EmbySub.Child();
+                                EmbySonic.Child c = new EmbySonic.Child();
                                 c.id = folder.GetProperty("Id").ToString();
                                 c.parent = folder.GetProperty("ParentId").ToString();
                                 c.title = folder.GetProperty("Name").ToString();
@@ -478,10 +478,10 @@ namespace EmbySub.Api
 
                         if (string.IsNullOrEmpty(req.f))
                         {
-                            EmbySub.Response r = new EmbySub.Response();
+                            EmbySonic.Response r = new EmbySonic.Response();
                             r.Item = d;
-                            r.ItemElementName = EmbySub.ItemChoiceType.directory;
-                            str = Serializer<EmbySub.Response>.Serialize(r);
+                            r.ItemElementName = EmbySonic.ItemChoiceType.directory;
+                            str = Serializer<EmbySonic.Response>.Serialize(r);
                             contentType = "text/xml";
                             url = String.Format("http://localhost:{0}/emby/Sessions/Logout", Plugin.Instance.Configuration.LocalEmbyPort);
                             await c.PostAsync(url, null);
@@ -489,7 +489,7 @@ namespace EmbySub.Api
                         }
                         else if (req.f.Equals("json"))
                         {
-                            EmbySub.JsonResponse r = new EmbySub.JsonResponse();
+                            EmbySonic.JsonResponse r = new EmbySonic.JsonResponse();
                             contentType = "text/json";
                             var options = new JsonSerializerOptions
                             {
@@ -520,8 +520,8 @@ namespace EmbySub.Api
                         q.Enqueue(artist);
                     }
 
-                    EmbySub.Indexes indexes = new EmbySub.Indexes();
-                    List<EmbySub.Index> letterIndex = new List<EmbySub.Index>();
+                    EmbySonic.Indexes indexes = new EmbySonic.Indexes();
+                    List<EmbySonic.Index> letterIndex = new List<EmbySonic.Index>();
 
                     char[] alpha = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz".ToCharArray();
 
@@ -531,14 +531,14 @@ namespace EmbySub.Api
                         JsonElement r;
                         if (q.TryPeek(out r))
                         {
-                            List<EmbySub.Artist> artistList = new List<EmbySub.Artist>();
+                            List<EmbySonic.Artist> artistList = new List<EmbySonic.Artist>();
 
                             // if there are any artists that begin with this letter, dequeue and add to index's artist array
                             char ch = q.Peek().GetProperty("Name").ToString()[0];
                             while (ch.Equals(c))
                             {
                                 JsonElement je = q.Dequeue();
-                                EmbySub.Artist a = new EmbySub.Artist();
+                                EmbySonic.Artist a = new EmbySonic.Artist();
                                 a.id = je.GetProperty("Id").ToString();
                                 a.name = je.GetProperty("Name").ToString();
                                 artistList.Add(a);
@@ -555,7 +555,7 @@ namespace EmbySub.Api
                             // if any artists for that letter existed, add the index to the master indexes list
                             if (artistList.Any())
                             {
-                                EmbySub.Index i = new EmbySub.Index();
+                                EmbySonic.Index i = new EmbySonic.Index();
                                 i.name = c.ToString();
                                 i.artist = artistList.ToArray();
                                 letterIndex.Add(i);
@@ -572,15 +572,15 @@ namespace EmbySub.Api
                     if (string.IsNullOrEmpty(req.f))
                     {
 
-                        EmbySub.Response r = new EmbySub.Response();
+                        EmbySonic.Response r = new EmbySonic.Response();
                         r.Item = indexes;
-                        r.ItemElementName = EmbySub.ItemChoiceType.indexes;
-                        str = Serializer<EmbySub.Response>.Serialize(r);
+                        r.ItemElementName = EmbySonic.ItemChoiceType.indexes;
+                        str = Serializer<EmbySonic.Response>.Serialize(r);
                         contentType = "text/xml";
                     }
                     else if (req.f.Equals("json"))
                     {
-                        EmbySub.JsonResponse r = new EmbySub.JsonResponse();
+                        EmbySonic.JsonResponse r = new EmbySonic.JsonResponse();
                         contentType = "text/json";
                         var options = new JsonSerializerOptions
                         {
@@ -635,12 +635,12 @@ namespace EmbySub.Api
                 JsonDocument k = JsonDocument.Parse(hrmraw);
                 JsonElement ss = k.RootElement.GetProperty("Items");
 
-                List<EmbySub.Child> songs = new List<EmbySub.Child>();
+                List<EmbySonic.Child> songs = new List<EmbySonic.Child>();
 
                 // ....and then add each song to our list of songs for the album
                 foreach (JsonElement song in ss.EnumerateArray())
                 {
-                    EmbySub.Child ch = new EmbySub.Child();
+                    EmbySonic.Child ch = new EmbySonic.Child();
                     ch.id = song.GetProperty("Id").ToString();
                     ch.title = song.GetProperty("Name").ToString();
                     ch.album = album.GetProperty("Name").ToString();
@@ -656,7 +656,7 @@ namespace EmbySub.Api
                 Child[] songArray = songs.ToArray();
 
                 // then we create the main album record....
-                EmbySub.AlbumWithSongsID3 aws = new EmbySub.AlbumWithSongsID3();
+                EmbySonic.AlbumWithSongsID3 aws = new EmbySonic.AlbumWithSongsID3();
                 aws.id = req.id;
                 aws.name = album.GetProperty("Name").ToString();
                 aws.artist = artist.GetProperty("Name").ToString();
@@ -670,15 +670,15 @@ namespace EmbySub.Api
                 if (string.IsNullOrEmpty(req.f))
                 {
 
-                    EmbySub.Response r = new EmbySub.Response();
+                    EmbySonic.Response r = new EmbySonic.Response();
                     r.Item = aws;
-                    r.ItemElementName = EmbySub.ItemChoiceType.album;
-                    str = Serializer<EmbySub.Response>.Serialize(r);
+                    r.ItemElementName = EmbySonic.ItemChoiceType.album;
+                    str = Serializer<EmbySonic.Response>.Serialize(r);
                     contentType = "text/xml";
                 }
                 else if (req.f.Equals("json"))
                 {
-                    EmbySub.JsonResponse r = new EmbySub.JsonResponse();
+                    EmbySonic.JsonResponse r = new EmbySonic.JsonResponse();
                     contentType = "text/json";
                     var options = new JsonSerializerOptions
                     {

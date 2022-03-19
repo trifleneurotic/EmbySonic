@@ -2,10 +2,10 @@ using MediaBrowser.Common.Configuration;
 using MediaBrowser.Common.Plugins;
 using MediaBrowser.Model.Plugins;
 using MediaBrowser.Model.Serialization;
-using EmbySub.Configuration;
+using EmbySonic.Configuration;
 using MediaBrowser.Model.Drawing;
 
-namespace EmbySub
+namespace EmbySonic
 {
     /// <summary>
     /// Class Plugin
@@ -27,7 +27,7 @@ namespace EmbySub
                 new PluginPageInfo
                 {
                     Name = "embysubsonic",
-                    EmbeddedResourcePath = "EmbySub.Configuration.configPage.html"
+                    EmbeddedResourcePath = "EmbySonic.Configuration.configPage.html"
                 }
             };
         }
@@ -50,7 +50,7 @@ namespace EmbySub
         public Stream GetThumbImage()
         {
             var type = GetType();
-            return type.Assembly.GetManifestResourceStream("EmbySub.Images.plugin.png");
+            return type.Assembly.GetManifestResourceStream("EmbySonic.Images.plugin.png");
         }
 
         public ImageFormat ThumbImageFormat

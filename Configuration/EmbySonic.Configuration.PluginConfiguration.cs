@@ -1,6 +1,6 @@
 using MediaBrowser.Model.Plugins;
 
-namespace EmbySub.Configuration
+namespace EmbySonic.Configuration
 {
     /// <summary>
     /// Class PluginConfiguration

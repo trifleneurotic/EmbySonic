@@ -43,15 +43,19 @@ namespace EmbySonic.Api
 
     public partial class SubsonicService : IService, IRequiresRequest
     {
-        public async Task<object> Get(Lyrics req)
+        public async Task<object> Get(RetrievalLyrics req)
         {
             return null;
         }
-        public async Task<object> Get(Captions req)
+        public async Task<object> Get(RetrievalCoverArt req)
         {
             return null;
         }
-        public async Task<object> Get(HttpRequestMessage req)
+        public async Task<object> Get(RetrievalCaptions req)
+        {
+            return null;
+        }
+        public async Task<object> Get(RetrievalAvatar req)
         {
             return null;
         }

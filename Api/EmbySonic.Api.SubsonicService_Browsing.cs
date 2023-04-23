@@ -4,43 +4,46 @@ using System.Text.Json;
 
 namespace EmbySonic.Api
 {
-    [Route("/rest/getAlbum.view", "GET", Summary = "Returns an individual album", Description = "Returns an individual album")]
+    [Route("/rest/getAlbum.view", "GET", Summary = "Returns details for an album, including a list of songs; this method organizes music according to ID3 tags.", Description = "Returns a <subsonic-response> element with a nested <album> element on success")]
     public class BrowsingGetAlbum : SystemBase
     {
-        [ApiMember(Name = "Album ID", Description = "Emby ID of album", IsRequired = true, DataType = "string", ParameterType = "query", Verb = "GET")]
+        [ApiMember(Name = "Album ID", Description = "The album ID", IsRequired = true, DataType = "string", ParameterType = "query", Verb = "GET")]
         public string? id { get; set; }
     }
 
-    [Route("/rest/getArtists.view", "GET", Summary = "Returns an ID3 (non-folder) list of all artists", Description = "Returns an ID3 (non-folder) list of all artists")]
+    [Route("/rest/getArtists.view", "GET", Summary = "Similar to getIndexes, but organizes music according to ID3 tags", Description = "Returns a <subsonic-response> element with a nested <artists> element on success")]
     public class BrowsingGetArtists : SystemBase
     {
-        [ApiMember(Name = "Music Folder ID", Description = "Emby ID of music folder", IsRequired = false, DataType = "string", ParameterType = "query", Verb = "GET")]
+        [ApiMember(Name = "Music Folder ID", Description = "If specified, only return artists in the music folder with the given ID; see getMusicFolders", IsRequired = false, DataType = "string", ParameterType = "query", Verb = "GET")]
         public string? musicFolderId { get; set; }
     }
 
-    [Route("/rest/getArtist.view", "GET", Summary = "Returns an artist with their albums", Description = "Returns an artist with their albums")]
+    [Route("/rest/getArtist.view", "GET", Summary = "Returns details for an artist, including a list of albums; this method organizes music according to ID3 tags", Description = "Returns a <subsonic-response> element with a nested <artist> element on success")]
     public class BrowsingGetArtist : SystemBase
     {
-        [ApiMember(Name = "Artist ID", Description = "Emby ID of artist", IsRequired = false, DataType = "string", ParameterType = "query", Verb = "GET")]
+        [ApiMember(Name = "Artist ID", Description = "The artist ID", IsRequired = false, DataType = "string", ParameterType = "query", Verb = "GET")]
         public string? id { get; set; }
     }
 
-    [Route("/rest/getIndexes.view", "GET", Summary = "Returns an indexed list of all artists", Description = "Returns an indexed list of all artists")]
+    [Route("/rest/getIndexes.view", "GET", Summary = "Returns an indexed structure of all artists", Description = "Returns a <subsonic-response> element with a nested <indexes> element on success")]
     public class BrowsingGetIndexes : SystemBase
     {
-        [ApiMember(Name = "Music Folder ID", Description = "Emby ID of music folder", IsRequired = false, DataType = "string", ParameterType = "query", Verb = "GET")]
+        [ApiMember(Name = "Music Folder ID", Description = "If specified, only return artists in the music folder with the given ID; see getMusicFolders", IsRequired = false, DataType = "string", ParameterType = "query", Verb = "GET")]
         public string? musicFolderId { get; set; }
+
+        [ApiMember(Name = "If Modified Since", Description = "If specified, only return a result if the artist collection has changed since the given time (in milliseconds since 1 Jan 1970)", IsRequired = false, DataType = "string", ParameterType = "query", Verb = "GET")]
+        public string? ifModifiedSince { get; set; }
     }
 
-    [Route("/rest/getMusicFolders.view", "GET", Summary = "Returns top level music folder configured for plugin", Description = "Returns top level music folder configured for plugin")]
+    [Route("/rest/getMusicFolders.view", "GET", Summary = "Returns all configured top-level music folders; takes no extra parameters", Description = "Returns a <subsonic-response> element with a nested <musicFolders> element on success")]
     public class BrowsingGetMusicFolders : SystemBase
     {
     }
 
-    [Route("/rest/getMusicDirectory.view", "GET", Summary = "Returns specific music directory", Description = "Returns specific music directory")]
+    [Route("/rest/getMusicDirectory.view", "GET", Summary = "Returns a listing of all files in a music directory; typically used to get list of albums for an artist, or list of songs for an album", Description = "Returns a <subsonic-response> element with a nested <directory> element on success")]
     public class BrowsingGetMusicDirectory : SystemBase
     {
-        [ApiMember(Name = "Music Folder ID", Description = "Emby ID of music folder", IsRequired = true, DataType = "string", ParameterType = "query", Verb = "GET")]
+        [ApiMember(Name = "Music Folder ID", Description = "A string which uniquely identifies the music folder; obtained by calls to getIndexes or getMusicDirectory", IsRequired = true, DataType = "string", ParameterType = "query", Verb = "GET")]
         public string? id { get; set; }
     }
 

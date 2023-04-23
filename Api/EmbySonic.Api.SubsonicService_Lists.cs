@@ -4,30 +4,107 @@ using System.Text.Json;
 
 namespace EmbySonic.Api
 {
-    [Route("/rest/getAlbumList.view", "GET", Summary = "Gets all albums for all artists", Description = "Gets all albums for all artists")]
+    [Route("/rest/getAlbumList.view", "GET", Summary = "Returns a list of random, newest, highest rated etc. albums; similar to the album lists on the home page of the Subsonic web interface", Description = "Returns a <subsonic-response> element with a nested <albumList> element on success")]
     public class ListAlbum : SystemBase
     {
-        [ApiMember(Name = "Size", Description = "Number of items to return", IsRequired = false, DataType = "int", ParameterType = "query", Verb = "GET")]
+        [ApiMember(Name = "Size", Description = "The number of albums to return; max 500", IsRequired = false, DataType = "int", ParameterType = "query", Verb = "GET")]
         public int size { get; set; }
 
-        [ApiMember(Name = "Type", Description = "Type of list to return", IsRequired = true, DataType = "string", ParameterType = "query", Verb = "GET")]
+        [ApiMember(Name = "Type", Description = "The list type; must be one of the following: random, newest, frequent, recent, starred, alphabeticalByName or alphabeticalByArtist; since 1.10.1 you can use byYear and byGenre to list albums in a given year range or genre", IsRequired = true, DataType = "string", ParameterType = "query", Verb = "GET")]
         public String type { get; set; }
+
+        [ApiMember(Name = "Offset", Description = "The list offset; useful if you for example want to page through the list of newest albums", IsRequired = false, DataType = "int", ParameterType = "query", Verb = "GET")]
+        public int offset { get; set; }
+
+        [ApiMember(Name = "From Year", Description = "The first year in the range; if fromYear > toYear a reverse chronological list is returned", IsRequired = false, DataType = "int", ParameterType = "query", Verb = "GET")]
+        public int fromYear { get; set; }
+
+        [ApiMember(Name = "To Year", Description = "The last year in the range", IsRequired = false, DataType = "int", ParameterType = "query", Verb = "GET")]
+        public int toYear { get; set; }
+
+        [ApiMember(Name = "Genre", Description = "The name of the genre, e.g., \"Rock\"", IsRequired = false, DataType = "string", ParameterType = "query", Verb = "GET")]
+        public String genre { get; set; }
+
+        [ApiMember(Name = "Music Folder ID", Description = "(Since 1.11.0) Only return albums in the music folder with the given ID; see getMusicFolders", IsRequired = false, DataType = "string", ParameterType = "query", Verb = "GET")]
+        public String musicFolderId { get; set; }
     }
 
-    [Route("/rest/getAlbumList2.view", "GET", Summary = "Gets all albums for all artists (ID3)", Description = "Gets all albums for all artists (ID3)")]
+    [Route("/rest/getAlbumList2.view", "GET", Summary = "Similar to getAlbumList, but organizes music according to ID3 tags", Description = "Returns a <subsonic-response> element with a nested <albumList2> element on success")]
     public class ListAlbum2 : SystemBase
     {
-        [ApiMember(Name = "Size", Description = "Number of items to return", IsRequired = false, DataType = "int", ParameterType = "query", Verb = "GET")]
+        [ApiMember(Name = "Size", Description = "The number of albums to return; max 500", IsRequired = false, DataType = "int", ParameterType = "query", Verb = "GET")]
         public int size { get; set; }
 
-        [ApiMember(Name = "Type", Description = "Type of list to return", IsRequired = true, DataType = "string", ParameterType = "query", Verb = "GET")]
+        [ApiMember(Name = "Type", Description = "The list type; must be one of the following: random, newest, frequent, recent, starred, alphabeticalByName or alphabeticalByArtist; since 1.10.1 you can use byYear and byGenre to list albums in a given year range or genre", IsRequired = true, DataType = "string", ParameterType = "query", Verb = "GET")]
         public String type { get; set; }
+
+        [ApiMember(Name = "Offset", Description = "The list offset; useful if you for example want to page through the list of newest albums", IsRequired = false, DataType = "int", ParameterType = "query", Verb = "GET")]
+        public int offset { get; set; }
+
+        [ApiMember(Name = "From Year", Description = "The first year in the range; if fromYear > toYear a reverse chronological list is returned", IsRequired = false, DataType = "int", ParameterType = "query", Verb = "GET")]
+        public int fromYear { get; set; }
+
+        [ApiMember(Name = "To Year", Description = "The last year in the range", IsRequired = false, DataType = "int", ParameterType = "query", Verb = "GET")]
+        public int toYear { get; set; }
+
+        [ApiMember(Name = "Genre", Description = "The name of the genre, e.g., \"Rock\"", IsRequired = false, DataType = "string", ParameterType = "query", Verb = "GET")]
+        public String genre { get; set; }
+
+        [ApiMember(Name = "Music Folder ID", Description = "(Since 1.11.0) Only return albums in the music folder with the given ID; see getMusicFolders", IsRequired = false, DataType = "string", ParameterType = "query", Verb = "GET")]
+        public String musicFolderId { get; set; }
     }
-    [Route("/rest/getRandomSongs.view", "GET", Summary = "Gets random songs (ID3)", Description = "Gets random songs (ID3)")]
+    [Route("/rest/getRandomSongs.view", "GET", Summary = "Returns random songs matching the given criteria", Description = "Returns a <subsonic-response> element with a nested <randomSongs> element on success")]
     public class ListRandomSongs : SystemBase
     {
-        [ApiMember(Name = "Size", Description = "Number of items to return", IsRequired = false, DataType = "int", ParameterType = "query", Verb = "GET")]
+        [ApiMember(Name = "Size", Description = "The number of songs to return; max 500", IsRequired = false, DataType = "int", ParameterType = "query", Verb = "GET")]
         public int size { get; set; }
+
+        [ApiMember(Name = "From Year", Description = "Only return songs published after or in this year", IsRequired = false, DataType = "int", ParameterType = "query", Verb = "GET")]
+        public int fromYear { get; set; }
+
+        [ApiMember(Name = "To Year", Description = "Only return songs published before or in this year", IsRequired = false, DataType = "int", ParameterType = "query", Verb = "GET")]
+        public int toYear { get; set; }
+
+        [ApiMember(Name = "Genre", Description = "Only returns songs belonging to this genre", IsRequired = false, DataType = "string", ParameterType = "query", Verb = "GET")]
+        public String genre { get; set; }
+
+        [ApiMember(Name = "Music Folder ID", Description = "Only return songs in the music folder with the given ID; see getMusicFolders", IsRequired = false, DataType = "string", ParameterType = "query", Verb = "GET")]
+        public String musicFolderId { get; set; }
+    }
+
+    [Route("/rest/getSongsByGenre.view", "GET", Summary = "Returns songs in a given genre", Description = "Returns a <subsonic-response> element with a nested <songsByGenre> element on success")]
+    public class ListSongsByGenre : SystemBase
+    {
+        [ApiMember(Name = "Count", Description = " 	The maximum number of songs to return; max 500", IsRequired = false, DataType = "int", ParameterType = "query", Verb = "GET")]
+        public int count { get; set; }
+
+        [ApiMember(Name = "Offset", Description = "The offset; seful if you want to page through the songs in a genre", IsRequired = false, DataType = "int", ParameterType = "query", Verb = "GET")]
+        public int offset { get; set; }
+
+        [ApiMember(Name = "Genre", Description = "The genre, as returned by getGenres", IsRequired = true, DataType = "string", ParameterType = "query", Verb = "GET")]
+        public String genre { get; set; }
+
+        [ApiMember(Name = "Music Folder ID", Description = "(Since 1.12.0) Only return albums in the music folder with the given ID; see getMusicFolders", IsRequired = false, DataType = "string", ParameterType = "query", Verb = "GET")]
+        public String musicFolderId { get; set; }
+    }
+
+    [Route("/rest/getNowPlaying.view", "GET", Summary = "Returns what is currently being played by all users; takes no extra parameters", Description = "Returns a <subsonic-response> element with a nested <nowPlaying> element on success")]
+    public class ListNowPlaying : SystemBase
+    {
+    }
+
+    [Route("/rest/getStarred.view", "GET", Summary = "Returns starred songs, albums and artists", Description = "Returns a <subsonic-response> element with a nested <starred2> element on success")]
+    public class ListStarred : SystemBase
+    {
+        [ApiMember(Name = "Music Folder ID", Description = "(Since 1.12.0) Only return results from the music folder with the given ID; see getMusicFolders", IsRequired = false, DataType = "string", ParameterType = "query", Verb = "GET")]
+        public String musicFolderId { get; set; }
+    }
+
+    [Route("/rest/getStarred2.view", "GET", Summary = "Similar to getStarred, but organizes music according to ID3 tags", Description = "Returns a <subsonic-response> element with a nested <starred> element on success")]
+    public class ListStarred2 : SystemBase
+    {
+        [ApiMember(Name = "Music Folder ID", Description = "(Since 1.12.0) Only return results from the music folder with the given ID; see getMusicFolders", IsRequired = false, DataType = "string", ParameterType = "query", Verb = "GET")]
+        public String musicFolderId { get; set; }
     }
 
     public partial class SubsonicService : IService, IRequiresRequest

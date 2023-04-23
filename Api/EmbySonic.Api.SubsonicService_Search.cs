@@ -26,7 +26,7 @@ namespace EmbySonic.Api
 
         [ApiMember(Name = "Song Offset", Description = "Search result offset for songs; Used for paging", IsRequired = false, DataType = "string", ParameterType = "query", Verb = "GET")]
         public String? songOffset { get; set; }
-        [ApiMember(Name = "Music Folder ID", Description = "(Since 1.12.0) Only return results from the music folder with the given ID; See getMusicFolders", IsRequired = false, DataType = "string", ParameterType = "query", Verb = "GET")]
+        [ApiMember(Name = "Music Folder ID", Description = "(Since 1.12.0) Only return results from the music folder with the given ID; see getMusicFolders", IsRequired = false, DataType = "string", ParameterType = "query", Verb = "GET")]
         public String? musicFolderId { get; set; }
 
     }

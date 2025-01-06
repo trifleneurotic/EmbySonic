@@ -2,6 +2,8 @@ using MediaBrowser.Model.Services;
 using System.Text;
 using System.Text.Json;
 using SQLite;
+using System.Collections.Generic;
+using System.Collections;
 
 namespace EmbySonic.Api
 {
@@ -54,6 +56,11 @@ namespace EmbySonic.Api
         public String artistName { get; set; }
         public String artistId { get; set; }
     }
+
+    public static class IEnumerableExtensions {
+    public static IEnumerable<(T item, int index)> WithIndex<T>(this IEnumerable<T> self)       
+       => self.Select((item, index) => (item, index));
+}
 
      [Table("MediaItems")]
     public class MediaItem
@@ -478,175 +485,96 @@ namespace EmbySonic.Api
                     r.root["musicFolders"] = m;
                     str = JsonSerializer.Serialize(r, options);
                 }
-
-
+                db.Close();
             }
             return ResultFactory.GetResult(Request, Encoding.UTF8.GetBytes(str), contentType, null);
         }
-
-
         public async Task<object> Get(BrowsingGetIndexes req)
         {
             HttpResponseMessage hrm = await Login(req);
             String contentType = String.Empty;
             String str = String.Empty;
-            String hrmraw = String.Empty;
-            String s = String.Empty;
-            String url = String.Empty;
-            JsonDocument j;
             if (!hrm.IsSuccessStatusCode)
             {
                 str = GetErrorObject(req, out contentType);
             }
             else
             {
-                hrmraw = await hrm.Content.ReadAsStringAsync();
-                JsonDocument doc = JsonDocument.Parse(hrmraw);
-                c.DefaultRequestHeaders.Add("Accept", "application/json");
-                c.DefaultRequestHeaders.Add("X-Emby-Token", doc.RootElement.GetProperty("AccessToken").ToString());
+                var databasePath = Path.Combine("", "library.db");
+                var db = new SQLiteConnection(databasePath);
 
-                await GetMusicLibId(req);
+                var indexes = new EmbySonic.Indexes();
 
-                if (!String.IsNullOrEmpty(this.musicLibId))
+                List<EmbySonic.Artist> al = new List<EmbySonic.Artist>();
+                Hashtable il = new Hashtable();
+
+                var artistResults = db.Query<MediaItem>(@"SELECT * FROM MediaItems WHERE id IN
+                                                         (SELECT DISTINCT ParentId FROM MediaItems WHERE ParentId IN
+                                                         (SELECT DISTINCT ParentId FROM MediaItems WHERE ParentId IN
+                                                         (SELECT DISTINCT ParentId FROM MediaItems WHERE name IN
+                                                         (SELECT DISTINCT name FROM MediaItems WHERE name IN
+                                                         (SELECT Name FROM MediaItems WHERE id IN
+                                                         (SELECT DISTINCT AlbumId FROM MediaItems WHERE Type=11
+                                                         AND AlbumId IS NOT NULL)))
+                                                         AND type=3)));");
+
+                if (indexes.ignoredArticles == null)
                 {
-                    // we want a certain music folder, so let's get all of them first
-                    if (!String.IsNullOrEmpty(req.musicFolderId))
+                    indexes.ignoredArticles = "The El La Los Las Le Les";
+                }
+
+                var ignoredArticlesArray = indexes.ignoredArticles.Split(' ');
+             
+                foreach (var item in artistResults)
+                {
+                    Artist a = new Artist();
+                    string artistName = item.Name;
+                    foreach (var article in ignoredArticlesArray)
                     {
-                        url = String.Format("http://localhost:{0}/emby/Items?ParentId={1}&Recursive=true&IncludeItemTypes=Folder&Fields=ParentId", Plugin.Instance.Configuration.LocalEmbyPort, musicLibId);
-                        hrm = await c.GetAsync(url);
-                        hrmraw = await hrm.Content.ReadAsStringAsync();
-                        j = JsonDocument.Parse(hrmraw);
-                        JsonElement allFolders = j.RootElement.GetProperty("Items");
-                        EmbySonic.Directory d = new EmbySonic.Directory();
-                        List<EmbySonic.Child> l = new List<EmbySonic.Child>();
-
-                        // for each folder let's find out if it is a parent or child music directory and add to the appropriate collection
-                        foreach (JsonElement folder in allFolders.EnumerateArray())
+                        if (artistName.StartsWith(article))
                         {
-                            if (folder.GetProperty("Id").ToString().Equals(req.musicFolderId))
-                            {
-                                d.parent = folder.GetProperty("ParentId").ToString();
-                                d.id = folder.GetProperty("Id").ToString();
-                                d.name = folder.GetProperty("Name").ToString();
-                            }
-                            else if (folder.GetProperty("ParentId").ToString().Equals(req.musicFolderId))
-                            {
-                                EmbySonic.Child c = new EmbySonic.Child();
-                                c.id = folder.GetProperty("Id").ToString();
-                                c.parent = folder.GetProperty("ParentId").ToString();
-                                c.title = folder.GetProperty("Name").ToString();
-                                c.artist = d.name;
-                                c.isDir = folder.GetProperty("IsFolder").GetBoolean();
-                                c.coverArt = folder.GetProperty("ImageTags").GetProperty("Primary").ToString();
-                                l.Add(c);
-                            }
-                        }
-
-                        d.child = l.ToArray();
-
-                        if (string.IsNullOrEmpty(req.f))
-                        {
-                            EmbySonic.Response r = new EmbySonic.Response();
-                            r.Item = d;
-                            r.ItemElementName = EmbySonic.ItemChoiceType.directory;
-                            str = Serializer<EmbySonic.Response>.Serialize(r);
-                            contentType = "text/xml";
-                            url = String.Format("http://localhost:{0}/emby/Sessions/Logout", Plugin.Instance.Configuration.LocalEmbyPort);
-                            await c.PostAsync(url, null);
-                            return ResultFactory.GetResult(Request, Encoding.UTF8.GetBytes(str), contentType, null);
-                        }
-                        else if (req.f.Equals("json"))
-                        {
-                            EmbySonic.JsonResponse r = new EmbySonic.JsonResponse();
-                            contentType = "text/json";
-                            var options = new JsonSerializerOptions
-                            {
-                                IgnoreNullValues = true,
-                                WriteIndented = true
-                            };
-                            r.root["_status"] = "ok";
-                            r.root["directory"] = d;
-                            str = JsonSerializer.Serialize(r, options);
-                            url = String.Format("http://localhost:{0}/emby/Sessions/Logout", Plugin.Instance.Configuration.LocalEmbyPort);
-                            await c.PostAsync(url, null);
-                            return ResultFactory.GetResult(Request, Encoding.UTF8.GetBytes(str), contentType, null);
-                        }
-
-                    }
-
-                    // library exists so first let's get all artists....
-                    url = String.Format("http://localhost:{0}/emby/Items?ParentId={1}&SortBy=Name", Plugin.Instance.Configuration.LocalEmbyPort, musicLibId);
-                    hrm = await c.GetAsync(url);
-                    hrmraw = await hrm.Content.ReadAsStringAsync();
-                    j = JsonDocument.Parse(hrmraw);
-                    JsonElement allArtists = j.RootElement.GetProperty("Items");
-                    Queue<JsonElement> q = new Queue<JsonElement>();
-
-                    // ....and put them in a FIFO Queue
-                    foreach (JsonElement artist in allArtists.EnumerateArray())
-                    {
-                        q.Enqueue(artist);
-                    }
-
-                    EmbySonic.Indexes indexes = new EmbySonic.Indexes();
-                    List<EmbySonic.Index> letterIndex = new List<EmbySonic.Index>();
-
-                    char[] alpha = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz".ToCharArray();
-
-                    // for each letter of the alphabet....
-                    foreach (char c in alpha)
-                    {
-                        JsonElement r;
-                        if (q.TryPeek(out r))
-                        {
-                            List<EmbySonic.Artist> artistList = new List<EmbySonic.Artist>();
-
-                            // if there are any artists that begin with this letter, dequeue and add to index's artist array
-                            char ch = q.Peek().GetProperty("Name").ToString()[0];
-                            while (ch.Equals(c))
-                            {
-                                JsonElement je = q.Dequeue();
-                                EmbySonic.Artist a = new EmbySonic.Artist();
-                                a.id = je.GetProperty("Id").ToString();
-                                a.name = je.GetProperty("Name").ToString();
-                                artistList.Add(a);
-                                if (!q.TryPeek(out r))
-                                {
-                                    break;
-                                }
-                                else
-                                {
-                                    ch = q.Peek().GetProperty("Name").ToString()[0];
-                                }
-                            }
-
-                            // if any artists for that letter existed, add the index to the master indexes list
-                            if (artistList.Any())
-                            {
-                                EmbySonic.Index i = new EmbySonic.Index();
-                                i.name = c.ToString();
-                                i.artist = artistList.ToArray();
-                                letterIndex.Add(i);
-                            }
-                        }
-                        else
-                        {
+                            artistName = artistName.Substring(article.Length).Trim();
                             break;
                         }
                     }
-
-                    indexes.index = letterIndex.ToArray();
-
-                    if (string.IsNullOrEmpty(req.f))
+                    if (artistName.Length == 0)
                     {
-
-                        EmbySonic.Response r = new EmbySonic.Response();
-                        r.Item = indexes;
-                        r.ItemElementName = EmbySonic.ItemChoiceType.indexes;
-                        str = Serializer<EmbySonic.Response>.Serialize(r);
-                        contentType = "text/xml";
+                        artistName = item.Name;
                     }
-                    else if (req.f.Equals("json"))
+                    a.name = artistName;
+                    a.id = item.Id.ToString();
+                    al.Add(a);
+                }
+
+                foreach (var item in al)
+                {
+                    if (il.ContainsKey(item.name[0].ToString()))
+                    {
+                        List<EmbySonic.Artist> artistList = (List<EmbySonic.Artist>)il[item.name[0].ToString()];
+                        artistList.Add(item);
+                    }
+                    else
+                    {
+                        List<EmbySonic.Artist> artistList = new List<EmbySonic.Artist>();
+                        artistList.Add(item);
+                        il.Add(item.name[0].ToString(), artistList);
+                    }
+                }
+
+                indexes.index = new EmbySonic.Index[il.Count];
+            
+                foreach (var o in il.OfType<object>().Select((x, i) => new {x, i}))
+                {
+                    EmbySonic.Index i = new EmbySonic.Index();
+                    DictionaryEntry dictionaryEntry = (DictionaryEntry)o.x;
+                    i.name = dictionaryEntry.Key.ToString();
+                    i.artist = ((List<EmbySonic.Artist>)dictionaryEntry.Value).ToArray();
+                    indexes.index[o.i] = i;
+                }
+
+                if (!String.IsNullOrEmpty(req.f))
+                {
+                    if (req.f.Equals("json"))
                     {
                         EmbySonic.JsonResponse r = new EmbySonic.JsonResponse();
                         contentType = "text/json";
@@ -656,16 +584,24 @@ namespace EmbySonic.Api
                             WriteIndented = true
                         };
                         r.root["_status"] = "ok";
-                        r.root["indexes"] = indexes;
+                        r.root["indexes"] = indexes.index;
                         str = JsonSerializer.Serialize(r, options);
                     }
                 }
+                else
+                {
+                    EmbySonic.Response r = new EmbySonic.Response();
+                    r.Item = indexes;
+                    r.ItemElementName = EmbySonic.ItemChoiceType.indexes;
+                    str = Serializer<EmbySonic.Response>.Serialize(r);
+                    contentType = "text/xml";
+                }
+                db.Close();
             }
 
-            url = String.Format("http://localhost:{0}/emby/Sessions/Logout", Plugin.Instance.Configuration.LocalEmbyPort);
-            await c.PostAsync(url, null);
             return ResultFactory.GetResult(Request, Encoding.UTF8.GetBytes(str), contentType, null);
 
+            //TODO: parameter processing paths
         }
         public async Task<object> Get(BrowsingGetAlbum req)
         {

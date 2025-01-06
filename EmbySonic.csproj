@@ -13,6 +13,7 @@
   <ItemGroup>
     <PackageReference Include="mediabrowser.server.core" Version="4.6.0.50" />
     <PackageReference Include="mediabrowser.common" Version="4.6.0.50" />
+    <PackageReference Include="sqlite-net-pcl" Version="1.9.172" />
     <PackageReference Include="system.text.json" />
   </ItemGroup>
   <ItemGroup>

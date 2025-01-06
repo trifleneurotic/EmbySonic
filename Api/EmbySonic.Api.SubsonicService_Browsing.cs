@@ -1,6 +1,7 @@
 using MediaBrowser.Model.Services;
 using System.Text;
 using System.Text.Json;
+using SQLite;
 
 namespace EmbySonic.Api
 {
@@ -54,7 +55,81 @@ namespace EmbySonic.Api
         public String artistId { get; set; }
     }
 
+     [Table("MediaItems")]
+    public class MediaItem
+    {
+        [PrimaryKey, AutoIncrement]
+        public int Id { get; set; }
+        public Guid guid { get; set; }
+        public int type { get; set; }
+        public int ParentId { get; set; }
+        public string Path { get; set; }
+        public int StartDate { get; set; }
+        public int EndDate { get; set; }
+        public bool IsMovie { get; set; }
+        public bool IsKids { get; set; }
+        public bool IsSports { get; set; }
+        public bool IsNews { get; set; }
+        public float CommunityRating { get; set; }
+        public string CustomRating { get; set; }
+        public int IndexNumber { get; set; }
+        public bool IsLocked { get; set; }
+        public string Name { get; set; }
+        public string OfficialRating { get; set; }
+        public string Overview { get; set; }
+        public int ParentIndexNumber { get; set; }
+        public int PremiereDate { get; set; }
+        public int ProductionYear { get; set; }
+        public string SortName { get; set; }
+        public long RunTimeTicks { get; set; }
+        public int DateCreated { get; set; }
+        public int DateModified { get; set; }
+        public bool IsSeries { get; set; }
+        public bool IsRepeat { get; set; }
+        public string PreferredMetadataLanguage { get; set; }
+        public string PreferredMetadataCountryCode { get; set; }
+        public int DateLastRefreshed { get; set; }
+        public int DateLastSaved { get; set; }
+        public bool IsInMixedFolder { get; set; }
+        public string LockedFields { get; set; }
+        public int InheritedParentalRatingValue { get; set; }
+        public int TopParentId { get; set; }
+        public float CriticRating { get; set; }
+        public string PresentationUniqueKey { get; set; }
+        public string OriginalTitle { get; set; }
+        public string SeriesName { get; set; }
+        public string Album { get; set; }
+        public int AlbumId { get; set; }
+        public int SeriesId { get; set; }
+        public string Tagline { get; set; }
+        public string ProviderIds { get; set; }
+        public string Images { get; set; }
+        public string ProductionLocations { get; set; }
+        public int TotalBitrate { get; set; }
+        public int ExtraType { get; set; }
+        public string SeriesPresentationUniqueKey { get; set; }
+        public string ExternalId { get; set; }
+        public int OwnerId { get; set; }
+        public int Width { get; set; }
+        public int Height { get; set; }
+        public int Size { get; set; }
+        public string Container { get; set; }
+        public int Status { get; set; }
+        public int DisplayOrder { get; set; }
+        public int ThreeDFormat { get; set; }
+        public int UserDataKeyId { get; set; }
+        public int SortIndexNumber { get; set; }
+        public int SortParentIndexNumber { get; set; }
+        public int IndexNumberEnd { get; set; }
+        public string ChannelNumber { get; set; }
+        public string RemoteTrailers { get; set; }
+        public int IsPublic { get; set; }
+        public bool IsNew { get; set; }
+        public bool IsPremiere { get; set; }
+        public bool IsLive { get; set; }
 
+        //TODO: foreign key constraints
+    }
 
     public partial class SubsonicService : IService, IRequiresRequest
     {
@@ -350,42 +425,34 @@ namespace EmbySonic.Api
             HttpResponseMessage hrm = await Login(req);
             String contentType = String.Empty;
             String str = String.Empty;
-            String hrmraw = String.Empty;
-            String s = String.Empty;
-            String url = String.Empty;
             if (!hrm.IsSuccessStatusCode)
             {
                 str = GetErrorObject(req, out contentType);
             }
             else
             {
-                hrmraw = await hrm.Content.ReadAsStringAsync();
-                JsonDocument doc = JsonDocument.Parse(hrmraw);
-                c.DefaultRequestHeaders.Add("Accept", "application/json");
-                c.DefaultRequestHeaders.Add("X-Emby-Token", doc.RootElement.GetProperty("AccessToken").ToString());
-
-                // we need the unique ID for the desired music library set in the plugin configuration
-                url = String.Format("http://localhost:{0}/emby/Items?IncludeItemTypes=Album&ExcludeItemTypes=Audio", Plugin.Instance.Configuration.LocalEmbyPort);
-                hrm = await c.GetAsync(url);
-                hrmraw = await hrm.Content.ReadAsStringAsync();
-                JsonDocument j = JsonDocument.Parse(hrmraw);
-                JsonElement allLibs = j.RootElement.GetProperty("Items");
-                String GetLetterIndex = String.Empty;
+                var databasePath = Path.Combine("", "library.db");
+                var db = new SQLiteConnection(databasePath);
 
                 List<EmbySonic.MusicFolder> mfl = new List<EmbySonic.MusicFolder>();
                 EmbySonic.MusicFolders m = new EmbySonic.MusicFolders();
 
-                foreach (JsonElement lib in allLibs.EnumerateArray())
+                var musicFolderResults = db.Query<MediaItem>(@"SELECT * FROM MediaItems WHERE id IN
+                                                              (SELECT ParentId FROM MediaItems WHERE id IN
+                                                              (SELECT DISTINCT ParentId FROM MediaItems WHERE ParentId IN
+                                                              (SELECT DISTINCT ParentId FROM MediaItems WHERE ParentId IN
+                                                              (SELECT DISTINCT ParentId FROM MediaItems WHERE name IN
+                                                              (SELECT DISTINCT name FROM MediaItems WHERE name IN
+                                                              (SELECT Name FROM MediaItems WHERE id IN
+                                                              (SELECT DISTINCT AlbumId FROM MediaItems WHERE Type=11 AND AlbumId IS NOT NULL)))
+                                                              AND type=3))))
+                                                              AND ParentId=2;");
+                foreach (var item in musicFolderResults)
                 {
-                    s = lib.GetProperty("Name").ToString();
-                    if (String.Equals(s, Plugin.Instance.Configuration.MusicLibraryName))
-                    {
-                        EmbySonic.MusicFolder mf = new EmbySonic.MusicFolder();
-                        mf.name = s;
-                        mf.id = Int32.Parse(lib.GetProperty("Id").ToString());
-                        mfl.Add(mf);
-                        break;
-                    }
+                    EmbySonic.MusicFolder mf = new EmbySonic.MusicFolder();
+                    mf.name = item.Name;
+                    mf.id = item.Id;
+                    mfl.Add(mf);
                 }
                 m.musicFolder = mfl.ToArray();
 
@@ -414,8 +481,6 @@ namespace EmbySonic.Api
 
 
             }
-            url = String.Format("http://localhost:{0}/emby/Sessions/Logout", Plugin.Instance.Configuration.LocalEmbyPort);
-            await c.PostAsync(url, null);
             return ResultFactory.GetResult(Request, Encoding.UTF8.GetBytes(str), contentType, null);
         }
 

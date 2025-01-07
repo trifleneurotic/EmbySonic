@@ -507,8 +507,20 @@ namespace EmbySonic.Api
 
                 List<EmbySonic.Artist> al = new List<EmbySonic.Artist>();
                 Hashtable il = new Hashtable();
-
-                var artistResults = db.Query<MediaItem>(@"SELECT * FROM MediaItems WHERE id IN
+                List<MediaItem> artistResults = new List<MediaItem>();
+                
+                if (!String.IsNullOrEmpty(req.musicFolderId)) {
+                    artistResults = db.Query<MediaItem>(string.Format(@"""SELECT * FROM MediaItems WHERE id IN
+                                                         (SELECT DISTINCT ParentId FROM MediaItems WHERE ParentId IN
+                                                         (SELECT DISTINCT ParentId FROM MediaItems WHERE ParentId IN
+                                                         (SELECT DISTINCT ParentId FROM MediaItems WHERE name IN
+                                                         (SELECT DISTINCT name FROM MediaItems WHERE name IN
+                                                         (SELECT Name FROM MediaItems WHERE id IN
+                                                         (SELECT DISTINCT AlbumId FROM MediaItems WHERE Type=11
+                                                         AND AlbumId IS NOT NULL)))
+                                                         AND type=3))) AND ParentID={0};""", req.musicFolderId));
+                } else {
+                    artistResults = db.Query<MediaItem>(@"SELECT * FROM MediaItems WHERE id IN
                                                          (SELECT DISTINCT ParentId FROM MediaItems WHERE ParentId IN
                                                          (SELECT DISTINCT ParentId FROM MediaItems WHERE ParentId IN
                                                          (SELECT DISTINCT ParentId FROM MediaItems WHERE name IN
@@ -517,6 +529,7 @@ namespace EmbySonic.Api
                                                          (SELECT DISTINCT AlbumId FROM MediaItems WHERE Type=11
                                                          AND AlbumId IS NOT NULL)))
                                                          AND type=3)));");
+                }
 
                 if (indexes.ignoredArticles == null)
                 {
@@ -527,6 +540,13 @@ namespace EmbySonic.Api
              
                 foreach (var item in artistResults)
                 {
+                    if (!String.IsNullOrEmpty(req.ifModifiedSince))
+                    {
+                        if (item.DateModified < Int32.Parse(req.ifModifiedSince))
+                        {
+                            continue;
+                        }
+                    }
                     Artist a = new Artist();
                     string artistName = item.Name;
                     foreach (var article in ignoredArticlesArray)
@@ -600,8 +620,6 @@ namespace EmbySonic.Api
             }
 
             return ResultFactory.GetResult(Request, Encoding.UTF8.GetBytes(str), contentType, null);
-
-            //TODO: parameter processing paths
         }
         public async Task<object> Get(BrowsingGetAlbum req)
         {

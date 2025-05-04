@@ -17,11 +17,8 @@ namespace EmbySonic
     {
 
         private object itemField;
-
         private ItemChoiceType itemElementNameField;
-
         private ResponseStatus statusField;
-
         private string versionField;
 
         /// <remarks/>

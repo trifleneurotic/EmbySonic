@@ -18,6 +18,7 @@ nupkg/
 *.sln.docstates
 *.sln
 *.pat
+*.query
 
 # Build results
 [Dd]ebug/

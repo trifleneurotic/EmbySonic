@@ -152,23 +152,23 @@ namespace EmbySonic.Api
                 JsonDocument j = JsonDocument.Parse(hrmraw);
 
                 JsonElement returnedAlbums = j.RootElement.GetProperty("Items");
-                List<EmbySonic.AlbumID3> albums;
+                List<AlbumID3> albums;
                 AddAlbumsToList(returnedAlbums, req, out albums);
-                EmbySonic.AlbumListID3 al = new EmbySonic.AlbumListID3();
+                AlbumListID3 al = new AlbumListID3();
 
                 if (string.IsNullOrEmpty(req.f))
                 {
-                    EmbySonic.Response r = new EmbySonic.Response();
+                    Response r = new Response();
                     contentType = "text/xml";
                     r.ItemElementName = EmbySonic.ItemChoiceType.albumList2;
                     al.album = albums.ToArray();
                     r.Item = al;
                     r.version = SupportedSubsonicApiVersion;
-                    str = Serializer<EmbySonic.Response>.Serialize(r);
+                    str = Serializer<Response>.Serialize(r);
                 }
                 else if (req.f.Equals("json"))
                 {
-                    EmbySonic.JsonResponse r = new EmbySonic.JsonResponse();
+                    JsonResponse r = new JsonResponse();
                     contentType = "text/json";
                     var options = new JsonSerializerOptions
                     {
@@ -218,23 +218,23 @@ namespace EmbySonic.Api
                     JsonDocument j = JsonDocument.Parse(hrmraw);
 
                     JsonElement returnedSongs = j.RootElement.GetProperty("Items");
-                    List<EmbySonic.Child> songs;
+                    List<Child> songs;
                     AddSongsToList(returnedSongs, req, out songs);
-                    EmbySonic.Songs sl = new EmbySonic.Songs();
+                    Songs sl = new Songs();
 
                     if (string.IsNullOrEmpty(req.f))
                     {
-                        EmbySonic.Response r = new EmbySonic.Response();
+                        Response r = new Response();
                         contentType = "text/xml";
                         r.ItemElementName = EmbySonic.ItemChoiceType.randomSongs;
                         sl.song = songs.ToArray();
                         r.Item = sl;
                         r.version = SupportedSubsonicApiVersion;
-                        str = Serializer<EmbySonic.Response>.Serialize(r);
+                        str = Serializer<Response>.Serialize(r);
                     }
                     else if (req.f.Equals("json"))
                     {
-                        EmbySonic.JsonResponse r = new EmbySonic.JsonResponse();
+                        JsonResponse r = new JsonResponse();
                         contentType = "text/json";
                         var options = new JsonSerializerOptions
                         {
@@ -303,23 +303,23 @@ namespace EmbySonic.Api
                     JsonDocument k = JsonDocument.Parse(hrmraw);
 
                     JsonElement returnedAlbums = k.RootElement.GetProperty("Items");
-                    List<EmbySonic.Child> albums;
+                    List<Child> albums;
                     AddAlbumsToList(returnedAlbums, req, out albums);
-                    EmbySonic.AlbumList al = new EmbySonic.AlbumList();
+                    AlbumList al = new AlbumList();
 
                     if (string.IsNullOrEmpty(req.f))
                     {
-                        EmbySonic.Response r = new EmbySonic.Response();
+                        Response r = new Response();
                         contentType = "text/xml";
                         r.ItemElementName = EmbySonic.ItemChoiceType.albumList;
                         al.album = albums.ToArray();
                         r.Item = al;
                         r.version = SupportedSubsonicApiVersion;
-                        str = Serializer<EmbySonic.Response>.Serialize(r);
+                        str = Serializer<Response>.Serialize(r);
                     }
                     else if (req.f.Equals("json"))
                     {
-                        EmbySonic.JsonResponse r = new EmbySonic.JsonResponse();
+                        JsonResponse r = new JsonResponse();
                         contentType = "text/json";
                         var options = new JsonSerializerOptions
                         {
@@ -338,12 +338,12 @@ namespace EmbySonic.Api
             return ResultFactory.GetResult(Request, Encoding.UTF8.GetBytes(str), contentType, null);
         }
 
-        private static void AddAlbumsToList(JsonElement ra, ListAlbum r, out List<EmbySonic.Child> l)
+        private static void AddAlbumsToList(JsonElement ra, ListAlbum r, out List<Child> l)
         {
-            l = new List<EmbySonic.Child>();
+            l = new List<Child>();
             foreach (JsonElement album in ra.EnumerateArray())
             {
-                EmbySonic.Child ch = new EmbySonic.Child();
+                Child ch = new Child();
                 ch.id = album.GetProperty("Id").ToString();
                 ch.parent = album.GetProperty("ParentId").ToString();
                 ch.title = album.GetProperty("Name").ToString();
@@ -352,12 +352,12 @@ namespace EmbySonic.Api
             }
         }
 
-        private static void AddAlbumsToList(JsonElement ra, ListAlbum2 r, out List<EmbySonic.AlbumID3> l)
+        private static void AddAlbumsToList(JsonElement ra, ListAlbum2 r, out List<AlbumID3> l)
         {
-            l = new List<EmbySonic.AlbumID3>();
+            l = new List<AlbumID3>();
             foreach (JsonElement album in ra.EnumerateArray())
             {
-                EmbySonic.AlbumID3 aid3 = new EmbySonic.AlbumID3();
+                AlbumID3 aid3 = new AlbumID3();
                 aid3.id = album.GetProperty("Id").ToString();
                 aid3.artistId = album.GetProperty("AlbumArtists")[0].GetProperty("Id").ToString();
                 aid3.artist = album.GetProperty("AlbumArtists")[0].GetProperty("Name").ToString();
@@ -379,12 +379,12 @@ namespace EmbySonic.Api
             }
         }
 
-        private static void AddSongsToList(JsonElement rs, ListRandomSongs r, out List<EmbySonic.Child> l)
+        private static void AddSongsToList(JsonElement rs, ListRandomSongs r, out List<Child> l)
         {
-            l = new List<EmbySonic.Child>();
+            l = new List<Child>();
             foreach (JsonElement song in rs.EnumerateArray())
             {
-                EmbySonic.Child ch = new EmbySonic.Child();
+                Child ch = new Child();
                 ch.id = song.GetProperty("Id").ToString();
                 ch.parent = song.GetProperty("AlbumId").ToString();
                 ch.title = song.GetProperty("Name").ToString();

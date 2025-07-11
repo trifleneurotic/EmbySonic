@@ -12,7 +12,7 @@ using System.Text.Json;
 
 namespace EmbySonic.Api
 {
-    public class SystemBase : IReturn<EmbySonic.Response>
+    public class SystemBase : IReturn<Response>
     {
         [ApiMember(Name = "Username", Description = "Username of Emby user", IsRequired = true, DataType = "string", ParameterType = "query", Verb = "GET")]
         public string? u { get; set; }
@@ -97,18 +97,18 @@ namespace EmbySonic.Api
             {
                 if (String.IsNullOrEmpty(req.f))
                 {
-                    EmbySonic.Response r = new EmbySonic.Response();
-                    EmbySonic.Error e = new EmbySonic.Error();
+                    Response r = new Response();
+                    Error e = new Error();
                     e.code = 0;
                     e.message = "Music library does not exist";
                     r.Item = e;
                     r.ItemElementName = EmbySonic.ItemChoiceType.error;
-                    s = Serializer<EmbySonic.Response>.Serialize(r);
+                    s = Serializer<Response>.Serialize(r);
                 }
                 else if (req.f.Equals("json"))
                 {
-                    EmbySonic.JsonResponse r = new EmbySonic.JsonResponse();
-                    var e = new EmbySonic.Error();
+                    JsonResponse r = new JsonResponse();
+                    var e = new Error();
                     e.code = 0;
                     e.message = "Music library does not exist";
                     var options = new JsonSerializerOptions
@@ -126,11 +126,11 @@ namespace EmbySonic.Api
             return ResultFactory.GetResult(Request, Encoding.UTF8.GetBytes(s), contentType, null);
         }
 
-        private EmbySonic.Child[] ShuffleChildren(EmbySonic.Child[] arr, int numElements)
+        private Child[] ShuffleChildren(Child[] arr, int numElements)
         {
             Random rand = new Random();
 
-            EmbySonic.Child[] RandomizedChildren = arr.OrderBy(x => rand.Next()).ToArray();
+            Child[] RandomizedChildren = arr.OrderBy(x => rand.Next()).ToArray();
 
             return RandomizedChildren.Take(numElements).ToArray();
         }
@@ -186,8 +186,8 @@ namespace EmbySonic.Api
         {
             if (String.IsNullOrEmpty(req.f))
             {
-                var subReq = new EmbySonic.Response();
-                var e = new EmbySonic.Error();
+                var subReq = new Response();
+                var e = new Error();
                 e.code = 0;
                 e.message = "Login failed";
                 subReq.status = EmbySonic.ResponseStatus.failed;
@@ -195,12 +195,12 @@ namespace EmbySonic.Api
                 subReq.ItemElementName = EmbySonic.ItemChoiceType.error;
                 subReq.version = SupportedSubsonicApiVersion;
                 type = "text/xml";
-                return Serializer<EmbySonic.Response>.Serialize(subReq);
+                return Serializer<Response>.Serialize(subReq);
             }
             if (req.f.Equals("json"))
             {
-                var subReq = new EmbySonic.JsonResponse();
-                var e = new EmbySonic.Error();
+                var subReq = new JsonResponse();
+                var e = new Error();
                 e.code = 0;
                 e.message = "Login failed";
                 subReq.root["error"] = e;
@@ -231,13 +231,13 @@ namespace EmbySonic.Api
             {
                 if (String.IsNullOrEmpty(req.f))
                 {
-                    EmbySonic.Response r = new EmbySonic.Response();
-                    str = Serializer<EmbySonic.Response>.Serialize(r);
+                    Response r = new Response();
+                    str = Serializer<Response>.Serialize(r);
                     contentType = "text/xml";
                 }
                 else if (req.f.Equals("json"))
                 {
-                    EmbySonic.JsonResponse r = new EmbySonic.JsonResponse();
+                    JsonResponse r = new JsonResponse();
                     var options = new JsonSerializerOptions
                     {
                         IgnoreNullValues = true,
@@ -266,19 +266,19 @@ namespace EmbySonic.Api
             {
                 if (String.IsNullOrEmpty(req.f))
                 {
-                    EmbySonic.Response r = new EmbySonic.Response();
-                    EmbySonic.License l = new EmbySonic.License();
+                    Response r = new Response();
+                    License l = new License();
                     l.valid = true;
                     l.email = "billingsupport@emby.media";
                     r.Item = l;
                     r.ItemElementName = EmbySonic.ItemChoiceType.license;
-                    str = Serializer<EmbySonic.Response>.Serialize(r);
+                    str = Serializer<Response>.Serialize(r);
                     contentType = "text/xml";
                 }
                 else if (req.f.Equals("json"))
                 {
-                    EmbySonic.JsonResponse r = new EmbySonic.JsonResponse();
-                    var lp = new EmbySonic.License();
+                    JsonResponse r = new JsonResponse();
+                    var lp = new License();
                     lp.valid = true;
                     lp.email = "billingsupport@emby.media";
                     var options = new JsonSerializerOptions

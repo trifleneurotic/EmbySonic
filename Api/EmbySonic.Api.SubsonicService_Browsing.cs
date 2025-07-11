@@ -57,12 +57,13 @@ namespace EmbySonic.Api
         public String artistId { get; set; }
     }
 
-    public static class IEnumerableExtensions {
-    public static IEnumerable<(T item, int index)> WithIndex<T>(this IEnumerable<T> self)       
-       => self.Select((item, index) => (item, index));
-}
+    public static class IEnumerableExtensions
+    {
+        public static IEnumerable<(T item, int index)> WithIndex<T>(this IEnumerable<T> self)
+           => self.Select((item, index) => (item, index));
+    }
 
-     [Table("MediaItems")]
+    [Table("MediaItems")]
     public class MediaItem
     {
         [PrimaryKey, AutoIncrement]
@@ -182,7 +183,7 @@ namespace EmbySonic.Api
                 JsonDocument k = JsonDocument.Parse(hrmraw);
                 JsonElement allID3Albums = k.RootElement.GetProperty("Items");
 
-                Dictionary<String, List<EmbySonic.AlbumID3>> d = new Dictionary<String, List<EmbySonic.AlbumID3>>();
+                Dictionary<String, List<AlbumID3>> d = new Dictionary<String, List<AlbumID3>>();
 
                 String artistName = string.Empty;
                 String artistId = string.Empty;
@@ -195,7 +196,7 @@ namespace EmbySonic.Api
                     {
                         if (!d.ContainsKey(req.id))
                         {
-                            d.Add(req.id, new List<EmbySonic.AlbumID3>());
+                            d.Add(req.id, new List<AlbumID3>());
                             artistName = aa.GetProperty("Name").ToString();
                             artistId = aa.GetProperty("Id").ToString();
                         }
@@ -220,7 +221,7 @@ namespace EmbySonic.Api
                     }
                 }
 
-                EmbySonic.ArtistWithAlbumsID3 awa = new ArtistWithAlbumsID3();
+                ArtistWithAlbumsID3 awa = new ArtistWithAlbumsID3();
                 awa.name = artistName;
                 awa.id = artistId;
                 awa.albumCount = d[artistId].Count;
@@ -229,15 +230,15 @@ namespace EmbySonic.Api
                 if (string.IsNullOrEmpty(req.f))
                 {
 
-                    EmbySonic.Response r = new EmbySonic.Response();
+                    Response r = new Response();
                     r.Item = awa;
                     r.ItemElementName = EmbySonic.ItemChoiceType.artist;
-                    str = Serializer<EmbySonic.Response>.Serialize(r);
+                    str = Serializer<Response>.Serialize(r);
                     contentType = "text/xml";
                 }
                 else if (req.f.Equals("json"))
                 {
-                    EmbySonic.JsonResponse r = new EmbySonic.JsonResponse();
+                    JsonResponse r = new JsonResponse();
                     contentType = "text/json";
                     var options = new JsonSerializerOptions
                     {
@@ -259,102 +260,61 @@ namespace EmbySonic.Api
             HttpResponseMessage hrm = await Login(req);
             String contentType = String.Empty;
             String str = String.Empty;
-            String hrmraw = String.Empty;
-            String s = String.Empty;
-            String url = String.Empty;
             if (!hrm.IsSuccessStatusCode)
             {
                 str = GetErrorObject(req, out contentType);
             }
             else
             {
-                hrmraw = await hrm.Content.ReadAsStringAsync();
-                JsonDocument doc = JsonDocument.Parse(hrmraw);
-                c.DefaultRequestHeaders.Add("Accept", "application/json");
-                c.DefaultRequestHeaders.Add("X-Emby-Token", doc.RootElement.GetProperty("AccessToken").ToString());
+                var databasePath = Path.Combine("", "library.db");
+                var db = new SQLiteConnection(databasePath);
 
-                // let's get a list of all ID3 songs
-                url = String.Format("http://localhost:{0}/emby/Items?IncludeItemTypes=Audio&Recursive=true", Plugin.Instance.Configuration.LocalEmbyPort);
-                HttpResponseMessage mes = await c.GetAsync(url);
-                hrmraw = await mes.Content.ReadAsStringAsync();
-                JsonDocument k = JsonDocument.Parse(hrmraw);
-                JsonElement allID3Songs = k.RootElement.GetProperty("Items");
+                List<Artist> al = new List<Artist>();
 
-                // now store all albums UNIQUELY per artist
-                Dictionary<String, HashSet<String>> d = new Dictionary<String, HashSet<String>>();
+                var artistResults = db.Query<Artist>(@"SELECT * FROM MediaItems WHERE id IN
+                                                    (SELECT DISTINCT ParentId FROM MediaItems WHERE ParentId IN
+                                                    (SELECT DISTINCT ParentId FROM MediaItems WHERE ParentId IN
+                                                    (SELECT DISTINCT ParentId FROM MediaItems WHERE name IN
+                                                    (SELECT DISTINCT name FROM MediaItems WHERE name IN
+                                                    (SELECT Name FROM MediaItems WHERE id IN
+                                                    (SELECT DISTINCT AlbumId FROM MediaItems WHERE Type=11 AND AlbumId IS NOT NULL))) AND type=3))) AND ParentID NOT IN
+                                                    (SELECT id FROM MediaItems WHERE id IN
+                                                    (SELECT DISTINCT ParentId FROM MediaItems WHERE ParentId IN
+                                                    (SELECT DISTINCT ParentId FROM MediaItems WHERE ParentId IN
+                                                    (SELECT DISTINCT ParentId FROM MediaItems WHERE name IN
+                                                    (SELECT DISTINCT name FROM MediaItems WHERE name IN
+                                                    (SELECT Name FROM MediaItems WHERE id IN
+                                                    (SELECT DISTINCT AlbumId FROM MediaItems WHERE Type=11 AND AlbumId IS NOT NULL))) AND type=3))));");
 
-                // make an artist ID lookup dictionary for convenience
-                Dictionary<String, ArtistPackage> artistWithId = new Dictionary<String, ArtistPackage>();
-
-                String albumArtist = string.Empty;
-                String artistId = string.Empty;
-                JsonElement je;
-                foreach (JsonElement song in allID3Songs.EnumerateArray())
+                foreach (var item in artistResults)
                 {
-                    if (!song.TryGetProperty("AlbumArtist", out je) || !song.TryGetProperty("Album", out je))
-                    {
-                        continue;
-                    }
+                    Artist ast = new Artist();
+                    ast.name = item.name;
+                    ast.id = item.id.ToString();
+                    ast.artistImageUrl = item.artistImageUrl;
+                    ast.averageRating = item.averageRating;
+                    ast.averageRatingSpecified = item.averageRatingSpecified;
+                    ast.starred = item.starred;
+                    ast.starredSpecified = item.starredSpecified;
+                    ast.userRating = item.userRating;
+                    ast.userRatingSpecified = item.userRatingSpecified;
+                    ast.userRating = item.userRating;
+                    ast.userRatingSpecified = item.userRatingSpecified;
 
-                    foreach (JsonElement items in song.GetProperty("ArtistItems").EnumerateArray())
-                    {
-                        artistId = items.GetProperty("Id").ToString();
-                        albumArtist = items.GetProperty("Name").ToString();
-                        break;
-                    }
-
-                    // not worrying about artists that don't begin with a letter right now
-                    if (!Char.IsLetter(albumArtist[0]))
-                    {
-                        continue;
-                    }
-
-                    if (!d.ContainsKey(albumArtist))
-                    {
-                        d.Add(albumArtist, new HashSet<String>());
-                    }
-
-                    String album = song.GetProperty("Album").ToString();
-
-                    d[albumArtist].Add(album);
-
-                    if (!artistWithId.ContainsKey(albumArtist))
-                    {
-                        ArtistPackage ta = new ArtistPackage();
-                        ta.artistName = albumArtist;
-                        ta.artistId = artistId;
-                        artistWithId.Add(albumArtist, ta);
-                    }
+                    al.Add(ast);
                 }
-
-                var sortedDict = from entry in d orderby entry.Key ascending select entry;
-
-                // now let's put each artist/albumlist pair into a queue for easier processing with a custom object
-                Queue<ArtistPackage> q = new Queue<ArtistPackage>();
-                foreach (KeyValuePair<string, HashSet<String>> entry in sortedDict)
-                {
-                    ArtistPackage ap = artistWithId[entry.Key];
-                    ap.albums = entry.Value;
-                    q.Enqueue(ap);
-                }
-
-                List<EmbySonic.IndexID3> li = this.GetLetterIndex(q);
-                EmbySonic.ArtistsID3 a = new EmbySonic.ArtistsID3();
-                a.ignoredArticles = "The El La Los Las Le Les";
-                a.index = li.ToArray();
 
                 if (string.IsNullOrEmpty(req.f))
                 {
-
-                    EmbySonic.Response r = new EmbySonic.Response();
-                    r.Item = a;
+                    Response r = new Response();
+                    r.Item = al.ToArray<Artist>();
                     r.ItemElementName = EmbySonic.ItemChoiceType.artists;
-                    str = Serializer<EmbySonic.Response>.Serialize(r);
+                    str = Serializer<Response>.Serialize(r);
                     contentType = "text/xml";
                 }
                 else if (req.f.Equals("json"))
                 {
-                    EmbySonic.JsonResponse r = new EmbySonic.JsonResponse();
+                    JsonResponse r = new JsonResponse();
                     contentType = "text/json";
                     var options = new JsonSerializerOptions
                     {
@@ -362,21 +322,18 @@ namespace EmbySonic.Api
                         WriteIndented = true
                     };
                     r.root["_status"] = "ok";
-                    r.root["artists"] = a;
+                    r.root["artists"] = al.ToArray<Artist>();
                     str = JsonSerializer.Serialize(r, options);
                 }
-
-
+                db.Close();
             }
-            url = String.Format("http://localhost:{0}/emby/Sessions/Logout", Plugin.Instance.Configuration.LocalEmbyPort);
-            await c.PostAsync(url, null);
             return ResultFactory.GetResult(Request, Encoding.UTF8.GetBytes(str), contentType, null);
         }
 
-        private List<EmbySonic.IndexID3> GetLetterIndex(Queue<ArtistPackage> q)
+        private List<IndexID3> GetLetterIndex(Queue<ArtistPackage> q)
         {
-            EmbySonic.ArtistsID3 artistListID3 = new EmbySonic.ArtistsID3();
-            List<EmbySonic.IndexID3> letterIndex = new List<IndexID3>();
+            ArtistsID3 artistListID3 = new ArtistsID3();
+            List<IndexID3> letterIndex = new List<IndexID3>();
 
             char[] alpha = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".ToCharArray();
 
@@ -412,7 +369,7 @@ namespace EmbySonic.Api
                     // if any artists for that letter existed, add the index to the master indexes list
                     if (artistIndex.Any())
                     {
-                        EmbySonic.IndexID3 idx = new IndexID3();
+                        IndexID3 idx = new IndexID3();
                         idx.name = Char.ToUpper(c).ToString();
                         idx.artist = artistIndex.ToArray();
                         letterIndex.Add(idx);
@@ -441,8 +398,8 @@ namespace EmbySonic.Api
                 var databasePath = Path.Combine("", "library.db");
                 var db = new SQLiteConnection(databasePath);
 
-                List<EmbySonic.MusicFolder> mfl = new List<EmbySonic.MusicFolder>();
-                EmbySonic.MusicFolders m = new EmbySonic.MusicFolders();
+                List<MusicFolder> mfl = new List<MusicFolder>();
+                MusicFolders m = new MusicFolders();
 
                 var musicFolderResults = db.Query<MediaItem>(@"SELECT * FROM MediaItems WHERE id IN
                                                               (SELECT ParentId FROM MediaItems WHERE id IN
@@ -456,7 +413,7 @@ namespace EmbySonic.Api
                                                               AND ParentId=2;");
                 foreach (var item in musicFolderResults)
                 {
-                    EmbySonic.MusicFolder mf = new EmbySonic.MusicFolder();
+                    MusicFolder mf = new MusicFolder();
                     mf.name = item.Name;
                     mf.id = item.Id;
                     mfl.Add(mf);
@@ -466,15 +423,15 @@ namespace EmbySonic.Api
                 if (string.IsNullOrEmpty(req.f))
                 {
 
-                    EmbySonic.Response r = new EmbySonic.Response();
+                    Response r = new Response();
                     r.Item = m;
                     r.ItemElementName = EmbySonic.ItemChoiceType.musicFolders;
-                    str = Serializer<EmbySonic.Response>.Serialize(r);
+                    str = Serializer<Response>.Serialize(r);
                     contentType = "text/xml";
                 }
                 else if (req.f.Equals("json"))
                 {
-                    EmbySonic.JsonResponse r = new EmbySonic.JsonResponse();
+                    JsonResponse r = new JsonResponse();
                     contentType = "text/json";
                     var options = new JsonSerializerOptions
                     {
@@ -503,13 +460,14 @@ namespace EmbySonic.Api
                 var databasePath = Path.Combine("", "library.db");
                 var db = new SQLiteConnection(databasePath);
 
-                var indexes = new EmbySonic.Indexes();
+                var indexes = new Indexes();
 
-                List<EmbySonic.Artist> al = new List<EmbySonic.Artist>();
+                List<Artist> al = new List<Artist>();
                 Hashtable il = new Hashtable();
                 List<MediaItem> artistResults = new List<MediaItem>();
-                
-                if (!String.IsNullOrEmpty(req.musicFolderId)) {
+
+                if (!String.IsNullOrEmpty(req.musicFolderId))
+                {
                     artistResults = db.Query<MediaItem>(string.Format(@"""SELECT * FROM MediaItems WHERE id IN
                                                          (SELECT DISTINCT ParentId FROM MediaItems WHERE ParentId IN
                                                          (SELECT DISTINCT ParentId FROM MediaItems WHERE ParentId IN
@@ -519,7 +477,9 @@ namespace EmbySonic.Api
                                                          (SELECT DISTINCT AlbumId FROM MediaItems WHERE Type=11
                                                          AND AlbumId IS NOT NULL)))
                                                          AND type=3))) AND ParentID={0};""", req.musicFolderId));
-                } else {
+                }
+                else
+                {
                     artistResults = db.Query<MediaItem>(@"SELECT * FROM MediaItems WHERE id IN
                                                          (SELECT DISTINCT ParentId FROM MediaItems WHERE ParentId IN
                                                          (SELECT DISTINCT ParentId FROM MediaItems WHERE ParentId IN
@@ -537,7 +497,7 @@ namespace EmbySonic.Api
                 }
 
                 var ignoredArticlesArray = indexes.ignoredArticles.Split(' ');
-             
+
                 foreach (var item in artistResults)
                 {
                     if (!String.IsNullOrEmpty(req.ifModifiedSince))
@@ -557,10 +517,6 @@ namespace EmbySonic.Api
                             break;
                         }
                     }
-                    if (artistName.Length == 0)
-                    {
-                        artistName = item.Name;
-                    }
                     a.name = artistName;
                     a.id = item.Id.ToString();
                     al.Add(a);
@@ -568,27 +524,33 @@ namespace EmbySonic.Api
 
                 foreach (var item in al)
                 {
-                    if (il.ContainsKey(item.name[0].ToString()))
+                    if (string.IsNullOrEmpty(item.name))
                     {
-                        List<EmbySonic.Artist> artistList = (List<EmbySonic.Artist>)il[item.name[0].ToString()];
-                        artistList.Add(item);
+                        continue;
+                    }
+                    string key = item.name[0].ToString();
+                    if (il.ContainsKey(key))
+                    {
+                        List<Artist> artistList = (List<Artist>)il[key];
+                        artistList!.Add(item);
                     }
                     else
                     {
-                        List<EmbySonic.Artist> artistList = new List<EmbySonic.Artist>();
+                        List<Artist> artistList = new List<Artist>();
                         artistList.Add(item);
-                        il.Add(item.name[0].ToString(), artistList);
+                        il.Add(key, artistList);
                     }
                 }
 
-                indexes.index = new EmbySonic.Index[il.Count];
-            
-                foreach (var o in il.OfType<object>().Select((x, i) => new {x, i}))
+                indexes.index = new Index[il.Count];
+
+                foreach (var o in il.OfType<object>().Select((x, i) => new { x, i }))
                 {
-                    EmbySonic.Index i = new EmbySonic.Index();
+                    Index i = new Index();
                     DictionaryEntry dictionaryEntry = (DictionaryEntry)o.x;
-                    i.name = dictionaryEntry.Key.ToString();
-                    i.artist = ((List<EmbySonic.Artist>)dictionaryEntry.Value).ToArray();
+                    i.name = dictionaryEntry.Key?.ToString() ?? string.Empty;
+                    var artistList = dictionaryEntry.Value as List<Artist>;
+                    i.artist = artistList != null ? artistList.ToArray() : Array.Empty<Artist>();
                     indexes.index[o.i] = i;
                 }
 
@@ -596,7 +558,7 @@ namespace EmbySonic.Api
                 {
                     if (req.f.Equals("json"))
                     {
-                        EmbySonic.JsonResponse r = new EmbySonic.JsonResponse();
+                        JsonResponse r = new JsonResponse();
                         contentType = "text/json";
                         var options = new JsonSerializerOptions
                         {
@@ -610,10 +572,10 @@ namespace EmbySonic.Api
                 }
                 else
                 {
-                    EmbySonic.Response r = new EmbySonic.Response();
+                    Response r = new Response();
                     r.Item = indexes;
                     r.ItemElementName = EmbySonic.ItemChoiceType.indexes;
-                    str = Serializer<EmbySonic.Response>.Serialize(r);
+                    str = Serializer<Response>.Serialize(r);
                     contentType = "text/xml";
                 }
                 db.Close();
@@ -627,80 +589,53 @@ namespace EmbySonic.Api
             HttpResponseMessage hrm = await Login(req);
             String contentType = String.Empty;
             String str = String.Empty;
-            String hrmraw = String.Empty;
-            String s = String.Empty;
-            String url = String.Empty;
-
             if (!hrm.IsSuccessStatusCode)
             {
                 str = GetErrorObject(req, out contentType);
             }
             else
             {
-                hrmraw = await hrm.Content.ReadAsStringAsync();
-                JsonDocument doc = JsonDocument.Parse(hrmraw);
-                c.DefaultRequestHeaders.Add("Accept", "application/json");
-                c.DefaultRequestHeaders.Add("X-Emby-Token", doc.RootElement.GetProperty("AccessToken").ToString());
+                var databasePath = Path.Combine("", "library.db");
+                var db = new SQLiteConnection(databasePath);
 
-                // first we get album (not the songs)
-                url = String.Format("http://localhost:{0}/emby/Items?Ids={1}&Fields=ParentId", Plugin.Instance.Configuration.LocalEmbyPort, req.id);
-                hrm = await c.GetAsync(url);
-                hrmraw = await hrm.Content.ReadAsStringAsync();
-                JsonDocument j = JsonDocument.Parse(hrmraw);
-                JsonElement album = j.RootElement.GetProperty("Items")[0];
-                JsonElement artist = album.GetProperty("ArtistItems")[0];
-
-                // then we get the album's songs
-                url = String.Format("http://localhost:{0}/emby/Items?ParentId={1}", Plugin.Instance.Configuration.LocalEmbyPort, req.id);
-                hrm = await c.GetAsync(url);
-                hrmraw = await hrm.Content.ReadAsStringAsync();
-                JsonDocument k = JsonDocument.Parse(hrmraw);
-                JsonElement ss = k.RootElement.GetProperty("Items");
-
-                List<EmbySonic.Child> songs = new List<EmbySonic.Child>();
-
-                // ....and then add each song to our list of songs for the album
-                foreach (JsonElement song in ss.EnumerateArray())
+                AlbumID3 aid3 = db.Query<AlbumID3>($@"SELECT * FROM MediaItems WHERE Id = '{req.id}' AND Type=11;").FirstOrDefault();
+                if (aid3 != null)
                 {
-                    EmbySonic.Child ch = new EmbySonic.Child();
-                    ch.id = song.GetProperty("Id").ToString();
-                    ch.title = song.GetProperty("Name").ToString();
-                    ch.album = album.GetProperty("Name").ToString();
-                    ch.artist = artist.GetProperty("Name").ToString();
-                    ch.isDir = song.GetProperty("IsFolder").GetBoolean();
-                    ch.albumId = req.id;
-                    ch.artistId = artist.GetProperty("Id").ToString();
-                    ch.durationSpecified = true;
-                    ch.duration = (int)TimeSpan.FromTicks(song.GetProperty("RunTimeTicks").GetInt64()).TotalSeconds;
-                    songs.Add(ch);
+                    AlbumWithSongsID3 aws = new AlbumWithSongsID3();
+                    aws.id = aid3.id;
+                    aws.name = aid3.name;
+                    aws.artist = aid3.artist;
+                    aws.artistId = aid3.artistId;
+                    aws.duration = aid3.duration;
+                    aws.songCount = 0;
+                    aws.year = aid3.year;
+                    aws.coverArt = aid3.coverArt;
+                    aws.genre = aid3.genre;
+                    var songs = db.Query<Child>($@"SELECT * FROM MediaItems WHERE AlbumId = '{req.id}' AND Type=11 ORDER BY IndexNumber;");
+                    aws.songCount = songs.Count;
+                    aws.song = songs.ToArray();
+                }
+                else
+                {
+                    aid3 = new AlbumID3();
+                    if (req.id != null)
+                    {
+                        aid3.id = req.id;
+                    }
                 }
 
-                Child[] songArray = songs.ToArray();
-
-                // then we create the main album record....
-                EmbySonic.AlbumWithSongsID3 aws = new EmbySonic.AlbumWithSongsID3();
-                aws.id = req.id;
-                aws.name = album.GetProperty("Name").ToString();
-                aws.artist = artist.GetProperty("Name").ToString();
-                aws.artistId = artist.GetProperty("Id").ToString();
-                aws.songCount = Int32.Parse(k.RootElement.GetProperty("TotalRecordCount").ToString());
-                aws.duration = (int)TimeSpan.FromTicks(album.GetProperty("RunTimeTicks").GetInt64()).TotalSeconds;
-
-                // ....and the album's song list to that record
-                aws.song = songArray;
 
                 if (string.IsNullOrEmpty(req.f))
                 {
-
-                    EmbySonic.Response r = new EmbySonic.Response();
-                    r.Item = aws;
+                    Response r = new Response();
+                    r.Item = aid3;
                     r.ItemElementName = EmbySonic.ItemChoiceType.album;
-                    str = Serializer<EmbySonic.Response>.Serialize(r);
+                    str = Serializer<Response>.Serialize(r);
                     contentType = "text/xml";
                 }
                 else if (req.f.Equals("json"))
                 {
-                    EmbySonic.JsonResponse r = new EmbySonic.JsonResponse();
+                    JsonResponse r = new JsonResponse();
                     contentType = "text/json";
                     var options = new JsonSerializerOptions
                     {
@@ -708,16 +643,13 @@ namespace EmbySonic.Api
                         WriteIndented = true
                     };
                     r.root["_status"] = "ok";
-                    r.root["album"] = aws;
+                    r.root["album"] = aid3;
                     str = JsonSerializer.Serialize(r, options);
+
                 }
-
+                db.Close();
             }
-
-            url = String.Format("http://localhost:{0}/emby/Sessions/Logout", Plugin.Instance.Configuration.LocalEmbyPort);
-            await c.PostAsync(url, null);
             return ResultFactory.GetResult(Request, Encoding.UTF8.GetBytes(str), contentType, null);
-
         }
     }
 }

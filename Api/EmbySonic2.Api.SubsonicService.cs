@@ -9,6 +9,7 @@ using System.Text.Json;
 using MediaBrowser.Controller.Entities;
 using MediaBrowser.Controller.Entities.Audio;
 
+
 namespace EmbySonic2.Api
 {
     public class SystemBase : IReturn<Response>
@@ -141,9 +142,9 @@ namespace EmbySonic2.Api
             String contentType = String.Empty;
             String str = String.Empty;
 
-            var user = _userManager.GetUserById("b46ed6e64a1343599b2352273982a86b");
+            // var user = _userManager.GetUserById("b46ed6e64a1343599b2352273982a86b");
 
-            var query = new InternalItemsQuery(user);
+            var query = new InternalItemsQuery(null);
 
             List<MusicArtist> itemsResult;
 
@@ -168,7 +169,9 @@ namespace EmbySonic2.Api
                 artist.id = item.Id.ToString();
                 artist.name = item.Name;
                 artist.coverArt = item.PrimaryImagePath;
-                artist.albumCount = item.GetChildCount(user);
+
+                var rc = item.GetRecursiveChildren().AsQueryable().Where(i => i is MusicAlbum);
+                artist.albumCount = rc.Count();
 
                 if (!d.ContainsKey(artist.name[..1]))
                 {
@@ -184,11 +187,6 @@ namespace EmbySonic2.Api
                 index.name = entry.Key;
                 index.artist = entry.Value.ToArray();
                 indexArray.Add(index);
-            }
-
-            foreach (var item in indexArray)
-            {
-                _logger.Info(item.name);   
             }
 
             artists.index = indexArray.ToArray();

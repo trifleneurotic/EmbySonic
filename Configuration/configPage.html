@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>EmbySonic</title>
+</head>
+<body>
+    <div data-role="page" class="page type-interior pluginConfigurationPage embySonicPage" data-require="emby-input,emby-button">
+
+        <div data-role="content">
+            <div class="content-primary">
+
+                <form class="embySonicForm">
+
+                    <div class="inputContainer">
+                            <input is="emby-input" type="text" id="apiKeyString" />                
+                        <div class="fieldDescription">Enter in a generated API key for your account.</div>
+                    </div>
+                    <div>
+                        <button is="emby-button" type="submit" class="raised button-submit block"><span>Save</span></button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <script type="text/javascript">
+
+            var page;
+                var pluginId = "1067e341-9cea-4587-adc7-8947dccb279e";
+
+                var loadData = function () {
+                Dashboard.showLoadingMsg();
+
+                ApiClient.getPluginConfiguration(pluginId).then(function (config) {
+
+                    $('#apiKeyString', page).val(config.ApiKey);
+                    
+                });
+
+                Dashboard.hideLoadingMsg();
+            };
+
+                $('.embySonicPage').on('pageshow', function (event) {
+                    
+                    page = this;
+
+                    loadData();
+                    
+                });
+
+                $('.embySonicForm').on('submit', function (e) {
+
+                Dashboard.showLoadingMsg();
+
+                var form = this;
+
+                ApiClient.getPluginConfiguration(pluginId).then(function (config) {
+
+                    var keyStr = $('#apiKeyString', form).val();
+
+                    config.ApiKey = keyStr;
+
+                    alert(keyStr);
+                    ApiClient.updatePluginConfiguration(pluginId, config).then(function () {
+                        Dashboard.hideLoadingMsg();
+                        Dashboard.processPluginConfigurationUpdateResult();
+                        loadData();
+                    }, function (error) {
+                        Dashboard.processErrorResponse(error);
+                        loadData();
+                    });
+                });
+
+                    return false;
+                });
+
+        </script>
+    </div>
+</body>
+</html>

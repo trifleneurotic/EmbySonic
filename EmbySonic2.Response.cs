@@ -374,8 +374,6 @@ namespace EmbySonic2
         }
 
         /// <remarks/>
-       
-        [JsonIgnore]
         public int track
         {
             get
@@ -405,7 +403,6 @@ namespace EmbySonic2
 
         /// <remarks/>
        
-        [JsonIgnore]
         public int year
         {
             get
@@ -464,8 +461,6 @@ namespace EmbySonic2
         }
 
         /// <remarks/>
-       
-        [JsonIgnore]
         public long size
         {
             get
@@ -555,7 +550,6 @@ namespace EmbySonic2
 
         /// <remarks/>
        
-        [JsonIgnore]
         public int duration
         {
             get
@@ -585,7 +579,6 @@ namespace EmbySonic2
 
         /// <remarks/>
        
-        [JsonIgnore]
         public int bitRate
         {
             get
@@ -720,7 +713,6 @@ namespace EmbySonic2
 
         /// <remarks/>
        
-        [JsonIgnore]
         public long playCount
         {
             get
@@ -780,7 +772,6 @@ namespace EmbySonic2
 
         /// <remarks/>
        
-        [JsonIgnore]
         public System.DateTime created
         {
             get
@@ -840,7 +831,6 @@ namespace EmbySonic2
 
         /// <remarks/>
        
-        [JsonIgnore]
         public string albumId
         {
             get
@@ -855,7 +845,6 @@ namespace EmbySonic2
 
         /// <remarks/>
        
-        [JsonIgnore]
         public string artistId
         {
             get
@@ -870,7 +859,6 @@ namespace EmbySonic2
 
         /// <remarks/>
        
-        [JsonIgnore]
         public MediaType2 type
         {
             get
@@ -1677,7 +1665,6 @@ namespace EmbySonic2
 
         /// <remarks/>
        
-        [JsonIgnore]
         public int year
         {
             get

@@ -134,6 +134,7 @@ namespace EmbySonic2.Api
                 album.playCount = item.PlayCount;
                 album.artistId = item.ArtistItems.FirstOrDefault()?.Id.ToString();
                 album.artist = item.AlbumArtist;
+                album.year = (int)(item.ProductionYear.HasValue ? item.ProductionYear : 0);
                 // album.year = (int)item.ProductionYear;
                 // album.genre = item.Genres[0].ToString();
                 var rc = item.GetRecursiveChildren().AsQueryable().Where(i => i is Audio);
@@ -141,7 +142,7 @@ namespace EmbySonic2.Api
                 foreach (Audio rc2 in rc)
                 {
                     var ch = new Child();
-                    ch.id = rc2.Id.ToString();
+                    ch.id = rc2.InternalId.ToString();
                     ch.parent = rc2.ParentId.ToString();
                     ch.title = rc2.Name;
                     ch.isDir = rc2.IsFolder;
@@ -151,8 +152,8 @@ namespace EmbySonic2.Api
                     ch.artistId = album.artistId.ToString();
                     ch.duration = (int)(rc2.RunTimeTicks / TimeSpan.TicksPerSecond);
                     ch.bitRate = rc2.TotalBitrate;
-                    // ch.track = (int)rc2.IndexNumber;
-                    // ch.year = (int)rc2.ProductionYear;
+                    ch.track = (int)(rc2.IndexNumber.HasValue ? rc2.IndexNumber : 0);
+                    ch.year = (int)(rc2.ProductionYear.HasValue ? rc2.ProductionYear : 0);
                     // ch.genre = rc2.Genres[0];
                     ch.size = rc2.Size;
                     ch.suffix = rc2.Container;

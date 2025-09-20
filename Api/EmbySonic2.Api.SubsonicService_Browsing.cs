@@ -33,10 +33,58 @@ namespace EmbySonic2.Api
         [ApiMember(Name = "Album ID", Description = "The album ID.", IsRequired = true, DataType = "string", ParameterType = "query", Verb = "GET")]
         public string? albumId { get; set; }
     }
+    
+    [Route("/rest/getMusicFolders", "GET", Summary = "Returns all configured top-level music folders.", Description = "Returns all configured top-level music folders. Takes no extra parameters.")]
+    public class BrowsingGetMusicFolders : SystemBase
+    {
+    }
 
     public partial class SubsonicService : IService, IRequiresRequest
     {
         // begin Browsing methods
+
+        public async Task<object> Get(BrowsingGetMusicFolders req)
+        {
+            String contentType = String.Empty;
+            String str = String.Empty;
+
+            // var user = _userManager.GetUserById("b46ed6e64a1343599b2352273982a86b");
+
+            var query = new InternalItemsQuery(null);
+
+            List<MusicArtist> itemsResult;
+            var folders = new MusicFolders();
+            List<String> folderResult = new List<String>();
+            List<MusicFolder> mfResult = new List<MusicFolder>();
+            itemsResult = _libraryManager.GetArtists(query).Items.Select(i => i.Item1).Cast<MusicArtist>().ToList();
+
+            JsonResponse r = new JsonResponse();
+            var options = new JsonSerializerOptions
+            {
+                IgnoreNullValues = true,
+                WriteIndented = true
+            };
+            r.root["status"] = "ok";
+
+            foreach (MusicArtist item in itemsResult)
+            {
+                if (!folderResult.Contains(item.ContainingFolderPath))
+                {
+                    var mf = new MusicFolder();
+                    mf.id = (int)item.ParentId;
+                    mf.name = item.ContainingFolderPath;
+                    mfResult.Add(mf);
+                }
+            }
+
+            folders.musicFolder = mfResult.ToArray();
+
+            r.root["musicFolders"] = folders;
+            str = JsonSerializer.Serialize(r, options);
+            contentType = "text/json";
+
+            return ResultFactory.GetResult(Request, Encoding.UTF8.GetBytes(str), contentType, null);
+        }
         public async Task<object> Get(BrowsingGetArtists req)
         {
             String contentType = String.Empty;
@@ -69,7 +117,6 @@ namespace EmbySonic2.Api
             var indexArray = new List<IndexID3>();
             artists.ignoredArticles = "The An A Die Das Ein Eine Les Le La";
             Dictionary<String, List<ArtistID3>> d = new Dictionary<String, List<ArtistID3>>();
-
 
             foreach (MusicArtist item in itemsResult)
             {
@@ -157,7 +204,7 @@ namespace EmbySonic2.Api
                     album.year = (int)(item.ProductionYear.HasValue ? item.ProductionYear : 0);
                     albumList.Add(album);
                 }
-                
+
             }
 
             artistID3.album = albumList.ToArray();

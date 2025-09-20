@@ -8,6 +8,7 @@ using System.Text;
 using System.Text.Json;
 using MediaBrowser.Controller.Entities;
 using MediaBrowser.Controller.Entities.Audio;
+using MediaBrowser.Controller.Playlists;
 
 
 namespace EmbySonic2.Api
@@ -50,6 +51,7 @@ namespace EmbySonic2.Api
     {
         private const string SupportedSubsonicApiVersion = "1.16.0";
         private readonly ILibraryManager _libraryManager;
+        private readonly IPlaylistManager _playlistManager;
         private readonly IFileSystem _fileSystem;
         private readonly ILogger _logger;
         private readonly IApplicationPaths _appPaths;
@@ -58,13 +60,14 @@ namespace EmbySonic2.Api
 
         public IRequest? Request { get; set; }
 
-        public SubsonicService(ILibraryManager libraryManager, IFileSystem fileSystem, ILogger logger, IApplicationPaths appPaths, IUserManager userManager, IHttpResultFactory resultFactory)
+        public SubsonicService(ILibraryManager libraryManager, IPlaylistManager playlistManager, IFileSystem fileSystem, ILogger logger, IApplicationPaths appPaths, IUserManager userManager, IHttpResultFactory resultFactory)
         {
             _libraryManager = libraryManager;
             _fileSystem = fileSystem;
             _logger = logger;
             _appPaths = appPaths;
             _userManager = userManager;
+            _playlistManager = playlistManager;
             ResultFactory = resultFactory;
         }
 

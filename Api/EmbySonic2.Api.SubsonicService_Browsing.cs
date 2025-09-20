@@ -13,11 +13,18 @@ using System.Net.Cache;
 
 namespace EmbySonic2.Api
 {
-    [Route("/rest/getArtists", "GET", Summary = "Similar to getIndexes, but organizes music according to ID3 tags", Description = "Returns a <subsonic-response> element with a nested <artists> element on success")]
+    [Route("/rest/getArtists", "GET", Summary = "Returns all artists.", Description = "Similar to getIndexes, but organizes music according to ID3 tags.")]
     public class BrowsingGetArtists : SystemBase
     {
         [ApiMember(Name = "Music Folder ID", Description = "If specified, only return artists in the music folder with the given ID; see getMusicFolders", IsRequired = false, DataType = "string", ParameterType = "query", Verb = "GET")]
         public string? musicFolderId { get; set; }
+    }
+
+    [Route("/rest/getArtist", "GET", Summary = "Returns details for an artist.", Description = "Returns details for an artist, including a list of albums. This method organizes music according to ID3 tags.")]
+    public class BrowsingGetArtist : SystemBase
+    {
+        [ApiMember(Name = "Artist ID", Description = "The artist ID", IsRequired = true, DataType = "string", ParameterType = "query", Verb = "GET")]
+        public string? artistId { get; set; }
     }
 
     [Route("/rest/getAlbum", "GET", Summary = "Returns details for an album.", Description = "Returns details for an album, including a list of songs. This method organizes music according to ID3 tags.")]
@@ -99,6 +106,69 @@ namespace EmbySonic2.Api
             return ResultFactory.GetResult(Request, Encoding.UTF8.GetBytes(str), contentType, null);
         }
 
+        public async Task<object> Get(BrowsingGetArtist req)
+        {
+            String contentType = String.Empty;
+            String str = String.Empty;
+
+            // var user = _userManager.GetUserById("b46ed6e64a1343599b2352273982a86b");
+
+            var query = new InternalItemsQuery(null);
+
+
+            List<MusicArtist> itemsResult;
+
+
+            itemsResult = _libraryManager.GetArtists(query).Items.Where(i => i.Item1.ExternalId.Equals(req.artistId)).Cast<MusicArtist>().ToList();
+            JsonResponse r = new JsonResponse();
+            var options = new JsonSerializerOptions
+            {
+                IgnoreNullValues = true,
+                WriteIndented = true
+            };
+            r.root["status"] = "ok";
+            var artistID3 = new ArtistWithAlbumsID3();
+            var albumListID3 = new AlbumListID3();
+            var indexArray = new List<IndexID3>();
+            Dictionary<String, List<ArtistID3>> d = new Dictionary<String, List<ArtistID3>>();
+            List<AlbumID3> albumList = new List<AlbumID3>();
+
+
+            foreach (MusicArtist item in itemsResult)
+            {
+                artistID3.id = item.Id.ToString();
+                artistID3.name = item.Name;
+                artistID3.coverArt = item.PrimaryImagePath;
+
+                var rc = item.GetRecursiveChildren().AsQueryable().Where(i => i is MusicAlbum).ToList();
+                artistID3.albumCount = rc.Count();
+                var album = new AlbumID3();
+
+                foreach (MusicAlbum al in rc)
+                {
+                    album.id = item.InternalId.ToString();
+                    album.name = item.Name.ToString();
+                    album.songCount = item.GetRecursiveChildren().Length;
+                    album.created = item.DateCreated.DateTime;
+                    album.duration = (int)(item.RunTimeTicks / TimeSpan.TicksPerSecond);
+                    album.playCount = item.PlayCount;
+                    album.artistId = artistID3.id;
+                    album.artist = artistID3.name;
+                    album.year = (int)(item.ProductionYear.HasValue ? item.ProductionYear : 0);
+                    albumList.Add(album);
+                }
+                
+            }
+
+            artistID3.album = albumList.ToArray();
+
+            r.root["artist"] = artistID3;
+            str = JsonSerializer.Serialize(r, options);
+            contentType = "text/json";
+
+            return ResultFactory.GetResult(Request, Encoding.UTF8.GetBytes(str), contentType, null);
+        }
+
         public async Task<object> Get(BrowsingGetAlbum req)
         {
             String contentType = String.Empty;
@@ -111,7 +181,7 @@ namespace EmbySonic2.Api
 
             List<MusicAlbum> itemsResult;
 
-            itemsResult = _libraryManager.GetMusicAlbums(query).Items.Select(i => i.Item1).Cast<MusicAlbum>().ToList();
+            itemsResult = _libraryManager.GetMusicAlbums(query).Items.Where(i => i.Item1.ExternalId.Equals(req.albumId)).Cast<MusicAlbum>().ToList();
 
             JsonResponse r = new JsonResponse();
             var options = new JsonSerializerOptions

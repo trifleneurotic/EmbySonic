@@ -3120,8 +3120,31 @@ namespace EmbySonic2
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-   
+
     public partial class Songs
+    {
+
+        private Child[] songField;
+
+        /// <remarks/>
+        public Child[] song
+        {
+            get
+            {
+                return this.songField;
+            }
+            set
+            {
+                this.songField = value;
+            }
+        }
+    }
+    
+    [System.SerializableAttribute()]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+   
+    public partial class RandomSongs
     {
 
         private Child[] songField;

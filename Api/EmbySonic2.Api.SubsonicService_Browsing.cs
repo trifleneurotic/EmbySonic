@@ -47,7 +47,6 @@ namespace EmbySonic2.Api
         {
             String contentType = String.Empty;
             String str = String.Empty;
-
             // var user = _userManager.GetUserById("b46ed6e64a1343599b2352273982a86b");
 
             var query = new InternalItemsQuery(null);

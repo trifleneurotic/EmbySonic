@@ -25,6 +25,8 @@ using MediaBrowser.Controller.Dto;
 using MediaBrowser.Controller.Entities.Movies;
 using MediaBrowser.Controller.IO;
 using MediaBrowser.Model.Extensions;
+using System.Xml.Linq;
+using System.Xml.Serialization;
 
 namespace EmbySonic2.Api
 {

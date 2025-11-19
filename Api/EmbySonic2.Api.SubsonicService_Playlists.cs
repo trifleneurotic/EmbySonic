@@ -1,4 +1,3 @@
-  
 using MediaBrowser.Common.Configuration;
 using MediaBrowser.Controller.Library;
 using MediaBrowser.Controller.Net;
@@ -26,6 +25,9 @@ using MediaBrowser.Controller.Dto;
 using MediaBrowser.Controller.Entities.Movies;
 using MediaBrowser.Controller.IO;
 using MediaBrowser.Model.Extensions;
+using MediaBrowser.Controller.Playlists;
+using MediaBrowser.Controller.Session;
+using System.Xml.Linq;
 
 
 namespace EmbySonic2.Api
@@ -87,7 +89,7 @@ namespace EmbySonic2.Api
             }
 
             // Create the playlist using Emby library classes
-            var createRequest = new MediaBrowser.Controller.Playlists.PlaylistCreationRequest
+            var createRequest = new MediaBrowser.Controller.Playlists.CreatePlaylistRequest
             {
                 Name = req.name,
                 UserId = user.Id,

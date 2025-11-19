@@ -8,8 +8,26 @@ using System.Text;
 using System.Text.Json;
 using MediaBrowser.Controller.Entities;
 using MediaBrowser.Controller.Entities.Audio;
+using System.Net.Cache;
+using MediaBrowser.Model.Querying;
+using MediaBrowser.Controller.Drawing;
+using MediaBrowser.Controller.Entities.TV;
+using MediaBrowser.Controller.Providers;
+using MediaBrowser.Model.Entities;
+using System.Runtime.InteropServices;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Threading.Tasks;
+using MediaBrowser.Controller.Collections;
+using MediaBrowser.Controller.Dto;
+using MediaBrowser.Controller.Entities.Movies;
+using MediaBrowser.Controller.IO;
+using MediaBrowser.Model.Extensions;
 using MediaBrowser.Controller.Playlists;
 using MediaBrowser.Controller.Session;
+using System.Xml.Linq;
 
 namespace EmbySonic2.Api
 {

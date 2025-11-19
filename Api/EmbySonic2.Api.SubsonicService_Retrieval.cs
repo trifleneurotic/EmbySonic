@@ -1,37 +1,14 @@
-using MediaBrowser.Common.Configuration;
-using MediaBrowser.Controller.Library;
-using MediaBrowser.Controller.Net;
-using MediaBrowser.Model.Logging;
-using MediaBrowser.Model.Services;
-using MediaBrowser.Model.Session;
-using MediaBrowser.Model.IO;
-using System.Text;
-using System.Text.Json;
-using MediaBrowser.Controller.Entities;
-using MediaBrowser.Controller.Entities.Audio;
-using System.Net.Cache;
-using MediaBrowser.Model.Querying;
-using MediaBrowser.Controller.Drawing;
-using MediaBrowser.Controller.Entities.TV;
-using MediaBrowser.Controller.Providers;
-using MediaBrowser.Model.Entities;
-using System.Runtime.InteropServices;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
-using MediaBrowser.Controller.Collections;
-using MediaBrowser.Controller.Dto;
-using MediaBrowser.Controller.Entities.Movies;
-using MediaBrowser.Controller.IO;
-using MediaBrowser.Model.Extensions;
-using System.Xml.Linq;
-using System.Xml.Serialization;
-
-
 namespace EmbySonic2.Api
 {
+    [Route("/rest/getLyrics", "GET", Summary = "Searches for and returns lyrics for a given song.", Description = "Returns lyrics for a given song.")]
+    public class RetrievalGetLyrics : SystemBase
+    {
+        [ApiMember(Name = "artist", Description = "The artist name.", IsRequired = false, DataType = "string", ParameterType = "query", Verb = "GET")]
+        public string? artist { get; set; }
+
+        [ApiMember(Name = "title", Description = "The song title.", IsRequired = false, DataType = "string", ParameterType = "query", Verb = "GET")]
+        public string? title { get; set; }
+    }
     [Route("/rest/stream", "GET", Summary = "Streams a given media file.", Description = "Streams a given media file.")]
     public class RetrievalStream : SystemBase
     {
@@ -59,6 +36,50 @@ namespace EmbySonic2.Api
 
     public partial class SubsonicService : IService, IRequiresRequest
     {
+         public async Task<object> Get(RetrievalGetLyrics req)
+        {
+            string contentType = string.Empty;
+            string str = string.Empty;
+
+            // TODO: Replace with actual user context
+            var user = _userManager.GetUserById("b46ed6e64a1343599b2352273982a86b");
+
+            if (string.IsNullOrEmpty(req.artist) && string.IsNullOrEmpty(req.title))
+            {
+                JsonResponse errorResponse = new JsonResponse();
+                errorResponse.root["status"] = "failed";
+                errorResponse.root["error"] = new { code = 10, message = "Missing artist or title parameter" };
+                contentType = "text/json";
+                str = JsonSerializer.Serialize(errorResponse, new JsonSerializerOptions { IgnoreNullValues = true, WriteIndented = true });
+                return ResultFactory.GetResult(Request, Encoding.UTF8.GetBytes(str), contentType, null);
+            }
+
+            // Attempt to find the song in the library
+            var items = _libraryManager.GetItemList(user).Where(i =>
+                (string.IsNullOrEmpty(req.artist) || (i.Artists != null && i.Artists.Any(a => a.Equals(req.artist, StringComparison.OrdinalIgnoreCase)))) &&
+                (string.IsNullOrEmpty(req.title) || i.Name.Equals(req.title, StringComparison.OrdinalIgnoreCase))
+            ).ToList();
+
+            string? lyrics = null;
+            if (items.Count > 0)
+            {
+                var song = items.First();
+                // Try to get lyrics from the song's metadata
+                lyrics = song.Lyrics;
+            }
+
+            JsonResponse r = new JsonResponse();
+            var options = new JsonSerializerOptions
+            {
+                IgnoreNullValues = true,
+                WriteIndented = true
+            };
+            r.root["status"] = "ok";
+            r.root["lyrics"] = new { artist = req.artist, title = req.title, value = lyrics ?? string.Empty };
+            contentType = "text/json";
+            str = JsonSerializer.Serialize(r, options);
+            return ResultFactory.GetResult(Request, Encoding.UTF8.GetBytes(str), contentType, null);
+        }
         public async Task<object> Get(RetrievalStream req)
         {
             String contentType = req.format ?? String.Empty;

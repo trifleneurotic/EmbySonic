@@ -1,3 +1,5 @@
+*As of today (7-Feb-2026), sadly, I am archiving this project. It was (and I think still is) a good idea, and it grew out of my desire a while back to use the Android app [DSub](https://github.com/daneren2005/Subsonic) with Emby. But since then some great apps have been released that natively leverage Emby's APIs (and I've been happily using [Symfonium](https://symfonium.app/) for a while now), although music apps likely wouldn't be the only use case for a piece of software such as EmbySonic. With that said though, my original use case has heretofore been satisfied by other apps, and I am wanting to turn my focus towards other projects. Please feel free to fork this project if you'd like to take it to the next level.*
+
 # EmbySonic
 ![EmbySonic logo](Images/plugin.png)
 
